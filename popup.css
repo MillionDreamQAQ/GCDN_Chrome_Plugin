@@ -1,0 +1,63 @@
+body {
+  width: 400px;
+  height: 400px;
+}
+
+.manual-container {
+  margin: 10px 4px;
+  display: flex;
+  font-size: 10pt;
+  align-items: center;
+
+  .checkbox-container {
+    margin-left: 10px;
+  }
+}
+
+.move-container {
+  margin: 10px 4px;
+  display: flex;
+  font-size: 10pt;
+  align-items: center;
+
+  .select-container {
+    width: 100px;
+
+    .select {
+      outline: none;
+      height: 24px;
+    }
+  }
+
+  .button-container {
+    width: 50px;
+
+    .button {
+      height: 24px;
+    }
+  }
+}
+
+.change-status-container {
+  margin: 10px 4px;
+  display: flex;
+  font-size: 10pt;
+  align-items: center;
+
+  .select-container {
+    width: 100px;
+
+    .select {
+      outline: none;
+      height: 24px;
+    }
+  }
+
+  .button-container {
+    width: 50px;
+
+    .button {
+      height: 24px;
+    }
+  }
+}

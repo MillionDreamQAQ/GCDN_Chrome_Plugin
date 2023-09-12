@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="manual-container">
+      手动模式
+      <div class="checkbox-container">
+        <input id="manual" type="checkbox" />
+      </div>
+    </div>
+    <hr />
+    <div class="move-container">
+      目标板块：
+      <div class="select-container">
+        <select id="moveTargetSpace" class="select">
+          <optgroup label="SpreadJS">
+            <option>求助中心</option>
+            <option>Bug反馈</option>
+            <option>产品需求</option>
+          </optgroup>
+        </select>
+      </div>
+      目标分类：
+      <div class="select-container">
+        <select id="moveTargetStatus" class="select">
+          <option>未处理</option>
+          <option>处理中</option>
+          <option>已处理</option>
+          <option>保留处理</option>
+        </select>
+      </div>
+      <div class="button-container">
+        <button id="move" class="button">移动</button>
+      </div>
+    </div>
+    <hr />
+    <div class="change-status-container">
+      目标分类：
+      <div class="select-container">
+        <select id="changeStatusTargetStatus" class="select">
+          <option>未处理</option>
+          <option>处理中</option>
+          <option>已处理</option>
+          <option>保留处理</option>
+        </select>
+      </div>
+      <div class="button-container">
+        <button id="changeStatus" class="button">分类</button>
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
