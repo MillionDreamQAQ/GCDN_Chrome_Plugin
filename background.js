@@ -171,19 +171,107 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener(contextClick);
 async function contextClick(info) {
   switch (info.menuItemId) {
-    case "move":
-      chrome.storage.sync.get("moveSpace", (data) => {
-        moveTargetSpace = data.moveSpace;
-      });
-      chrome.storage.sync.get("moveStatus", (data) => {
-        moveTargetStatus = data.moveStatus;
-      });
+    // case "move":
+    //   chrome.storage.sync.get("moveSpace", (data) => {
+    //     moveTargetSpace = data.moveSpace;
+    //   });
+    //   chrome.storage.sync.get("moveStatus", (data) => {
+    //     moveTargetStatus = data.moveStatus;
+    //   });
+    //   await handleMoveButtonClick(tabId);
+    //   break;
+    // case "change":
+    //   chrome.storage.sync.get("changeStatus", (data) => {
+    //     changeStatusTargetStatus = data.changeStatus;
+    //   });
+    //   await handleChangeStatusButtonClick(tabId);
+    //   break;
+
+    /********************************************************************** */
+
+    case "story_waiting":
+      moveTargetSpace = "产品需求";
+      moveTargetStatus = "未处理";
       await handleMoveButtonClick(tabId);
       break;
-    case "change":
-      chrome.storage.sync.get("changeStatus", (data) => {
-        changeStatusTargetStatus = data.changeStatus;
-      });
+    case "story_doing":
+      moveTargetSpace = "产品需求";
+      moveTargetStatus = "处理中";
+      await handleMoveButtonClick(tabId);
+      break;
+    case "story_done":
+      moveTargetSpace = "产品需求";
+      moveTargetStatus = "已处理";
+      await handleMoveButtonClick(tabId);
+      break;
+    case "story_query":
+      moveTargetSpace = "产品需求";
+      moveTargetStatus = "保留处理";
+      await handleMoveButtonClick(tabId);
+      break;
+
+    /********************************************************************** */
+
+    case "bug_waiting":
+      moveTargetSpace = "Bug反馈";
+      moveTargetStatus = "未处理";
+      await handleMoveButtonClick(tabId);
+      break;
+    case "bug_doing":
+      moveTargetSpace = "Bug反馈";
+      moveTargetStatus = "处理中";
+      await handleMoveButtonClick(tabId);
+      break;
+    case "bug_done":
+      moveTargetSpace = "Bug反馈";
+      moveTargetStatus = "已处理";
+      await handleMoveButtonClick(tabId);
+      break;
+    case "bug_query":
+      moveTargetSpace = "Bug反馈";
+      moveTargetStatus = "保留处理";
+      await handleMoveButtonClick(tabId);
+      break;
+
+    /********************************************************************** */
+
+    case "help_waiting":
+      moveTargetSpace = "求助中心";
+      moveTargetStatus = "未处理";
+      await handleMoveButtonClick(tabId);
+      break;
+    case "help_doing":
+      moveTargetSpace = "求助中心";
+      moveTargetStatus = "处理中";
+      await handleMoveButtonClick(tabId);
+      break;
+    case "help_done":
+      moveTargetSpace = "求助中心";
+      moveTargetStatus = "已处理";
+      await handleMoveButtonClick(tabId);
+      break;
+    case "help_query":
+      moveTargetSpace = "求助中心";
+      moveTargetStatus = "保留处理";
+      await handleMoveButtonClick(tabId);
+      break;
+
+    /********************************************************************** */
+
+    case "waiting":
+      changeStatusTargetStatus = "未处理";
+      await handleChangeStatusButtonClick(tabId);
+      break;
+    case "doing":
+      changeStatusTargetStatus = "处理中";
+      await handleChangeStatusButtonClick(tabId);
+      break;
+    case "done":
+      changeStatusTargetStatus = "已处理";
+      await handleChangeStatusButtonClick(tabId);
+      break;
+    case "query":
+      changeStatusTargetStatus = "保留处理";
       await handleChangeStatusButtonClick(tabId);
       break;
     default:
