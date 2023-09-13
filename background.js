@@ -16,22 +16,155 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     { active: true, lastFocusedWindow: true, currentWindow: true },
     function (tabs) {
       tabInfo = tabs[0];
-      tabId = tabs[0].id;
+      tabId = tabInfo.id;
     }
   );
 });
 
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
+  let moveParent = chrome.contextMenus.create({
     id: "move",
     type: "normal",
     title: "移动帖子",
   });
 
+  let helpParent = chrome.contextMenus.create({
+    id: "help",
+    type: "normal",
+    title: "求助中心",
+    parentId: moveParent,
+  });
+
   chrome.contextMenus.create({
-    id: "change",
+    id: "help_waiting",
+    type: "normal",
+    title: "未处理",
+    parentId: helpParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "help_doing",
+    type: "normal",
+    title: "处理中",
+    parentId: helpParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "help_done",
+    type: "normal",
+    title: "已处理",
+    parentId: helpParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "help_query",
+    type: "normal",
+    title: "保留处理",
+    parentId: helpParent,
+  });
+
+  let bugParent = chrome.contextMenus.create({
+    id: "bug",
+    type: "normal",
+    title: "Bug反馈",
+    parentId: moveParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "bug_waiting",
+    type: "normal",
+    title: "未处理",
+    parentId: bugParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "bug_doing",
+    type: "normal",
+    title: "处理中",
+    parentId: bugParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "bug_done",
+    type: "normal",
+    title: "已处理",
+    parentId: bugParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "bug_query",
+    type: "normal",
+    title: "保留处理",
+    parentId: bugParent,
+  });
+
+  let storyParent = chrome.contextMenus.create({
+    id: "story",
+    type: "normal",
+    title: "产品需求",
+    parentId: moveParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "story_waiting",
+    type: "normal",
+    title: "未处理",
+    parentId: storyParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "story_doing",
+    type: "normal",
+    title: "处理中",
+    parentId: storyParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "story_done",
+    type: "normal",
+    title: "已处理",
+    parentId: storyParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "story_query",
+    type: "normal",
+    title: "保留处理",
+    parentId: storyParent,
+  });
+
+  let changeParent = chrome.contextMenus.create({
+    id: "changeParent",
     type: "normal",
     title: "更改帖子状态",
+  });
+
+  chrome.contextMenus.create({
+    id: "waiting",
+    type: "normal",
+    title: "未处理",
+    parentId: changeParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "doing",
+    type: "normal",
+    title: "处理中",
+    parentId: changeParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "done",
+    type: "normal",
+    title: "已处理",
+    parentId: changeParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "query",
+    type: "normal",
+    title: "保留处理",
+    parentId: changeParent,
   });
 });
 
@@ -61,13 +194,13 @@ async function contextClick(info) {
 chrome.runtime.onMessage.addListener(messageReceived);
 function messageReceived(data) {
   if (data.msg == "changeStatus") {
-    tabId = data.tab[0].id;
     tabInfo = data.tab[0];
+    tabId = tabId.id;
     changeStatusTargetStatus = data.status;
     handleChangeStatusButtonClick(tabId);
   } else if (data.msg == "move") {
-    tabId = data.tab[0].id;
     tabInfo = data.tab[0];
+    tabId = tabId.id;
     moveTargetSpace = data.space;
     moveTargetStatus = data.status;
     handleMoveButtonClick(tabId);

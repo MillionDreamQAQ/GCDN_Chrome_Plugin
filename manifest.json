@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "GCDN Helper",
-  "description": "Test",
-  "version": "1.0",
+  "description": "In order to change status or move automatically.",
+  "version": "1.1",
   "background": {
     "service_worker": "background.js"
   },
