@@ -195,12 +195,12 @@ chrome.runtime.onMessage.addListener(messageReceived);
 function messageReceived(data) {
   if (data.msg == "changeStatus") {
     tabInfo = data.tab[0];
-    tabId = tabId.id;
+    tabId = tabInfo.id;
     changeStatusTargetStatus = data.status;
     handleChangeStatusButtonClick(tabId);
   } else if (data.msg == "move") {
     tabInfo = data.tab[0];
-    tabId = tabId.id;
+    tabId = tabInfo.id;
     moveTargetSpace = data.space;
     moveTargetStatus = data.status;
     handleMoveButtonClick(tabId);
