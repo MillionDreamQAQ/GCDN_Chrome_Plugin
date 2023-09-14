@@ -22,6 +22,12 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 });
 
 chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: "search",
+    title: "使用JIRA搜索：%s",
+    contexts: ["selection"],
+  });
+
   let moveParent = chrome.contextMenus.create({
     id: "move",
     type: "normal",
@@ -186,6 +192,24 @@ async function contextClick(info) {
     //   });
     //   await handleChangeStatusButtonClick(tabId);
     //   break;
+
+    case "search":
+      console.log(info);
+      let text = info.selectionText;
+      if (text[0] == "(") {
+        text = text.replaceAll("(", "");
+        text = text.replaceAll(")", "");
+      } else if (text[0] == "（") {
+        text = text.replaceAll("（", "");
+        text = text.replaceAll("）", "");
+      } else {
+        text = text.replaceAll("[", "");
+        text = text.replaceAll("]", "");
+      }
+      chrome.tabs.create({
+        url: "https://grapecity.atlassian.net/browse/" + encodeURI(text),
+      });
+      break;
 
     /********************************************************************** */
 
