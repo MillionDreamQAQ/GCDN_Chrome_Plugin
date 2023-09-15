@@ -1,8 +1,3 @@
-// let popup = chrome.runtime.getContexts({
-//   contextTypes: ["POPUP"],
-// });
-// console.log(popup);
-
 let tabInfo = null;
 let tabId = null;
 
@@ -11,15 +6,12 @@ let moveTargetStatus = null;
 
 let changeStatusTargetStatus = null;
 
-chrome.tabs.onActivated.addListener((activeInfo) => {
-  chrome.tabs.query(
-    { active: true, lastFocusedWindow: true, currentWindow: true },
-    function (tabs) {
-      tabInfo = tabs[0];
-      tabId = tabInfo.id;
-    }
-  );
-});
+// chrome.tabs.onActivated.addListener((activeInfo) => {
+//   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+//     tabInfo = tabs[0];
+//     tabId = tabInfo.id;
+//   });
+// });
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
@@ -172,10 +164,18 @@ chrome.runtime.onInstalled.addListener(() => {
     title: "保留处理",
     parentId: changeParent,
   });
+
+  chrome.contextMenus.create({
+    id: "close",
+    type: "normal",
+    title: "结贴",
+  });
 });
 
 chrome.contextMenus.onClicked.addListener(contextClick);
-async function contextClick(info) {
+async function contextClick(info, tab) {
+  tabInfo = tab;
+  tabId = tabInfo.id;
   switch (info.menuItemId) {
     // case "move":
     //   chrome.storage.sync.get("moveSpace", (data) => {
@@ -194,18 +194,20 @@ async function contextClick(info) {
     //   break;
 
     case "search":
-      console.log(info);
       let text = info.selectionText;
-      if (text[0] == "(") {
+      if (text.indexOf("(") != -1 || text.indexOf(")") != -1) {
         text = text.replaceAll("(", "");
         text = text.replaceAll(")", "");
-      } else if (text[0] == "（") {
+      }
+      if (text.indexOf("（") != -1 || text.indexOf("）") != -1) {
         text = text.replaceAll("（", "");
         text = text.replaceAll("）", "");
-      } else {
+      }
+      if (text.indexOf("[") != -1 || text.indexOf("]") != -1) {
         text = text.replaceAll("[", "");
         text = text.replaceAll("]", "");
       }
+
       chrome.tabs.create({
         url: "https://grapecity.atlassian.net/browse/" + encodeURI(text),
       });
@@ -298,6 +300,15 @@ async function contextClick(info) {
       changeStatusTargetStatus = "保留处理";
       await handleChangeStatusButtonClick(tabId);
       break;
+
+    /********************************************************************** */
+
+    case "close":
+      await handleCloseButtonClick();
+      break;
+
+    /********************************************************************** */
+
     default:
       break;
   }
@@ -316,6 +327,10 @@ function messageReceived(data) {
     moveTargetSpace = data.space;
     moveTargetStatus = data.status;
     handleMoveButtonClick(tabId);
+  } else if (data.msg == "close") {
+    tabInfo = data.tab[0];
+    tabId = tabInfo.id;
+    handleCloseButtonClick(tabId);
   }
 }
 
@@ -345,7 +360,6 @@ async function handleMoveButtonClick(tabId) {
   await chrome.scripting.executeScript({
     target: { tabId },
     func: submit,
-    args: [getTabId()],
   });
 }
 
@@ -449,6 +463,41 @@ function change_status_stage1(status) {
   }
 }
 
+/******************************************************************************* */
+
+async function handleCloseButtonClick(tabId) {
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: close_stage0,
+  });
+
+  await sleep(1000);
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: close_stage1,
+  });
+
+  await sleep(500);
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: submit,
+  });
+}
+
+function close_stage0() {
+  let closeButton = document.querySelector("#modmenu > a:nth-child(15)");
+  closeButton.click();
+}
+
+function close_stage1() {
+  let closeCheckBox = document.querySelector(
+    "#moderateform > div > table > tbody > tr:nth-child(2) > td > ul > li:nth-child(2) > label"
+  );
+  closeCheckBox.click();
+}
+
+/******************************************************************************* */
+
 function submit(tabId) {
   chrome.storage.sync.get("manual", (data) => {
     let res = data.manual;
@@ -459,8 +508,6 @@ function submit(tabId) {
     }
   });
 }
-
-/******************************************************************************* */
 
 function getMoveTargetSpace() {
   return moveTargetSpace;

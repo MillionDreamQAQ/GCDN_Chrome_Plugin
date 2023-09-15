@@ -1,6 +1,10 @@
 let tabInfo = null;
 let tabId = null;
 
+const manualCheckBox = document.querySelector("#manual");
+
+const closeButton = document.querySelector("#close");
+
 const moveTargetSpace = document.querySelector("#moveTargetSpace");
 const moveTargetStatus = document.querySelector("#moveTargetStatus");
 const moveButton = document.querySelector("#move");
@@ -9,8 +13,6 @@ const changeStatusTargetStatus = document.querySelector(
   "#changeStatusTargetStatus"
 );
 const changeStatusButton = document.querySelector("#changeStatus");
-
-const manualCheckBox = document.querySelector("#manual");
 
 function setDefaultData() {
   chrome.storage.sync.get("moveSpace", (data) => {
@@ -73,6 +75,11 @@ function attachButtonEvent() {
     const tab = await chrome.tabs.query({ active: true, currentWindow: true });
     const status = getChangeStatusTargetStatus();
     chrome.runtime.sendMessage({ msg: "changeStatus", tab, status });
+  });
+
+  closeButton.addEventListener("click", async () => {
+    const tab = await chrome.tabs.query({ active: true, currentWindow: true });
+    chrome.runtime.sendMessage({ msg: "close", tab });
   });
 }
 
