@@ -177,22 +177,6 @@ async function contextClick(info, tab) {
   tabInfo = tab;
   tabId = tabInfo.id;
   switch (info.menuItemId) {
-    // case "move":
-    //   chrome.storage.sync.get("moveSpace", (data) => {
-    //     moveTargetSpace = data.moveSpace;
-    //   });
-    //   chrome.storage.sync.get("moveStatus", (data) => {
-    //     moveTargetStatus = data.moveStatus;
-    //   });
-    //   await handleMoveButtonClick(tabId);
-    //   break;
-    // case "change":
-    //   chrome.storage.sync.get("changeStatus", (data) => {
-    //     changeStatusTargetStatus = data.changeStatus;
-    //   });
-    //   await handleChangeStatusButtonClick(tabId);
-    //   break;
-
     case "search":
       let text = info.selectionText;
       if (text.indexOf("(") != -1 || text.indexOf(")") != -1) {
