@@ -304,7 +304,7 @@ async function contextClick(info, tab) {
     /********************************************************************** */
 
     case "close":
-      await handleCloseButtonClick();
+      await handleCloseButtonClick(tabId);
       break;
 
     /********************************************************************** */
