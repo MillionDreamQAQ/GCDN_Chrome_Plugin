@@ -15,7 +15,7 @@ function addMessageListener() {
 }
 
 function attachEvent() {
-  document.getElementById("setFids").addEventListener("click", updateAreaId);
+  document.getElementById("setBoard").addEventListener("click", updateBoardId);
   document
     .getElementById("updateTime")
     .addEventListener("change", updateTimeChange);
@@ -30,10 +30,10 @@ function attachEvent() {
 
 function setDefaultData() {
   chrome.storage.sync.get(
-    ["fids", "notifyTime", "updateTime", "setGold", "setArea"],
+    ["board", "notifyTime", "updateTime", "setGold", "setArea"],
     function (result) {
-      if (result?.fids) {
-        document.getElementById("fids").value = result.fids;
+      if (result?.board) {
+        document.getElementById("board").value = result.board;
       }
       if (result?.updateTime) {
         document.getElementById("updateTime").value = result.updateTime;
@@ -103,7 +103,7 @@ function initSpread() {
 function fetchData() {
   document.getElementById("forumdata").innerHTML = "加载中...";
 
-  function gcdnListFun() {
+  function fetchDataFun() {
     let xhr1 = new XMLHttpRequest();
     xhr1.open(
       "GET",
@@ -204,16 +204,16 @@ function fetchData() {
 
         if (resp instanceof Array) {
           if (resp.length) {
-            if (document.getElementById("fids").value) {
-              let fids = document.getElementById("fids").value.split(",");
+            if (document.getElementById("board").value) {
+              let board = document.getElementById("board").value.split(",");
               resp = resp
-                .filter((topic) => fids.includes(topic.fid))
+                .filter((topic) => board.includes(topic.fid))
                 .filter((node) => node["最后回帖用户"] != "Lay.Li");
             }
             let obj1 = document.getElementById("num");
             obj1.innerText = "辛苦啦，帖子已被你清空！！！";
             bindingData(resp);
-            gcdnListFun();
+            fetchDataFun();
             document.getElementById("forumdata").innerHTML = "";
 
             let spread = GC.Spread.Sheets.findControl("ss");
@@ -368,7 +368,7 @@ function bindingData(data) {
     "吉林",
     "辽宁",
   ];
-  let ease = ["上海", "江苏", "浙江", "安徽", "湖北"];
+  let east = ["上海", "江苏", "浙江", "安徽", "湖北"];
   let south = ["广东", "广西", "海南", "福建", "江西", "湖南"];
   let west = [
     "陕西",
@@ -394,7 +394,7 @@ function bindingData(data) {
         sheet.setValue(i, 9, area[0]);
       }
     }
-    for (const province of ease) {
+    for (const province of east) {
       if (value.indexOf(province) != -1) {
         sheet.setValue(i, 9, area[1]);
       }
@@ -568,8 +568,8 @@ function bindingData(data) {
   sheet.resumePaint();
 }
 
-function updateAreaId() {
-  chrome.storage.sync.set({ fids: document.getElementById("fids").value });
+function updateBoardId() {
+  chrome.storage.sync.set({ board: document.getElementById("board").value });
 
   let spread = GC.Spread.Sheets.findControl("ss");
   let sheet = spread.getActiveSheet();

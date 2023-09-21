@@ -575,10 +575,10 @@ function getForumDataUser(isNotify) {
     .then((response) => response.json())
     .then((resp) => {
       if (Array.isArray(resp) && resp.length) {
-        chrome.storage.sync.get(["fids"], function (result) {
-          if (result?.fids) {
-            let fids = result.fids.split(",");
-            resp = resp.filter((topic) => fids.includes(topic.fid));
+        chrome.storage.sync.get(["board"], function (result) {
+          if (result?.board) {
+            let board = result.board.split(",");
+            resp = resp.filter((topic) => board.includes(topic.fid));
           }
           notificationUser(isNotify, resp.length);
         });
