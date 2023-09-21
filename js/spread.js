@@ -1,8 +1,18 @@
 window.onload = function () {
+  addMessageListener();
   attachEvent();
   setDefaultData();
   initSpread();
 };
+
+function addMessageListener() {
+  chrome.runtime.onMessage.addListener(messageReceived);
+  function messageReceived(data) {
+    if (data.msg == "refresh") {
+      location?.reload();
+    }
+  }
+}
 
 function attachEvent() {
   document.getElementById("setFids").addEventListener("click", updateAreaId);
@@ -767,10 +777,3 @@ function countRow() {
 }
 
 /************************************************* */
-
-chrome.runtime.onMessage.addListener(messageReceived);
-function messageReceived(data) {
-  if (data.msg == "refresh") {
-    location?.reload();
-  }
-}
