@@ -15,25 +15,23 @@ const changeStatusTargetStatus = document.querySelector(
 const changeStatusButton = document.querySelector("#changeStatus");
 
 function setDefaultData() {
-  chrome.storage.sync.get("moveSpace", (data) => {
-    let res = data.moveSpace;
-    moveTargetSpace.value = res;
-  });
-
-  chrome.storage.sync.get("moveStatus", (data) => {
-    let res = data.moveStatus;
-    moveTargetStatus.value = res;
-  });
-
-  chrome.storage.sync.get("changeStatus", (data) => {
-    let res = data.changeStatus;
-    changeStatusTargetStatus.value = res;
-  });
-
-  chrome.storage.sync.get("manual", (data) => {
-    let res = data.manual;
-    manualCheckBox.checked = res;
-  });
+  chrome.storage.sync.get(
+    ["moveSpace", "moveStatus", "changeStatus", "manual"],
+    function (data) {
+      if (data?.moveSpace) {
+        moveTargetSpace.value = data.moveSpace;
+      }
+      if (data?.moveStatus) {
+        moveTargetStatus.value = data.moveStatus;
+      }
+      if (data?.changeStatus) {
+        changeStatusTargetStatus.value = data.changeStatus;
+      }
+      if (data?.manual) {
+        manualCheckBox.checked = data.manual;
+      }
+    }
+  );
 }
 
 function attachEvent() {
@@ -106,5 +104,34 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function setAlarm() {
+  window.setInterval(function () {
+    let refreshHours = new Date().getHours();
+    let refreshMin = new Date().getMinutes();
+    let refreshSec = new Date().getSeconds();
+    if (refreshHours == "12" && refreshMin == "0" && refreshSec == "0") {
+      chrome.notifications.clear("EmailNotification");
+      chrome.notifications.create("EmailNotification", {
+        type: "basic",
+        iconUrl: "../images/warn.png",
+        title: "授权发送提醒",
+        message: "客户很着急，请检查是否还有未发送的授权，谢谢！",
+        requireInteraction: true,
+      });
+    }
+    if (refreshHours == "17" && refreshMin == "30" && refreshSec == "0") {
+      chrome.notifications.clear("EmailNotification");
+      chrome.notifications.create("EmailNotification", {
+        type: "basic",
+        iconUrl: "../images/warn.png",
+        title: "授权发送提醒",
+        message: "客户很着急，请检查是否还有未发送的授权，谢谢！",
+        requireInteraction: true,
+      });
+    }
+  }, 1000);
+}
+
 setDefaultData();
 attachEvent();
+setAlarm();

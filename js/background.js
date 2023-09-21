@@ -338,6 +338,8 @@ function messageReceived(data) {
     tabInfo = data.tab[0];
     tabId = tabInfo.id;
     handleCloseButtonClick(tabId);
+  } else if (data.msg == "extension_tab_info") {
+    extensionTabInfo = data.extensionTabInfo;
   }
 }
 
@@ -545,7 +547,7 @@ chrome.storage.sync.get(["notiTime"], function (result) {
 });
 chrome.storage.sync.get(["updateTime"], function (result) {
   if (result["updateTime"] === undefined || result["updateTime"] === null) {
-    chrome.storage.sync.set({ updateTime: "5" });
+    chrome.storage.sync.set({ updateTime: "2" });
   }
 });
 
@@ -569,47 +571,37 @@ chrome.runtime.onInstalled.addListener(function () {
 });
 
 function getForumDataUser(isNotify) {
-  let xhr = new XMLHttpRequest();
-  xhr.open(
-    "GET",
-    "https://gcdn.grapecity.com.cn/api/forummasterreply.php",
-    true
-  );
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == 4) {
-      let resp = JSON.parse(xhr.responseText);
-
-      if (resp instanceof Array) {
-        if (resp.length) {
-          chrome.storage.sync.get(["fids"], function (result) {
-            if (result?.fids) {
-              let fids = result.fids.split(",");
-              resp = resp.filter((topic) => fids.includes(topic.fid));
-            }
-            notificationUser(isNotify, resp.length);
-            location.reload(true);
-          });
-        }
+  fetch("https://gcdn.grapecity.com.cn/api/forummasterreply.php")
+    .then((response) => response.json())
+    .then((resp) => {
+      if (Array.isArray(resp) && resp.length) {
+        chrome.storage.sync.get(["fids"], function (result) {
+          if (result?.fids) {
+            let fids = result.fids.split(",");
+            resp = resp.filter((topic) => fids.includes(topic.fid));
+          }
+          notificationUser(isNotify, resp.length);
+        });
       }
-      chrome.browserAction.setBadgeText({ text: "" });
-    }
-  };
-  xhr.send();
+      chrome.action.setBadgeText({ text: "" });
+    })
+    .catch((error) => {
+      console.error("An error occurred:", error);
+    });
 }
 
 function notificationUser(isNotify, unreadTopicCount) {
-  console.log(location);
-  location.reload(true);
+  chrome.runtime.sendMessage({ msg: "refresh" });
 
-  chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 125] });
-  chrome.browserAction.setBadgeText({
+  chrome.action.setBadgeBackgroundColor({ color: [255, 0, 0, 125] });
+  chrome.action.setBadgeText({
     text: unreadTopicCount > 0 ? "" + unreadTopicCount : "",
   });
 
   if (isNotify && unreadTopicCount > 0) {
     let options = {
       type: "basic",
-      iconUrl: "img/icon.png",
+      iconUrl: "../images/icon.png",
       title: "GCDN提醒",
       message: "你关注的板块有" + unreadTopicCount + "个帖子需要处理",
     };
@@ -629,7 +621,7 @@ chrome.alarms.onAlarm.addListener(function (alarm) {
 chrome.notifications.onClicked.addListener(function (notificationId) {
   if (notificationId === "UserReplyNotification") {
     chrome.tabs.create(
-      { url: chrome.extension.getURL("index.html") },
+      { url: chrome.runtime.getURL("index.html") },
       function (tab) {
         console.log(tab);
       }

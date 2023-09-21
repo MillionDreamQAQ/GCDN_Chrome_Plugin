@@ -4,9 +4,10 @@
   "description": "自动获取GCDN未回复问题，并发送系统提醒，可设置关注版块ID，更新和提醒间隔，脚本化自动调整帖子状态等。",
   "version": "1.0",
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "js/background.js"
   },
   "permissions": [
+    "management",
     "storage",
     "activeTab",
     "tabs",
@@ -24,7 +25,7 @@
     "http://*/*"
   ],
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "index.html",
     "default_icon": {
       "16": "images/icon.png",
       "32": "images/icon.png",

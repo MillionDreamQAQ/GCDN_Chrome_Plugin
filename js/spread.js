@@ -1,18 +1,26 @@
 window.onload = function () {
-  document.getElementById("setFids").addEventListener("click", setFids);
+  attachEvent();
+  setDefaultData();
+  initSpread();
+};
+
+function attachEvent() {
+  document.getElementById("setFids").addEventListener("click", updateAreaId);
   document
     .getElementById("updateTime")
     .addEventListener("change", updateTimeChange);
   document
-    .getElementById("notiTime")
-    .addEventListener("change", notiTimeChange);
+    .getElementById("notifyTime")
+    .addEventListener("change", notifyTimeChange);
   document.getElementById("openNewTab").addEventListener("click", openNewTab);
-  document.getElementById("export").addEventListener("click", exportFile);
+  document.getElementById("export").addEventListener("click", exportExcel);
   document.getElementById("setGold").addEventListener("click", showAll);
   document.getElementById("setArea").addEventListener("click", showArea);
+}
 
+function setDefaultData() {
   chrome.storage.sync.get(
-    ["fids", "notiTime", "updateTime", "setGold", "setArea"],
+    ["fids", "notifyTime", "updateTime", "setGold", "setArea"],
     function (result) {
       if (result?.fids) {
         document.getElementById("fids").value = result.fids;
@@ -20,8 +28,8 @@ window.onload = function () {
       if (result?.updateTime) {
         document.getElementById("updateTime").value = result.updateTime;
       }
-      if (result?.notiTime) {
-        document.getElementById("notiTime").value = result.notiTime;
+      if (result?.notifyTime) {
+        document.getElementById("notifyTime").value = result.notifyTime;
       }
       if (result?.setGold) {
         document.getElementById("setGold").value = result.setGold;
@@ -29,33 +37,6 @@ window.onload = function () {
       if (result?.setArea) {
         document.getElementById("setArea").value = result.setArea;
       }
-    }
-  );
-
-  initSpread();
-};
-
-function openNewTab() {
-  chrome.tabs.create({ url: window.location.href });
-}
-
-function exportFile() {
-  let spread = GC.Spread.Sheets.findControl(document.getElementById("ss"));
-
-  let excelIo = new GC.Spread.Excel.IO();
-  let serializationOption = {
-    includeBindingSource: true,
-    columnHeadersAsFrozenRows: true,
-  };
-  let json = spread.toJSON(serializationOption);
-  let fileName = "forum.xlsx";
-  excelIo.save(
-    json,
-    function (blob) {
-      saveAs(blob, fileName);
-    },
-    function (e) {
-      console.log(e);
     }
   );
 }
@@ -76,7 +57,6 @@ function initSpread() {
         { name: "板块", displayName: "板块", size: 180 },
         { name: "帖子标题", displayName: "帖子标题", size: 300 },
         { name: "处理状态", displayName: "处理状态", size: 100 },
-
         { name: "发帖用户用户组", displayName: "发帖用户组", size: 100 },
         {
           name: "发帖时间",
@@ -106,11 +86,11 @@ function initSpread() {
       sheet.autoGenerateColumns = false;
       sheet.bindColumns(colInfos);
     }
-    loadForumData();
+    fetchData();
   });
 }
 
-function loadForumData() {
+function fetchData() {
   document.getElementById("forumdata").innerHTML = "加载中...";
 
   function gcdnListFun() {
@@ -136,9 +116,9 @@ function loadForumData() {
             sheet.getColumnWidth(1) +
             sheet.getColumnWidth(2) +
             (sheet.getColumnWidth(3) / 7) * 5.8;
-          function SortHeaderCellType1() {}
-          SortHeaderCellType1.prototype = new GC.Spread.Sheets.CellTypes.Text();
-          SortHeaderCellType1.prototype.paint = function (
+          function PartnerCellType() {}
+          PartnerCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
+          PartnerCellType.prototype.paint = function (
             ctx,
             value,
             x,
@@ -170,7 +150,7 @@ function loadForumData() {
             }
 
             img1 = new Image();
-            img1.src = "images/partner.png";
+            img1.src = "../images/partner.png";
             img1.onload = function () {
               context.sheet.repaint();
             };
@@ -189,7 +169,7 @@ function loadForumData() {
           for (let i = 0; i < sheet.getRowCount(); i++) {
             let value = sheet.getValue(i, 3);
             if (value === "伙伴/重要客户") {
-              sheet.setCellType(i, 3, new SortHeaderCellType1());
+              sheet.setCellType(i, 3, new PartnerCellType());
             }
           }
         } catch (e) {
@@ -230,8 +210,6 @@ function loadForumData() {
             spread.options.scrollIgnoreHidden = true;
             let sheet = spread.getActiveSheet();
 
-            // ********************************************************************************
-            // 筛选金牌
             let setGold = parseFloat(document.getElementById("setGold").value);
             if (setGold == 1) {
               sheet.rowFilter().unfilter(3);
@@ -267,10 +245,6 @@ function loadForumData() {
               countRow();
             }
 
-            // ********************************************************************************
-
-            // ********************************************************************************
-            // 筛选区域
             let setArea = parseFloat(document.getElementById("setArea").value);
             if (setArea === 0) {
               sheet.rowFilter().unfilter(9);
@@ -345,7 +319,6 @@ function loadForumData() {
               sheet.rowFilter().filterButtonVisible(true);
               countRow();
             }
-            // ********************************************************************************
           } else {
             document.getElementById("forumdata").innerHTML = "没有要处理的帖子";
           }
@@ -373,7 +346,7 @@ function bindingData(data) {
   sheet.setColumnWidth(3, 110);
 
   let area = ["北方区", "华东区", "南方区", "西部区"];
-  let province1 = [
+  let north = [
     "北京",
     "天津",
     "山西",
@@ -385,9 +358,9 @@ function bindingData(data) {
     "吉林",
     "辽宁",
   ];
-  let province2 = ["上海", "江苏", "浙江", "安徽", "湖北"];
-  let province3 = ["广东", "广西", "海南", "福建", "江西", "湖南"];
-  let province4 = [
+  let ease = ["上海", "江苏", "浙江", "安徽", "湖北"];
+  let south = ["广东", "广西", "海南", "福建", "江西", "湖南"];
+  let west = [
     "陕西",
     "甘肃",
     "青海",
@@ -406,23 +379,23 @@ function bindingData(data) {
 
   for (let i = 0; i < sheet.getRowCount(); i++) {
     let value = sheet.getValue(i, 10);
-    for (const element of province1) {
-      if (value.indexOf(element) != -1) {
+    for (const province of north) {
+      if (value.indexOf(province) != -1) {
         sheet.setValue(i, 9, area[0]);
       }
     }
-    for (const element of province2) {
-      if (value.indexOf(element) != -1) {
+    for (const province of ease) {
+      if (value.indexOf(province) != -1) {
         sheet.setValue(i, 9, area[1]);
       }
     }
-    for (const element of province3) {
-      if (value.indexOf(element) != -1) {
+    for (const province of south) {
+      if (value.indexOf(province) != -1) {
         sheet.setValue(i, 9, area[2]);
       }
     }
-    for (const element of province4) {
-      if (value.indexOf(element) != -1) {
+    for (const province of west) {
+      if (value.indexOf(province) != -1) {
         sheet.setValue(i, 9, area[3]);
       }
     }
@@ -514,9 +487,9 @@ function bindingData(data) {
     sheet.getColumnWidth(1) +
     sheet.getColumnWidth(2) +
     (sheet.getColumnWidth(3) / 7) * 5.8;
-  function SortHeaderCellType() {}
-  SortHeaderCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
-  SortHeaderCellType.prototype.paint = function (
+  function GoldenUserCellType() {}
+  GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
+  GoldenUserCellType.prototype.paint = function (
     ctx,
     value,
     x,
@@ -537,7 +510,7 @@ function bindingData(data) {
       return;
     }
     img = new Image();
-    img.src = "images/golden.png";
+    img.src = "../images/golden.png";
     img.onload = function () {
       context.sheet.repaint();
     };
@@ -545,7 +518,7 @@ function bindingData(data) {
 
   for (let i = 0; i < row; i++) {
     if (sheet.getCell(i, 3).value() == "金牌服务用户") {
-      sheet.setCellType(i, 0, new SortHeaderCellType());
+      sheet.setCellType(i, 0, new GoldenUserCellType());
     }
   }
 
@@ -585,7 +558,7 @@ function bindingData(data) {
   sheet.resumePaint();
 }
 
-function setFids() {
+function updateAreaId() {
   chrome.storage.sync.set({ fids: document.getElementById("fids").value });
 
   let spread = GC.Spread.Sheets.findControl("ss");
@@ -594,7 +567,7 @@ function setFids() {
   let template = JSON.stringify(spread.toJSON());
   chrome.storage.sync.set({ template: template });
 
-  loadForumData();
+  fetchData();
 }
 
 function updateTimeChange() {
@@ -607,16 +580,45 @@ function updateTimeChange() {
     chrome.alarms.create("UpdateCountTimer", { periodInMinutes: updateTime });
   }
 }
-function notiTimeChange() {
+
+function notifyTimeChange() {
   chrome.storage.sync.set({
-    notiTime: document.getElementById("notiTime").value,
+    notifyTime: document.getElementById("notifyTime").value,
   });
-  let notiTime = parseFloat(document.getElementById("notiTime").value);
+  let notifyTime = parseFloat(document.getElementById("notifyTime").value);
   chrome.alarms.clear("UserReplyTimer");
-  if (notiTime > 0) {
-    chrome.alarms.create("UserReplyTimer", { periodInMinutes: notiTime });
+  if (notifyTime > 0) {
+    chrome.alarms.create("UserReplyTimer", { periodInMinutes: notifyTime });
   }
 }
+
+async function openNewTab() {
+  chrome.tabs.create({
+    url: window.location.href,
+  });
+}
+
+function exportExcel() {
+  let spread = GC.Spread.Sheets.findControl(document.getElementById("ss"));
+
+  let excelIo = new GC.Spread.Excel.IO();
+  let serializationOption = {
+    includeBindingSource: true,
+    columnHeadersAsFrozenRows: true,
+  };
+  let json = spread.toJSON(serializationOption);
+  let fileName = "forum.xlsx";
+  excelIo.save(
+    json,
+    function (blob) {
+      saveAs(blob, fileName);
+    },
+    function (e) {
+      console.log(e);
+    }
+  );
+}
+
 function showAll() {
   chrome.storage.sync.set({
     setGold: document.getElementById("setGold").value,
@@ -758,11 +760,17 @@ function countRow() {
   }
   let obj = document.getElementById("num");
   if (j === 0) {
-    obj.innerText = "辛苦啦，你关注的版块已被你清空！！！";
+    obj.innerText = "辛苦啦，你关注的版块已被你清空！";
   } else {
-    obj.innerText =
-      "你关注的版块还有" + j + "个帖子待处理。加油，胜利在望！！！";
+    obj.innerText = "你关注的版块还有" + j + "个帖子待处理。加油，胜利在望！";
   }
 }
 
 /************************************************* */
+
+chrome.runtime.onMessage.addListener(messageReceived);
+function messageReceived(data) {
+  if (data.msg == "refresh") {
+    location?.reload();
+  }
+}
