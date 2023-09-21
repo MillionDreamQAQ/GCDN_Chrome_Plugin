@@ -1,26 +1,41 @@
 {
   "manifest_version": 3,
-  "name": "GCDN Helper",
-  "description": "In order to change status or move automatically.",
-  "version": "1.2",
+  "name": "GCDN Tool Gen2",
+  "description": "自动获取GCDN未回复问题，并发送系统提醒，可设置关注版块ID，更新和提醒间隔，脚本化自动调整帖子状态等。",
+  "version": "1.0",
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["storage", "activeTab", "tabs", "scripting", "contextMenus"],
-  "host_permissions": ["https://gcdn.grapecity.com.cn/*"],
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs",
+    "scripting",
+    "contextMenus",
+    "alarms",
+    "notifications",
+    "webRequest",
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback"
+  ],
+  "host_permissions": [
+    "https://*/*",
+    "https://gcdn.grapecity.com.cn/*",
+    "http://*/*"
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "images/get_started16.png",
-      "32": "images/get_started32.png",
-      "48": "images/get_started48.png",
-      "128": "images/get_started128.png"
+      "16": "images/icon.png",
+      "32": "images/icon.png",
+      "48": "images/icon.png",
+      "128": "images/icon.png"
     }
   },
   "icons": {
-    "16": "images/get_started16.png",
-    "32": "images/get_started32.png",
-    "48": "images/get_started48.png",
-    "128": "images/get_started128.png"
+    "16": "images/icon.png",
+    "32": "images/icon.png",
+    "48": "images/icon.png",
+    "128": "images/icon.png"
   }
 }

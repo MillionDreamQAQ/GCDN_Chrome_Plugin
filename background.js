@@ -6,14 +6,20 @@ let moveTargetStatus = null;
 
 let changeStatusTargetStatus = null;
 
-// chrome.tabs.onActivated.addListener((activeInfo) => {
-//   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-//     tabInfo = tabs[0];
-//     tabId = tabInfo.id;
-//   });
-// });
+/******************************************************************************* */
 
 chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: "search_crm",
+    title: "使用CRM搜索：%s",
+    contexts: ["selection"],
+  });
+
+  chrome.contextMenus.create({
+    id: "notebook",
+    title: "进入我的笔记本",
+  });
+
   chrome.contextMenus.create({
     id: "search",
     title: "使用JIRA搜索：%s",
@@ -197,6 +203,21 @@ async function contextClick(info, tab) {
       });
       break;
 
+    case "search_crm":
+      chrome.tabs.create({
+        url:
+          "https://developersolutions.crm5.dynamics.com/main.aspx?appid=69dffb8e-ae36-e811-817f-e0071b6927a1&forceUCI=1&pagetype=search&searchText=" +
+          encodeURI(params.selectionText) +
+          "&searchType=1",
+      });
+      break;
+
+    case "notebook":
+      chrome.tabs.create({
+        url: "http://xa-gcscn-sys/gc_worksupport/%E5%94%AE%E5%90%8E%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86%E9%A1%B5%E9%9D%A2",
+      });
+      break;
+
     /********************************************************************** */
 
     case "story_waiting":
@@ -297,6 +318,8 @@ async function contextClick(info, tab) {
       break;
   }
 }
+
+/******************************************************************************* */
 
 chrome.runtime.onMessage.addListener(messageReceived);
 function messageReceived(data) {
@@ -512,3 +535,104 @@ function getTabId() {
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+/******************************************************************************* */
+
+chrome.storage.sync.get(["notiTime"], function (result) {
+  if (result["notiTime"] === undefined || result["notiTime"] === null) {
+    chrome.storage.sync.set({ notiTime: "15" });
+  }
+});
+chrome.storage.sync.get(["updateTime"], function (result) {
+  if (result["updateTime"] === undefined || result["updateTime"] === null) {
+    chrome.storage.sync.set({ updateTime: "5" });
+  }
+});
+
+chrome.runtime.onInstalled.addListener(function () {
+  chrome.storage.sync.get(["notiTime", "updateTime"], function (result) {
+    if (result?.notiTime) {
+      let notiTime = parseFloat(result.notiTime);
+      if (notiTime > 0) {
+        chrome.alarms.create("UserReplyTimer", { periodInMinutes: notiTime });
+      }
+    }
+    if (result?.updateTime) {
+      let updateTime = parseFloat(result.updateTime);
+      if (updateTime > 0) {
+        chrome.alarms.create("UpdateCountTimer", {
+          periodInMinutes: updateTime,
+        });
+      }
+    }
+  });
+});
+
+function getForumDataUser(isNotify) {
+  let xhr = new XMLHttpRequest();
+  xhr.open(
+    "GET",
+    "https://gcdn.grapecity.com.cn/api/forummasterreply.php",
+    true
+  );
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      let resp = JSON.parse(xhr.responseText);
+
+      if (resp instanceof Array) {
+        if (resp.length) {
+          chrome.storage.sync.get(["fids"], function (result) {
+            if (result?.fids) {
+              let fids = result.fids.split(",");
+              resp = resp.filter((topic) => fids.includes(topic.fid));
+            }
+            notificationUser(isNotify, resp.length);
+            location.reload(true);
+          });
+        }
+      }
+      chrome.browserAction.setBadgeText({ text: "" });
+    }
+  };
+  xhr.send();
+}
+
+function notificationUser(isNotify, unreadTopicCount) {
+  console.log(location);
+  location.reload(true);
+
+  chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 125] });
+  chrome.browserAction.setBadgeText({
+    text: unreadTopicCount > 0 ? "" + unreadTopicCount : "",
+  });
+
+  if (isNotify && unreadTopicCount > 0) {
+    let options = {
+      type: "basic",
+      iconUrl: "img/icon.png",
+      title: "GCDN提醒",
+      message: "你关注的板块有" + unreadTopicCount + "个帖子需要处理",
+    };
+    chrome.notifications.clear("UserReplyNotification");
+    chrome.notifications.create("UserReplyNotification", options);
+  }
+}
+
+chrome.alarms.onAlarm.addListener(function (alarm) {
+  if (alarm.name === "UserReplyTimer") {
+    getForumDataUser(true);
+  } else if (alarm.name === "UpdateCountTimer") {
+    getForumDataUser(false);
+  }
+});
+
+chrome.notifications.onClicked.addListener(function (notificationId) {
+  if (notificationId === "UserReplyNotification") {
+    chrome.tabs.create(
+      { url: chrome.extension.getURL("index.html") },
+      function (tab) {
+        console.log(tab);
+      }
+    );
+  }
+});

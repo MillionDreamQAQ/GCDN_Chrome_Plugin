@@ -1,64 +1,145 @@
 body {
-  width: 400px;
-  height: 400px;
+  min-width: 770px;
+  height: 800px;
 }
 
-.manual-container {
-  margin: 10px 4px;
+.container {
   display: flex;
-  font-size: 10pt;
-  align-items: center;
+  flex-direction: row-reverse;
+}
 
-  .checkbox-container {
-    margin-left: 10px;
-    margin-right: 85px
+.operation-container {
+  display: flex;
+  flex-direction: column;
+
+  .manual-container {
+    margin: 10px 4px;
+    display: flex;
+    font-size: 10pt;
+    align-items: center;
+    justify-content: flex-end;
+
+    .checkbox-container {
+      margin-right: 80px;
+    }
+
+    .button-container {
+      width: 50px;
+
+      .button {
+        height: 24px;
+      }
+    }
+  }
+
+  .move-container {
+    margin: 10px 4px;
+    display: flex;
+    font-size: 10pt;
+    align-items: center;
+    justify-content: flex-end;
+
+    .select-container {
+      width: 100px;
+
+      .select {
+        outline: none;
+        height: 24px;
+      }
+    }
+
+    .button-container {
+      width: 50px;
+
+      .button {
+        height: 24px;
+      }
+    }
+  }
+
+  .change-status-container {
+    margin: 10px 4px;
+    display: flex;
+    font-size: 10pt;
+    align-items: center;
+    justify-content: flex-end;
+
+    .select-container {
+      width: 100px;
+
+      .select {
+        outline: none;
+        height: 24px;
+      }
+    }
+
+    .button-container {
+      width: 50px;
+
+      .button {
+        height: 24px;
+      }
+    }
   }
 }
 
-.move-container {
-  margin: 10px 4px;
-  display: flex;
-  font-size: 10pt;
-  align-items: center;
+.spread-container {
+  .class-container {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
 
-  .select-container {
-    width: 100px;
+    .hint {
+      font-size: large;
+      font-weight: bold;
+      margin-right: 20px;
+    }
 
-    .select {
-      outline: none;
+    .input {
+      height: 17px;
+      width: 180px;
+      margin: 0px 16px 0px 0px;
+    }
+
+    .button {
+      margin-right: 16px;
       height: 24px;
     }
   }
 
-  .button-container {
-    width: 50px;
+  .config-container {
+    display: flex;
+    align-items: center;
+    font-size: 10pt;
 
     .button {
       height: 24px;
+      margin: 0px 16px 0px 0px;
     }
-  }
-}
-
-.change-status-container {
-  margin: 10px 4px;
-  display: flex;
-  font-size: 10pt;
-  align-items: center;
-
-  .select-container {
-    width: 100px;
 
     .select {
+      margin: 8px 16px 8px 0px;
+
       outline: none;
       height: 24px;
+      width: 100px;
+    }
+
+    .updateTime {
+      margin-left: 56px;
     }
   }
 
-  .button-container {
-    width: 50px;
+  .data-container {
+    font-size: 10pt;
 
-    .button {
-      height: 24px;
+    #forumdata {
+      height: 15px;
+    }
+
+    .num {
+      font-weight: bold;
+      font-size: large;
     }
   }
 }
