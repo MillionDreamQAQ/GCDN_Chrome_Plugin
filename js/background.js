@@ -540,23 +540,23 @@ function sleep(ms) {
 
 /******************************************************************************* */
 
-chrome.storage.sync.get(["notiTime"], function (result) {
-  if (result["notiTime"] === undefined || result["notiTime"] === null) {
-    chrome.storage.sync.set({ notiTime: "15" });
+chrome.storage.sync.get(["notifyTime"], function (result) {
+  if (result["notifyTime"] === undefined || result["notifyTime"] === null) {
+    chrome.storage.sync.set({ notifyTime: "0" });
   }
 });
 chrome.storage.sync.get(["updateTime"], function (result) {
   if (result["updateTime"] === undefined || result["updateTime"] === null) {
-    chrome.storage.sync.set({ updateTime: "2" });
+    chrome.storage.sync.set({ updateTime: "0" });
   }
 });
 
 chrome.runtime.onInstalled.addListener(function () {
-  chrome.storage.sync.get(["notiTime", "updateTime"], function (result) {
-    if (result?.notiTime) {
-      let notiTime = parseFloat(result.notiTime);
-      if (notiTime > 0) {
-        chrome.alarms.create("UserReplyTimer", { periodInMinutes: notiTime });
+  chrome.storage.sync.get(["notifyTime", "updateTime"], function (result) {
+    if (result?.notifyTime) {
+      let notifyTime = parseFloat(result.notifyTime);
+      if (notifyTime > 0) {
+        chrome.alarms.create("UserReplyTimer", { periodInMinutes: notifyTime });
       }
     }
     if (result?.updateTime) {
