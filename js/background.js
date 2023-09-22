@@ -197,6 +197,10 @@ async function contextClick(info, tab) {
         text = text.replaceAll("[", "");
         text = text.replaceAll("]", "");
       }
+      if (text.indexOf("【") != -1 || text.indexOf("】") != -1) {
+        text = text.replaceAll("【", "");
+        text = text.replaceAll("】", "");
+      }
 
       chrome.tabs.create({
         url: "https://grapecity.atlassian.net/browse/" + encodeURI(text),
