@@ -211,7 +211,7 @@ async function contextClick(info, tab) {
       chrome.tabs.create({
         url:
           "https://developersolutions.crm5.dynamics.com/main.aspx?appid=69dffb8e-ae36-e811-817f-e0071b6927a1&forceUCI=1&pagetype=search&searchText=" +
-          encodeURI(params.selectionText) +
+          encodeURI(info.selectionText) +
           "&searchType=1",
       });
       break;
