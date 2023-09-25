@@ -6,6 +6,16 @@ let moveTargetStatus = null;
 
 let changeStatusTargetStatus = null;
 
+chrome.tabs.onActivated.addListener((activeInfo) => {
+  chrome.tabs.query(
+    { active: true, lastFocusedWindow: true, currentWindow: true },
+    function (tabs) {
+      tabInfo = tabs[0];
+      tabId = tabInfo.id;
+    }
+  );
+});
+
 /******************************************************************************* */
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -176,6 +186,12 @@ chrome.runtime.onInstalled.addListener(() => {
     type: "normal",
     title: "结贴",
   });
+
+  chrome.contextMenus.create({
+    id: "remove_reward",
+    type: "normal",
+    title: "移除悬赏",
+  });
 });
 
 chrome.contextMenus.onClicked.addListener(contextClick);
@@ -318,6 +334,12 @@ async function contextClick(info, tab) {
 
     /********************************************************************** */
 
+    case "remove_reward":
+      await handleRemoveRewardButtonClick(tabId);
+      break;
+
+    /********************************************************************** */
+
     default:
       break;
   }
@@ -342,10 +364,16 @@ function messageReceived(data) {
     tabInfo = data.tab[0];
     tabId = tabInfo.id;
     handleCloseButtonClick(tabId);
-  } else if (data.msg == "extension_tab_info") {
-    extensionTabInfo = data.extensionTabInfo;
   }
 }
+
+/******************************************************************************* */
+
+chrome.commands.onCommand.addListener((command) => {
+  if (command == "remove_rewards") {
+    handleRemoveRewardButtonClick(tabId);
+  }
+});
 
 /******************************************************************************* */
 
@@ -507,6 +535,26 @@ function close_stage1() {
     "#moderateform > div > table > tbody > tr:nth-child(2) > td > ul > li:nth-child(2) > label"
   );
   closeCheckBox.click();
+}
+
+/******************************************************************************* */
+
+async function handleRemoveRewardButtonClick(tabId) {
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: remove_stage0,
+  });
+
+  await sleep(500);
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: submit,
+  });
+}
+
+function remove_stage0() {
+  let removeButton = document.querySelector("#modmenu > a:nth-child(29)");
+  removeButton.click();
 }
 
 /******************************************************************************* */
