@@ -380,11 +380,11 @@ function messageReceived(data) {
 
 chrome.commands.onCommand.addListener((command) => {
   switch (command) {
-    case remove_rewards:
+    case "remove_rewards":
       handleRemoveRewardButtonClick(tabId);
       break;
 
-    case set_done:
+    case "set_done":
       changeStatusTargetStatus = "已处理";
       handleChangeStatusButtonClick(tabId);
       break;
