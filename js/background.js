@@ -349,29 +349,48 @@ async function contextClick(info, tab) {
 
 chrome.runtime.onMessage.addListener(messageReceived);
 function messageReceived(data) {
-  if (data.msg == "changeStatus") {
-    tabInfo = data.tab[0];
-    tabId = tabInfo.id;
-    changeStatusTargetStatus = data.status;
-    handleChangeStatusButtonClick(tabId);
-  } else if (data.msg == "move") {
-    tabInfo = data.tab[0];
-    tabId = tabInfo.id;
-    moveTargetSpace = data.space;
-    moveTargetStatus = data.status;
-    handleMoveButtonClick(tabId);
-  } else if (data.msg == "close") {
-    tabInfo = data.tab[0];
-    tabId = tabInfo.id;
-    handleCloseButtonClick(tabId);
+  switch (data.msg) {
+    case changeStatus:
+      tabInfo = data.tab[0];
+      tabId = tabInfo.id;
+      changeStatusTargetStatus = data.status;
+      handleChangeStatusButtonClick(tabId);
+      break;
+
+    case move:
+      tabInfo = data.tab[0];
+      tabId = tabInfo.id;
+      moveTargetSpace = data.space;
+      moveTargetStatus = data.status;
+      handleMoveButtonClick(tabId);
+      break;
+
+    case close:
+      tabInfo = data.tab[0];
+      tabId = tabInfo.id;
+      handleCloseButtonClick(tabId);
+      break;
+
+    default:
+      break;
   }
 }
 
 /******************************************************************************* */
 
 chrome.commands.onCommand.addListener((command) => {
-  if (command == "remove_rewards") {
-    handleRemoveRewardButtonClick(tabId);
+  switch (command) {
+    case remove_rewards:
+      handleRemoveRewardButtonClick(tabId);
+      break;
+
+    case set_done:
+      changeStatusTargetStatus = "已处理";
+      handleChangeStatusButtonClick(tabId);
+      break;
+
+    default:
+      break;
   }
 });
 
@@ -623,7 +642,9 @@ chrome.runtime.onInstalled.addListener(function () {
 });
 
 function getForumDataUser(isNotify) {
-  fetch("https://gcdn.grapecity.com.cn/api/forummasterreply.php")
+  fetch("https://gcdn.grapecity.com.cn/api/forummasterreply.php", {
+    mode: "no-cors",
+  })
     .then((response) => response.json())
     .then((resp) => {
       if (Array.isArray(resp) && resp.length) {
@@ -680,3 +701,31 @@ chrome.notifications.onClicked.addListener(function (notificationId) {
     );
   }
 });
+
+(function (window) {
+  window.setInterval(function () {
+    let refreshHours = new Date().getHours();
+    let refreshMin = new Date().getMinutes();
+    let refreshSec = new Date().getSeconds();
+    if (refreshHours == "12" && refreshMin == "0" && refreshSec == "0") {
+      chrome.notifications.clear("EmailNotification");
+      chrome.notifications.create("EmailNotification", {
+        type: "basic",
+        iconUrl: "../images/warn.png",
+        title: "授权发送提醒",
+        message: "客户很着急，请检查是否还有未发送的授权，谢谢！",
+        requireInteraction: true,
+      });
+    }
+    if (refreshHours == "17" && refreshMin == "30" && refreshSec == "0") {
+      chrome.notifications.clear("EmailNotification");
+      chrome.notifications.create("EmailNotification", {
+        type: "basic",
+        iconUrl: "../images/warn.png",
+        title: "授权发送提醒",
+        message: "客户很着急，请检查是否还有未发送的授权，谢谢！",
+        requireInteraction: true,
+      });
+    }
+  }, 1000);
+})(this);

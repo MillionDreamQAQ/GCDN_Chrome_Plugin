@@ -67,7 +67,9 @@ function initSpread() {
         { name: "板块", displayName: "板块", size: 180 },
         { name: "帖子标题", displayName: "帖子标题", size: 300 },
         { name: "处理状态", displayName: "处理状态", size: 100 },
-        { name: "发帖用户用户组", displayName: "发帖用户组", size: 100 },
+        { name: "倒数第二层回复用户", displayName: "上次回帖用户", size: 120 },
+        { name: "发帖用户用户组", displayName: "发帖用户组", size: 120 },
+        { name: "客户类型", displayName: "", size: 120 },
         {
           name: "发帖时间",
           displayName: "发帖时间",
@@ -101,95 +103,9 @@ function initSpread() {
 }
 
 function fetchData() {
-  document.getElementById("forumdata").innerHTML = "加载中...";
-
-  function fetchDataFun() {
-    let xhr1 = new XMLHttpRequest();
-    xhr1.open(
-      "GET",
-      "http://xa-gcscn-sys/gcdnApi/ServerCommand/getPartnerGCDN",
-      true
-    );
-
-    xhr1.onreadystatechange = function () {
-      if (xhr1.readyState == 4) {
-        try {
-          let resp = JSON.parse(xhr1.response);
-
-          let spread = GC.Spread.Sheets.findControl("ss");
-
-          let sheet = spread.getActiveSheet();
-
-          let img1 = null;
-          let w =
-            sheet.getColumnWidth(0) +
-            sheet.getColumnWidth(1) +
-            sheet.getColumnWidth(2) +
-            (sheet.getColumnWidth(3) / 7) * 5.8;
-          function PartnerCellType() {}
-          PartnerCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
-          PartnerCellType.prototype.paint = function (
-            ctx,
-            value,
-            x,
-            y,
-            width,
-            height,
-            style,
-            context
-          ) {
-            GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(
-              this,
-              arguments
-            );
-
-            if (img1) {
-              ctx.save();
-
-              ctx.beginPath();
-              ctx.moveTo(x, y);
-              ctx.drawImage(
-                img1,
-                x + (sheet.getColumnWidth(3) / 7) * 5.8,
-                y,
-                20,
-                20
-              );
-              ctx.restore();
-              return;
-            }
-
-            img1 = new Image();
-            img1.src = "../images/partner.png";
-            img1.onload = function () {
-              context.sheet.repaint();
-            };
-          };
-
-          for (let i = 0; i < sheet.getRowCount(); i++) {
-            let value = sheet.getValue(i, 6);
-
-            for (const element of resp.gcdnList) {
-              if (value.indexOf(element) != -1) {
-                sheet.setValue(i, 3, "伙伴/重要客户");
-              }
-            }
-          }
-
-          for (let i = 0; i < sheet.getRowCount(); i++) {
-            let value = sheet.getValue(i, 3);
-            if (value === "伙伴/重要客户") {
-              sheet.setCellType(i, 3, new PartnerCellType());
-            }
-          }
-        } catch (e) {
-          console.log(e);
-        }
-      }
-    };
-
-    xhr1.send();
-  }
+  let forumElement = document.getElementById("forumdata");
+  forumElement.innerHTML = "加载中...";
+  let numElement = document.getElementById("num");
 
   let xhr = new XMLHttpRequest();
   xhr.open(
@@ -210,135 +126,149 @@ function fetchData() {
                 .filter((topic) => board.includes(topic.fid))
                 .filter((node) => node["最后回帖用户"] != "Lay.Li");
             }
-            let obj1 = document.getElementById("num");
-            obj1.innerText = "辛苦啦，帖子已被你清空！！！";
+            numElement.innerText = "辛苦啦，帖子已被你清空！！！";
             bindingData(resp);
-            fetchDataFun();
-            document.getElementById("forumdata").innerHTML = "";
+            fetchCustomerType();
+            forumElement.innerHTML = "";
 
             let spread = GC.Spread.Sheets.findControl("ss");
             spread.options.scrollIgnoreHidden = true;
             let sheet = spread.getActiveSheet();
 
             let setGold = parseFloat(document.getElementById("setGold").value);
-            if (setGold == 1) {
-              sheet.rowFilter().unfilter(3);
-              let conditionN =
-                new GC.Spread.Sheets.ConditionalFormatting.Condition(
-                  GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
-                  {
-                    compareType:
-                      GC.Spread.Sheets.ConditionalFormatting.TextCompareType
-                        .contains,
-                    expected: "*金牌服务用户*",
-                  }
-                );
-
-              let conditionN1 =
-                new GC.Spread.Sheets.ConditionalFormatting.Condition(
-                  GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
-                  {
-                    compareType:
-                      GC.Spread.Sheets.ConditionalFormatting.TextCompareType
-                        .contains,
-                    expected: "*伙伴/重要客户*",
-                  }
-                );
-
-              sheet.rowFilter().addFilterItem(3, conditionN);
-              sheet.rowFilter().addFilterItem(3, conditionN1);
-              sheet.rowFilter().filter(3);
-              countRow();
-            } else if (setGold == 0) {
-              sheet.rowFilter().unfilter(3);
-              sheet.rowFilter().filterButtonVisible(true);
-              countRow();
-            }
+            filterByGold(setGold, sheet);
 
             let setArea = parseFloat(document.getElementById("setArea").value);
-            if (setArea === 0) {
-              sheet.rowFilter().unfilter(9);
-              sheet.rowFilter().filterButtonVisible(true);
-              countRow();
-            } else if (setArea === 1) {
-              sheet.rowFilter().removeFilterItems(9);
-              sheet.rowFilter().filterButtonVisible(false);
-              let condition =
-                new GC.Spread.Sheets.ConditionalFormatting.Condition(
-                  GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
-                  {
-                    compareType:
-                      GC.Spread.Sheets.ConditionalFormatting.TextCompareType
-                        .contains,
-                    expected: "*北方区*",
-                  }
-                );
-              sheet.rowFilter().addFilterItem(9, condition);
-              sheet.rowFilter().filter(9);
-              sheet.rowFilter().filterButtonVisible(true);
-              countRow();
-            } else if (setArea === 2) {
-              sheet.rowFilter().removeFilterItems(9);
-              sheet.rowFilter().filterButtonVisible(false);
-              let condition =
-                new GC.Spread.Sheets.ConditionalFormatting.Condition(
-                  GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
-                  {
-                    compareType:
-                      GC.Spread.Sheets.ConditionalFormatting.TextCompareType
-                        .contains,
-                    expected: "*华东区*",
-                  }
-                );
-              sheet.rowFilter().addFilterItem(9, condition);
-              sheet.rowFilter().filter(9);
-              sheet.rowFilter().filterButtonVisible(true);
-              countRow();
-            } else if (setArea === 3) {
-              sheet.rowFilter().removeFilterItems(9);
-              sheet.rowFilter().filterButtonVisible(false);
-              let condition =
-                new GC.Spread.Sheets.ConditionalFormatting.Condition(
-                  GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
-                  {
-                    compareType:
-                      GC.Spread.Sheets.ConditionalFormatting.TextCompareType
-                        .contains,
-                    expected: "*南方区*",
-                  }
-                );
-              sheet.rowFilter().addFilterItem(9, condition);
-              sheet.rowFilter().filter(9);
-              sheet.rowFilter().filterButtonVisible(true);
-              countRow();
-            } else if (setArea === 4) {
-              sheet.rowFilter().removeFilterItems(9);
-              sheet.rowFilter().filterButtonVisible(false);
-              let condition =
-                new GC.Spread.Sheets.ConditionalFormatting.Condition(
-                  GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
-                  {
-                    compareType:
-                      GC.Spread.Sheets.ConditionalFormatting.TextCompareType
-                        .contains,
-                    expected: "*西部区*",
-                  }
-                );
-              sheet.rowFilter().addFilterItem(9, condition);
-              sheet.rowFilter().filter(9);
-              sheet.rowFilter().filterButtonVisible(true);
-              countRow();
-            }
+            filterByArea(setArea, sheet);
           } else {
-            document.getElementById("forumdata").innerHTML = "没有要处理的帖子";
+            forumElement.innerHTML = "没有要处理的帖子";
           }
         }
       } catch (e) {
-        document.getElementById("forumdata").innerHTML = "获取失败，请重新获取";
+        forumElement.innerHTML = "获取失败，请重新获取";
       }
     }
   };
   xhr.send();
+}
+
+function fetchCustomerType() {
+  let xhr1 = new XMLHttpRequest();
+  xhr1.open(
+    "GET",
+    "http://xa-gcscn-sys/gc_worksupport/ServerCommand/getGCDNInfo",
+    true
+  );
+
+  xhr1.onreadystatechange = function () {
+    if (xhr1.readyState == 4) {
+      try {
+        let resp = JSON.parse(xhr1.response);
+        let spread = GC.Spread.Sheets.findControl("ss");
+        let sheet = spread.getActiveSheet();
+        let img1 = null;
+
+        function PartnerCellType() {}
+        PartnerCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
+        PartnerCellType.prototype.paint = function (
+          ctx,
+          value,
+          x,
+          y,
+          width,
+          height,
+          style,
+          context
+        ) {
+          GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(
+            this,
+            arguments
+          );
+
+          if (img1) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.drawImage(
+              img1,
+              x + (sheet.getColumnWidth(4) / 7) * 5.8,
+              y,
+              20,
+              20
+            );
+            ctx.restore();
+            return;
+          }
+
+          img1 = new Image();
+          img1.src = "../images/partner.png";
+          img1.onload = function () {
+            context.sheet.repaint();
+          };
+        };
+
+        let partnerList = [],
+          importantCustomerList = [];
+        let resResult = resp.partnerGCDN;
+        if (resResult.length == 0) {
+          return;
+        }
+        resResult.forEach((item) => {
+          if (item["关系类型"] == "合作伙伴") {
+            partnerList.push(item["账号"]);
+          } else if (item["关系类型"] == "重点客户") {
+            let current = item["账号"];
+            let tempArr = [];
+            if (current.indexOf("/") != -1) {
+              tempArr = current.split("/");
+              importantCustomerList.push(tempArr);
+            } else if (current.indexOf(",") != -1) {
+              tempArr = current.split(",");
+              importantCustomerList.push(tempArr);
+            } else if (current.indexOf("，") != -1) {
+              tempArr = current.split("，");
+              importantCustomerList.push(tempArr);
+            } else {
+              importantCustomerList.push(item["账号"]);
+            }
+          }
+        });
+
+        for (let i = 0; i < sheet.getRowCount(); i++) {
+          let GCDN_ID = sheet.getValue(i, 9);
+          for (const element of partnerList) {
+            if (GCDN_ID == element) {
+              sheet.setValue(i, 5, "合作伙伴");
+              sheet.setCellType(i, 5, new PartnerCellType());
+              break;
+            }
+          }
+          let needBreak = false;
+          for (const element of importantCustomerList) {
+            let current = element;
+            if (GCDN_ID == current) {
+              sheet.setValue(i, 5, "重点客户");
+              break;
+            } else if (Array.isArray(current)) {
+              for (const element of current) {
+                if (GCDN_ID == element) {
+                  sheet.setValue(i, 5, "重点客户");
+                  needBreak = true;
+                  break;
+                }
+              }
+            }
+            if (needBreak) {
+              break;
+            }
+          }
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+  xhr1.send();
 }
 
 function bindingData(data) {
@@ -352,8 +282,6 @@ function bindingData(data) {
   sheet.suspendPaint();
 
   sheet.setDataSource(data);
-  sheet.setColumnWidth(2, 80);
-  sheet.setColumnWidth(3, 110);
 
   let area = ["北方区", "华东区", "南方区", "西部区"];
   let north = [
@@ -387,44 +315,44 @@ function bindingData(data) {
     "澳大利亚",
   ];
 
+  let addressIndex = 12;
+  let areaIndex = 11;
+
   for (let i = 0; i < sheet.getRowCount(); i++) {
-    let value = sheet.getValue(i, 10);
+    let value = sheet.getValue(i, addressIndex);
     for (const province of north) {
       if (value.indexOf(province) != -1) {
-        sheet.setValue(i, 9, area[0]);
+        sheet.setValue(i, areaIndex, area[0]);
       }
     }
     for (const province of east) {
       if (value.indexOf(province) != -1) {
-        sheet.setValue(i, 9, area[1]);
+        sheet.setValue(i, areaIndex, area[1]);
       }
     }
     for (const province of south) {
       if (value.indexOf(province) != -1) {
-        sheet.setValue(i, 9, area[2]);
+        sheet.setValue(i, areaIndex, area[2]);
       }
     }
     for (const province of west) {
       if (value.indexOf(province) != -1) {
-        sheet.setValue(i, 9, area[3]);
+        sheet.setValue(i, areaIndex, area[3]);
       }
     }
   }
 
   for (let i = 0; i < sheet.getRowCount(); i++) {
-    let value = sheet.getValue(i, 9);
+    let value = sheet.getValue(i, areaIndex);
     if (
       value !== "北方区" &&
       value !== "华东区" &&
       value !== "南方区" &&
       value !== "西部区"
     ) {
-      sheet.setValue(i, 9, area[2]);
+      sheet.setValue(i, areaIndex, area[2]);
     }
   }
-
-  sheet.setColumnWidth(2, 80);
-  sheet.setColumnWidth(3, 115);
 
   let style1 = new GC.Spread.Sheets.Style();
   style1.backColor = "#FB6573";
@@ -445,13 +373,13 @@ function bindingData(data) {
   style6.foreColor = "#FFCB6C";
 
   let row = sheet.getRowCount();
-  let obj = document.getElementById("num");
   if (row >= 1) {
-    obj.innerText = "注意，还有" + row + "个帖子待处理。加油，胜利在望！！！";
+    document.getElementById("num").innerText =
+      "注意，还有" + row + "个帖子待处理。加油，胜利在望！！！";
   }
 
   let ranges = [new GC.Spread.Sheets.Range(0, 2, row, 1)];
-  let ranges1 = [new GC.Spread.Sheets.Range(0, 3, row, 1)];
+  let ranges1 = [new GC.Spread.Sheets.Range(0, 4, row, 1)];
 
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
@@ -479,7 +407,7 @@ function bindingData(data) {
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "伙伴/重要客户",
+    "合作伙伴",
     style5,
     ranges1
   );
@@ -496,7 +424,8 @@ function bindingData(data) {
     sheet.getColumnWidth(0) +
     sheet.getColumnWidth(1) +
     sheet.getColumnWidth(2) +
-    (sheet.getColumnWidth(3) / 7) * 5.8;
+    sheet.getColumnWidth(3) +
+    (sheet.getColumnWidth(4) / 7) * 5.8;
   function GoldenUserCellType() {}
   GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
   GoldenUserCellType.prototype.paint = function (
@@ -527,7 +456,7 @@ function bindingData(data) {
   };
 
   for (let i = 0; i < row; i++) {
-    if (sheet.getCell(i, 3).value() == "金牌服务用户") {
+    if (sheet.getCell(i, 4).value() == "金牌服务用户") {
       sheet.setCellType(i, 0, new GoldenUserCellType());
     }
   }
@@ -657,15 +586,15 @@ function showAll() {
         }
       );
 
-      sheet.rowFilter().addFilterItem(3, conditionG);
-      sheet.rowFilter().addFilterItem(3, conditionG1);
-      sheet.rowFilter().filter(3);
+      sheet.rowFilter().addFilterItem(4, conditionG);
+      sheet.rowFilter().addFilterItem(4, conditionG1);
+      sheet.rowFilter().filter(4);
       sheet.rowFilter().filterButtonVisible(true);
       countRow();
     } else if (result["setGold"] == 0) {
       let spread = GC.Spread.Sheets.findControl("ss");
       let sheet = spread.getActiveSheet();
-      sheet.rowFilter().removeFilterItems(3);
+      sheet.rowFilter().removeFilterItems(4);
       sheet.rowFilter().filterButtonVisible(true);
       countRow();
     }
@@ -678,17 +607,14 @@ function showArea() {
   });
 
   chrome.storage.sync.get({ setArea }, function (result) {
+    let spread = GC.Spread.Sheets.findControl("ss");
+    let sheet = spread.getActiveSheet();
     if (result["setArea"] == 0) {
-      let spread = GC.Spread.Sheets.findControl("ss");
-      let sheet = spread.getActiveSheet();
-
-      sheet.rowFilter().unfilter(9);
+      sheet.rowFilter().unfilter(11);
       sheet.rowFilter().filterButtonVisible(true);
       countRow();
     } else if (result["setArea"] == 1) {
-      let spread = GC.Spread.Sheets.findControl("ss");
-      let sheet = spread.getActiveSheet();
-      sheet.rowFilter().removeFilterItems(9);
+      sheet.rowFilter().removeFilterItems(11);
       sheet.rowFilter().filterButtonVisible(false);
       let condition = new GC.Spread.Sheets.ConditionalFormatting.Condition(
         GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
@@ -698,14 +624,12 @@ function showArea() {
           expected: "*北方区*",
         }
       );
-      sheet.rowFilter().addFilterItem(9, condition);
-      sheet.rowFilter().filter(9);
+      sheet.rowFilter().addFilterItem(11, condition);
+      sheet.rowFilter().filter(11);
       sheet.rowFilter().filterButtonVisible(true);
       countRow();
     } else if (result["setArea"] == 2) {
-      let spread = GC.Spread.Sheets.findControl("ss");
-      let sheet = spread.getActiveSheet();
-      sheet.rowFilter().removeFilterItems(9);
+      sheet.rowFilter().removeFilterItems(11);
       sheet.rowFilter().filterButtonVisible(false);
       let condition = new GC.Spread.Sheets.ConditionalFormatting.Condition(
         GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
@@ -715,14 +639,12 @@ function showArea() {
           expected: "*华东区*",
         }
       );
-      sheet.rowFilter().addFilterItem(9, condition);
-      sheet.rowFilter().filter(9);
+      sheet.rowFilter().addFilterItem(11, condition);
+      sheet.rowFilter().filter(11);
       sheet.rowFilter().filterButtonVisible(true);
       countRow();
     } else if (result["setArea"] == 3) {
-      let spread = GC.Spread.Sheets.findControl("ss");
-      let sheet = spread.getActiveSheet();
-      sheet.rowFilter().removeFilterItems(9);
+      sheet.rowFilter().removeFilterItems(11);
       sheet.rowFilter().filterButtonVisible(false);
       let condition = new GC.Spread.Sheets.ConditionalFormatting.Condition(
         GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
@@ -732,14 +654,12 @@ function showArea() {
           expected: "*南方区*",
         }
       );
-      sheet.rowFilter().addFilterItem(9, condition);
-      sheet.rowFilter().filter(9);
+      sheet.rowFilter().addFilterItem(11, condition);
+      sheet.rowFilter().filter(11);
       sheet.rowFilter().filterButtonVisible(true);
       countRow();
     } else if (result["setArea"] == 4) {
-      let spread = GC.Spread.Sheets.findControl("ss");
-      let sheet = spread.getActiveSheet();
-      sheet.rowFilter().removeFilterItems(9);
+      sheet.rowFilter().removeFilterItems(11);
       sheet.rowFilter().filterButtonVisible(false);
       let condition = new GC.Spread.Sheets.ConditionalFormatting.Condition(
         GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
@@ -749,12 +669,126 @@ function showArea() {
           expected: "*西部区*",
         }
       );
-      sheet.rowFilter().addFilterItem(9, condition);
-      sheet.rowFilter().filter(9);
+      sheet.rowFilter().addFilterItem(11, condition);
+      sheet.rowFilter().filter(11);
       sheet.rowFilter().filterButtonVisible(true);
       countRow();
     }
   });
+}
+
+function filterByGold(setGold, sheet) {
+  sheet.rowFilter().filterButtonVisible(true);
+  sheet.rowFilter().unfilter(4);
+  sheet.rowFilter().unfilter(5);
+  if (setGold == 0) {
+    countRow();
+    return;
+  }
+  sheet.rowFilter().filterButtonVisible(false);
+  sheet.rowFilter().removeFilterItems(4);
+  sheet.rowFilter().removeFilterItems(5);
+
+  let conditionG = new GC.Spread.Sheets.ConditionalFormatting.Condition(
+    GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
+    {
+      compareType:
+        GC.Spread.Sheets.ConditionalFormatting.TextCompareType.contains,
+      expected: "*金牌服务用户*",
+    }
+  );
+  let conditionN1 = new GC.Spread.Sheets.ConditionalFormatting.Condition(
+    GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
+    {
+      compareType:
+        GC.Spread.Sheets.ConditionalFormatting.TextCompareType.contains,
+      expected: "*合作伙伴*",
+    }
+  );
+  let conditionN2 = new GC.Spread.Sheets.ConditionalFormatting.Condition(
+    GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
+    {
+      compareType:
+        GC.Spread.Sheets.ConditionalFormatting.TextCompareType.contains,
+      expected: "*重点客户*",
+    }
+  );
+
+  if (setGold == 1) {
+    sheet.rowFilter().addFilterItem(4, conditionG);
+    sheet.rowFilter().filter(4);
+  } else if (setGold == 2) {
+    sheet.rowFilter().addFilterItem(5, conditionN1);
+    sheet.rowFilter().filter(5);
+  } else if (setGold == 3) {
+    sheet.rowFilter().addFilterItem(5, conditionN2);
+    sheet.rowFilter().filter(5);
+  }
+
+  sheet.rowFilter().filterButtonVisible(true);
+  countRow();
+}
+
+function filterByArea(setArea, sheet) {
+  sheet.rowFilter().filterButtonVisible(true);
+  sheet.rowFilter().removeFilterItems(11);
+  if (setArea == 0) {
+    countRow();
+    return;
+  }
+  sheet.rowFilter().filterButtonVisible(false);
+  sheet.rowFilter().unfilter(11);
+  let northCondition = new GC.Spread.Sheets.ConditionalFormatting.Condition(
+    GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
+    {
+      compareType:
+        GC.Spread.Sheets.ConditionalFormatting.TextCompareType.contains,
+      expected: "*北方区*",
+    }
+  );
+  let eastCondition = new GC.Spread.Sheets.ConditionalFormatting.Condition(
+    GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
+    {
+      compareType:
+        GC.Spread.Sheets.ConditionalFormatting.TextCompareType.contains,
+      expected: "*华东区*",
+    }
+  );
+  let southCondition = new GC.Spread.Sheets.ConditionalFormatting.Condition(
+    GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
+    {
+      compareType:
+        GC.Spread.Sheets.ConditionalFormatting.TextCompareType.contains,
+      expected: "*南方区*",
+    }
+  );
+  let westCondition = new GC.Spread.Sheets.ConditionalFormatting.Condition(
+    GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
+    {
+      compareType:
+        GC.Spread.Sheets.ConditionalFormatting.TextCompareType.contains,
+      expected: "*西部区*",
+    }
+  );
+
+  switch (setArea) {
+    case 1:
+      sheet.rowFilter().addFilterItem(11, northCondition);
+      break;
+    case 2:
+      sheet.rowFilter().addFilterItem(11, eastCondition);
+      break;
+    case 3:
+      sheet.rowFilter().addFilterItem(11, southCondition);
+      break;
+    case 4:
+      sheet.rowFilter().addFilterItem(11, westCondition);
+      break;
+  }
+
+  sheet.rowFilter().filter(11);
+  sheet.rowFilter().filterButtonVisible(true);
+  countRow();
 }
 
 /**********************统计隐藏行****************** */
@@ -768,11 +802,19 @@ function countRow() {
       j++;
     }
   }
-  let obj = document.getElementById("num");
+  let numElement = document.getElementById("num");
+  chrome.action.setBadgeBackgroundColor({ color: "#CCCCFF" });
   if (j === 0) {
-    obj.innerText = "辛苦啦，你关注的版块已被你清空！";
+    numElement.innerText = "没帖子了，你很强，我知道~";
+    chrome.action.setBadgeText({
+      text: "",
+    });
   } else {
-    obj.innerText = "你关注的版块还有" + j + "个帖子待处理。加油，胜利在望！";
+    numElement.innerText =
+      "你关注的版块还有" + j + "个帖子待处理。加油，胜利在望！";
+    chrome.action.setBadgeText({
+      text: j.toString(),
+    });
   }
 }
 
