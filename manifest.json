@@ -51,6 +51,12 @@
         "default": "Alt+C"
       },
       "description": "Set Status To Done."
+    },
+    "close": {
+      "suggested_key": {
+        "default": "Alt+V"
+      },
+      "description": "Close Project."
     }
   }
 }

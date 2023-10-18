@@ -389,6 +389,10 @@ chrome.commands.onCommand.addListener((command) => {
       handleChangeStatusButtonClick(tabId);
       break;
 
+    case "close":
+      handleCloseButtonClick(tabId);
+      break;
+
     default:
       break;
   }
