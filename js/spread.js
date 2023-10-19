@@ -27,13 +27,25 @@ function attachEvent() {
   document.getElementById("setGold").addEventListener("click", showAll);
   document.getElementById("setArea").addEventListener("click", showArea);
 
-  document.getElementById("setBugBoard").addEventListener("click", bugBoardChange);
-  document.getElementById("setStartTime").addEventListener("click", startTimeChange);
+  document
+    .getElementById("setBugBoard")
+    .addEventListener("click", bugBoardChange);
+  document
+    .getElementById("setStartTime")
+    .addEventListener("click", startTimeChange);
 }
 
 function setDefaultData() {
   chrome.storage.sync.get(
-    ["board", "notifyTime", "updateTime", "setGold", "setArea", "bugBoard", "startTime"],
+    [
+      "board",
+      "notifyTime",
+      "updateTime",
+      "setGold",
+      "setArea",
+      "bugBoard",
+      "startTime",
+    ],
     function (result) {
       if (result?.board) {
         document.getElementById("board").value = result.board;
@@ -63,6 +75,19 @@ function setDefaultData() {
 function initSpread() {
   let spread = new GC.Spread.Sheets.Workbook(document.getElementById("ss"));
   spread.addSheet(1, new GC.Spread.Sheets.Worksheet("Bug反馈"));
+  spread.bind(
+    GC.Spread.Sheets.Events.ActiveSheetChanged,
+    function (sender, args) {
+      let numElement = document.getElementById("num");
+      let count = spread.getActiveSheet().getRowCount();
+      if (count == 0) {
+        numElement.innerText = "没帖子了，你很强，我知道~";
+      } else {
+        numElement.innerText =
+          "你关注的版块还有" + count + "个帖子待处理。加油，胜利在望！";
+      }
+    }
+  );
 
   chrome.storage.sync.get(["template"], function (result) {
     if (result?.template) {
@@ -832,7 +857,7 @@ function filterByArea(setArea, sheet) {
 function fetchBugData() {
   let bugBoard = document.getElementById("bugBoard").value;
   let startTime = document.getElementById("startTime").value;
-  
+
   fetch("https://gcdn.grapecity.com.cn/api/forumbugfeeds.php", {
     method: "POST",
     body: JSON.stringify({
@@ -999,7 +1024,9 @@ function bindingBugData(data) {
 }
 
 function bugBoardChange() {
-  chrome.storage.sync.set({ bugBoard: document.getElementById("bugBoard").value });
+  chrome.storage.sync.set({
+    bugBoard: document.getElementById("bugBoard").value,
+  });
 
   let spread = GC.Spread.Sheets.findControl("ss");
   let sheet = spread.getSheet(1);
@@ -1009,7 +1036,9 @@ function bugBoardChange() {
 }
 
 function startTimeChange() {
-  chrome.storage.sync.set({ startTime: document.getElementById("startTime").value });
+  chrome.storage.sync.set({
+    startTime: document.getElementById("startTime").value,
+  });
 
   let spread = GC.Spread.Sheets.findControl("ss");
   let sheet = spread.getSheet(1);
