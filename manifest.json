@@ -9,6 +9,7 @@
   "permissions": [
     "management",
     "storage",
+    "unlimitedStorage",
     "activeTab",
     "tabs",
     "scripting",

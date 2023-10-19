@@ -108,6 +108,20 @@
         <option value="120">2小时</option>
       </select>
       <input type="button" id="openNewTab" value="新页面" />
+
+      <div class="bug-container">
+        <div class="board-container">
+          <label>Bug板块Id：</label>
+          <input class="input" type="text" id='bugBoard' />
+          <input class="button" type="button" id='setBugBoard' value="设置" />
+        </div>
+
+        <div class="start-container">
+          <label>Bug板块起始时间：</label>
+          <input class="input" type="text" placeholder="2023-11-11" id='startTime' />
+          <input class="button" type="button" id='setStartTime' value="设置" />
+        </div>
+      </div>
     </div>
 
     <div class="data-container">
@@ -118,6 +132,7 @@
       <p class="num" id="num"></p>
     </div>
   </div>
+
   <script src="node_modules/@grapecity/spread-sheets/dist/gc.spread.sheets.all.min.js"></script>
   <script src="node_modules/@grapecity/spread-sheets-resources-zh/dist/gc.spread.sheets.resources.zh.min.js"></script>
   <script src="node_modules/@grapecity/spread-excelio/dist/gc.spread.excelio.min.js"></script>

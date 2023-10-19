@@ -110,7 +110,9 @@ body {
   .config-container {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     font-size: 10pt;
+    width: 770px;
 
     .button {
       height: 24px;
@@ -127,6 +129,34 @@ body {
 
     .updateTime {
       margin-left: 44px;
+    }
+  }
+
+  .bug-container {
+    display: flex;
+    align-items: center;
+    font-size: 10pt;
+
+    .input {
+      height: 17px;
+      width: 180px;
+      margin: 0px 16px 0px 0px;
+    }
+
+    .button {
+      margin-right: 16px;
+      height: 24px;
+    }
+
+    .board-container {
+      display: flex;
+      align-items: center;
+      margin-right: 54px;
+    }
+
+    .start-container {
+      display: flex;
+      align-items: center;
     }
   }
 

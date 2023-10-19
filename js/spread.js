@@ -15,7 +15,7 @@ function addMessageListener() {
 }
 
 function attachEvent() {
-  document.getElementById("setBoard").addEventListener("click", updateBoardId);
+  document.getElementById("setBoard").addEventListener("click", boardChange);
   document
     .getElementById("updateTime")
     .addEventListener("change", updateTimeChange);
@@ -26,11 +26,14 @@ function attachEvent() {
   document.getElementById("export").addEventListener("click", exportExcel);
   document.getElementById("setGold").addEventListener("click", showAll);
   document.getElementById("setArea").addEventListener("click", showArea);
+
+  document.getElementById("setBugBoard").addEventListener("click", bugBoardChange);
+  document.getElementById("setStartTime").addEventListener("click", startTimeChange);
 }
 
 function setDefaultData() {
   chrome.storage.sync.get(
-    ["board", "notifyTime", "updateTime", "setGold", "setArea"],
+    ["board", "notifyTime", "updateTime", "setGold", "setArea", "bugBoard", "startTime"],
     function (result) {
       if (result?.board) {
         document.getElementById("board").value = result.board;
@@ -47,22 +50,34 @@ function setDefaultData() {
       if (result?.setArea) {
         document.getElementById("setArea").value = result.setArea;
       }
+      if (result?.bugBoard) {
+        document.getElementById("bugBoard").value = result.bugBoard;
+      }
+      if (result?.startTime) {
+        document.getElementById("startTime").value = result.startTime;
+      }
     }
   );
 }
 
 function initSpread() {
   let spread = new GC.Spread.Sheets.Workbook(document.getElementById("ss"));
+  spread.addSheet(1, new GC.Spread.Sheets.Worksheet("Bug反馈"));
+
   chrome.storage.sync.get(["template"], function (result) {
     if (result?.template) {
       spread.fromJSON(JSON.parse(result.template));
-      let sheet = spread.getActiveSheet();
+      let sheet = spread.getSheet(0);
       sheet.setDataSource([]);
+
+      let sheet2 = spread.getSheet(1);
+      sheet2.setDataSource([]);
     } else {
       spread.options.scrollbarMaxAlign = true;
       spread.options.newTabVisible = false;
-      let sheet = spread.getActiveSheet();
 
+      let sheet = spread.getSheet(0);
+      sheet.name("待回复的帖子");
       let colInfos = [
         { name: "板块", displayName: "板块", size: 180 },
         { name: "帖子标题", displayName: "帖子标题", size: 300 },
@@ -97,12 +112,33 @@ function initSpread() {
       ];
       sheet.autoGenerateColumns = false;
       sheet.bindColumns(colInfos);
+
+      let sheet2 = spread.getSheet(1);
+      let colInfos2 = [
+        { name: "板块", displayName: "板块", size: 180 },
+        { name: "帖子标题", displayName: "帖子标题", size: 300 },
+        { name: "处理状态", displayName: "处理状态", size: 100 },
+        { name: "发帖用户用户组", displayName: "发帖用户组", size: 120 },
+        {
+          name: "主题发布时间",
+          displayName: "发帖时间",
+          size: 100,
+          formatter: "MM-dd hh:mm",
+        },
+        { name: "发帖用户", displayName: "发帖用户", size: 100 },
+        { name: "主题类型", displayName: "帖子类型", size: 100 },
+      ];
+      sheet2.autoGenerateColumns = false;
+      sheet2.bindColumns(colInfos2);
     }
-    fetchData();
+    fetchHelpData();
+    fetchBugData();
   });
 }
 
-function fetchData() {
+/**********************Sheet1 FetchData****************** */
+
+function fetchHelpData() {
   let forumElement = document.getElementById("forumdata");
   forumElement.innerHTML = "加载中...";
   let numElement = document.getElementById("num");
@@ -127,7 +163,7 @@ function fetchData() {
                 .filter((node) => node["最后回帖用户"] != "Lay.Li");
             }
             numElement.innerText = "辛苦啦，帖子已被你清空！！！";
-            bindingData(resp);
+            bindingHelpData(resp);
             fetchCustomerType();
             forumElement.innerHTML = "";
 
@@ -210,7 +246,7 @@ function fetchCustomerType() {
         let partnerList = [],
           importantCustomerList = [];
         let resResult = resp.partnerGCDN;
-        if (resResult.length == 0) {
+        if (!resResult || resResult.length == 0) {
           return;
         }
         resResult.forEach((item) => {
@@ -271,14 +307,12 @@ function fetchCustomerType() {
   xhr1.send();
 }
 
-function bindingData(data) {
+function bindingHelpData(data) {
   if (!data?.length) {
     return;
   }
   let spread = GC.Spread.Sheets.findControl("ss");
   let sheet = spread.getActiveSheet();
-  let spreadNS = GC.Spread.Sheets;
-
   sheet.suspendPaint();
 
   sheet.setDataSource(data);
@@ -438,7 +472,7 @@ function bindingData(data) {
     style,
     context
   ) {
-    spreadNS.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
+    GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
 
     if (img) {
       ctx.save();
@@ -497,7 +531,7 @@ function bindingData(data) {
   sheet.resumePaint();
 }
 
-function updateBoardId() {
+function boardChange() {
   chrome.storage.sync.set({ board: document.getElementById("board").value });
 
   let spread = GC.Spread.Sheets.findControl("ss");
@@ -506,7 +540,7 @@ function updateBoardId() {
   let template = JSON.stringify(spread.toJSON());
   chrome.storage.sync.set({ template: template });
 
-  fetchData();
+  fetchHelpData();
 }
 
 function updateTimeChange() {
@@ -790,6 +824,201 @@ function filterByArea(setArea, sheet) {
   sheet.rowFilter().filterButtonVisible(true);
   countRow();
 }
+
+/************************************************* */
+
+/**********************Sheet2 FetchData****************** */
+
+function fetchBugData() {
+  let bugBoard = document.getElementById("bugBoard").value;
+  let startTime = document.getElementById("startTime").value;
+  
+  fetch("https://gcdn.grapecity.com.cn/api/forumbugfeeds.php", {
+    method: "POST",
+    body: JSON.stringify({
+      begin: startTime,
+      fid: [bugBoard],
+      code: "vbA3i=rtiEG",
+    }),
+    headers: new Headers({
+      "Content-Type": "application/json",
+    }),
+  })
+    .then((res) => res.json())
+    .catch((error) => console.error("Error:", error))
+    .then((response) => bindingBugData(response));
+}
+
+function bindingBugData(data) {
+  if (!data?.length) {
+    return;
+  }
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(1);
+
+  sheet.suspendPaint();
+
+  sheet.setDataSource(data);
+
+  let style1 = new GC.Spread.Sheets.Style();
+  style1.backColor = "#FB6573";
+
+  let style2 = new GC.Spread.Sheets.Style();
+  style2.backColor = "#C6E7EC";
+
+  let style3 = new GC.Spread.Sheets.Style();
+  style3.backColor = "#64E834";
+
+  let style4 = new GC.Spread.Sheets.Style();
+  style4.backColor = "#6A5ACD";
+
+  let style5 = new GC.Spread.Sheets.Style();
+  style5.foreColor = "#5b457c";
+
+  let style6 = new GC.Spread.Sheets.Style();
+  style6.foreColor = "#FFCB6C";
+
+  let row = sheet.getRowCount();
+
+  let ranges = [new GC.Spread.Sheets.Range(0, 2, row, 1)];
+  let ranges1 = [new GC.Spread.Sheets.Range(0, 3, row, 1)];
+
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "未处理",
+    style1,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "处理中",
+    style2,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已处理",
+    style3,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "保留处理",
+    style4,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "合作伙伴",
+    style5,
+    ranges1
+  );
+
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "金牌服务用户",
+    style6,
+    ranges1
+  );
+
+  let img = null;
+  let w =
+    sheet.getColumnWidth(0) +
+    sheet.getColumnWidth(1) +
+    sheet.getColumnWidth(2) +
+    (sheet.getColumnWidth(3) / 7) * 5.8;
+  function GoldenUserCellType() {}
+  GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
+  GoldenUserCellType.prototype.paint = function (
+    ctx,
+    value,
+    x,
+    y,
+    width,
+    height,
+    style,
+    context
+  ) {
+    GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
+
+    if (img) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.drawImage(img, x + w, y, 20, 20);
+      ctx.restore();
+      return;
+    }
+    img = new Image();
+    img.src = "../images/golden.png";
+    img.onload = function () {
+      context.sheet.repaint();
+    };
+  };
+
+  for (let i = 0; i < row; i++) {
+    if (sheet.getCell(i, 3).value() == "金牌服务用户") {
+      sheet.setCellType(i, 0, new GoldenUserCellType());
+    }
+  }
+
+  let titleIndex = -1;
+  for (let i = 0; i < sheet.getColumnCount(); i++) {
+    if (
+      sheet.getText(0, i, GC.Spread.Sheets.SheetArea.colHeader) === "帖子标题"
+    ) {
+      titleIndex = i;
+      break;
+    }
+  }
+  if (titleIndex >= 0) {
+    for (let i = 0; i < data.length; i++) {
+      sheet.setHyperlink(
+        i,
+        titleIndex,
+        {
+          url:
+            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
+            data[i]["tid"],
+          tooltip:
+            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
+            data[i]["tid"],
+          linkColor: "#0066cc",
+          visitedLinkColor: "#3399ff",
+        },
+        GC.Spread.Sheets.SheetArea.viewport
+      );
+      sheet.setText(i, titleIndex, data[i]["帖子标题"]);
+    }
+  }
+  let range = new GC.Spread.Sheets.Range(-1, 0, -1, sheet.getColumnCount());
+  let rowFilter = new GC.Spread.Sheets.Filter.HideRowFilter(range);
+  sheet.rowFilter(rowFilter);
+
+  sheet.resumePaint();
+}
+
+function bugBoardChange() {
+  chrome.storage.sync.set({ bugBoard: document.getElementById("bugBoard").value });
+
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(1);
+  sheet.setDataSource([]);
+
+  fetchBugData();
+}
+
+function startTimeChange() {
+  chrome.storage.sync.set({ startTime: document.getElementById("startTime").value });
+
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(1);
+  sheet.setDataSource([]);
+
+  fetchBugData();
+}
+
+/************************************************* */
 
 /**********************统计隐藏行****************** */
 
