@@ -64,16 +64,16 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 
   chrome.contextMenus.create({
-    id: "help_done",
+    id: "help_query",
     type: "normal",
-    title: "已处理",
+    title: "调研中",
     parentId: helpParent,
   });
 
   chrome.contextMenus.create({
-    id: "help_query",
+    id: "help_done",
     type: "normal",
-    title: "保留处理",
+    title: "已处理",
     parentId: helpParent,
   });
 
@@ -99,16 +99,16 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 
   chrome.contextMenus.create({
-    id: "bug_done",
+    id: "bug_query",
     type: "normal",
-    title: "已处理",
+    title: "调研中",
     parentId: bugParent,
   });
 
   chrome.contextMenus.create({
-    id: "bug_query",
+    id: "bug_done",
     type: "normal",
-    title: "保留处理",
+    title: "已处理",
     parentId: bugParent,
   });
 
@@ -134,16 +134,16 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 
   chrome.contextMenus.create({
-    id: "story_done",
+    id: "story_query",
     type: "normal",
-    title: "已处理",
+    title: "调研中",
     parentId: storyParent,
   });
 
   chrome.contextMenus.create({
-    id: "story_query",
+    id: "story_done",
     type: "normal",
-    title: "保留处理",
+    title: "已处理",
     parentId: storyParent,
   });
 
@@ -168,16 +168,16 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 
   chrome.contextMenus.create({
-    id: "done",
+    id: "query",
     type: "normal",
-    title: "已处理",
+    title: "调研中",
     parentId: changeParent,
   });
 
   chrome.contextMenus.create({
-    id: "query",
+    id: "done",
     type: "normal",
-    title: "保留处理",
+    title: "已处理",
     parentId: changeParent,
   });
 
@@ -257,7 +257,7 @@ async function contextClick(info, tab) {
       break;
     case "story_query":
       moveTargetSpace = "产品需求";
-      moveTargetStatus = "保留处理";
+      moveTargetStatus = "调研中";
       await handleMoveButtonClick(tabId);
       break;
 
@@ -280,7 +280,7 @@ async function contextClick(info, tab) {
       break;
     case "bug_query":
       moveTargetSpace = "Bug反馈";
-      moveTargetStatus = "保留处理";
+      moveTargetStatus = "调研中";
       await handleMoveButtonClick(tabId);
       break;
 
@@ -303,7 +303,7 @@ async function contextClick(info, tab) {
       break;
     case "help_query":
       moveTargetSpace = "求助中心";
-      moveTargetStatus = "保留处理";
+      moveTargetStatus = "调研中";
       await handleMoveButtonClick(tabId);
       break;
 
@@ -322,7 +322,7 @@ async function contextClick(info, tab) {
       await handleChangeStatusButtonClick(tabId);
       break;
     case "query":
-      changeStatusTargetStatus = "保留处理";
+      changeStatusTargetStatus = "调研中";
       await handleChangeStatusButtonClick(tabId);
       break;
 
@@ -465,10 +465,10 @@ function move_stage2(status) {
     case "处理中":
       statusSelect.options.selectedIndex = offset + 1;
       break;
-    case "已处理":
+    case "调研中":
       statusSelect.options.selectedIndex = offset + 2;
       break;
-    case "保留处理":
+    case "已处理":
       statusSelect.options.selectedIndex = offset + 3;
       break;
     default:
@@ -516,10 +516,10 @@ function change_status_stage1(status) {
     case "处理中":
       statusSelect.options.selectedIndex = offset + 1;
       break;
-    case "已处理":
+    case "调研中":
       statusSelect.options.selectedIndex = offset + 2;
       break;
-    case "保留处理":
+    case "已处理":
       statusSelect.options.selectedIndex = offset + 3;
       break;
     default:

@@ -454,14 +454,14 @@ function bindingHelpData(data) {
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "已处理",
-    style3,
+    "调研中",
+    style4,
     ranges
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "保留处理",
-    style4,
+    "已处理",
+    style3,
     ranges
   );
   sheet.conditionalFormats.addSpecificTextRule(
@@ -470,7 +470,6 @@ function bindingHelpData(data) {
     style5,
     ranges1
   );
-
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "金牌服务用户",
@@ -922,14 +921,14 @@ function bindingBugData(data) {
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "已处理",
-    style3,
+    "调研中",
+    style4,
     ranges
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "保留处理",
-    style4,
+    "已处理",
+    style3,
     ranges
   );
   sheet.conditionalFormats.addSpecificTextRule(
@@ -938,7 +937,6 @@ function bindingBugData(data) {
     style5,
     ranges1
   );
-
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "金牌服务用户",
