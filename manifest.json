@@ -41,6 +41,12 @@
     "128": "images/icon.png"
   },
   "commands": {
+    "move_to_bug_query": {
+      "suggested_key": {
+        "default": "Alt+Z"
+      },
+      "description": "Move To Bug Query Status."
+    },
     "remove_rewards": {
       "suggested_key": {
         "default": "Alt+X"

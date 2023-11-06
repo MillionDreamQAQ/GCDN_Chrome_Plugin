@@ -380,6 +380,12 @@ function messageReceived(data) {
 
 chrome.commands.onCommand.addListener((command) => {
   switch (command) {
+    case "move_to_bug_query":
+      moveTargetSpace = "Bug反馈";
+      changeStatusTargetStatus = "调研中";
+      handleMoveButtonClick(tabId);
+      break;
+
     case "remove_rewards":
       handleRemoveRewardButtonClick(tabId);
       break;
