@@ -228,7 +228,7 @@ async function contextClick(info, tab) {
         url:
           "https://developersolutions.crm5.dynamics.com/main.aspx?appid=69dffb8e-ae36-e811-817f-e0071b6927a1&forceUCI=1&pagetype=search&searchText=" +
           encodeURI(info.selectionText) +
-          "&searchType=1",
+          "&searchType=0",
       });
       break;
 
