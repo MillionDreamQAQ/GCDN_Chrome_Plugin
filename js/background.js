@@ -6,6 +6,8 @@ let moveTargetStatus = null;
 
 let changeStatusTargetStatus = null;
 
+let replySelectionIndex = null;
+
 chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.query(
     { active: true, lastFocusedWindow: true, currentWindow: true },
@@ -192,6 +194,40 @@ chrome.runtime.onInstalled.addListener(() => {
     type: "normal",
     title: "移除悬赏",
   });
+
+  let quickReplyParent = chrome.contextMenus.create({
+    id: "quick_reply_parent",
+    type: "normal",
+    title: "快速回复",
+  });
+
+  chrome.contextMenus.create({
+    id: "quick_reply1",
+    type: "normal",
+    title: "快速回复1",
+    parentId: quickReplyParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "quick_reply2",
+    type: "normal",
+    title: "快速回复2",
+    parentId: quickReplyParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "quick_reply3",
+    type: "normal",
+    title: "快速回复3",
+    parentId: quickReplyParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "quick_reply4",
+    type: "normal",
+    title: "快速回复4",
+    parentId: quickReplyParent,
+  });
 });
 
 chrome.contextMenus.onClicked.addListener(contextClick);
@@ -336,6 +372,28 @@ async function contextClick(info, tab) {
 
     case "remove_reward":
       await handleRemoveRewardButtonClick(tabId);
+      break;
+
+    /********************************************************************** */
+
+    case "quick_reply1":
+      replySelectionIndex = 1;
+      await handleQuickReplay(tabId);
+      break;
+
+    case "quick_reply2":
+      replySelectionIndex = 2;
+      await handleQuickReplay(tabId);
+      break;
+
+    case "quick_reply3":
+      replySelectionIndex = 3;
+      await handleQuickReplay(tabId);
+      break;
+
+    case "quick_reply4":
+      replySelectionIndex = 4;
+      await handleQuickReplay(tabId);
       break;
 
     /********************************************************************** */
@@ -588,6 +646,48 @@ function remove_stage0() {
 
 /******************************************************************************* */
 
+async function handleQuickReplay(tabId) {
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: quick_reply,
+    args: [getReplySelectionIndex()],
+  });
+}
+
+function quick_reply(index) {
+  let textArea = document.querySelector("#fastpostmessage");
+  if (textArea) {
+    switch (index) {
+      case 1:
+        chrome.storage.sync.get("quickReplyData1", (data) => {
+          textArea.value += data.quickReplyData1;
+        });
+        break;
+      case 2:
+        chrome.storage.sync.get("quickReplyData2", (data) => {
+          textArea.value += data.quickReplyData2;
+        });
+        break;
+      case 3:
+        chrome.storage.sync.get("quickReplyData3", (data) => {
+          textArea.value += data.quickReplyData3;
+        });
+        break;
+      case 4:
+        chrome.storage.sync.get("quickReplyData4", (data) => {
+          textArea.value += data.quickReplyData4;
+        });
+        break;
+      default:
+        break;
+    }
+  } else {
+    alert("未找到指定元素！(#fastpostmessage)");
+  }
+}
+
+/******************************************************************************* */
+
 function submit(tabId) {
   chrome.storage.sync.get("manual", (data) => {
     let res = data.manual;
@@ -597,6 +697,10 @@ function submit(tabId) {
       confirmButton.click();
     }
   });
+}
+
+function getReplySelectionIndex() {
+  return replySelectionIndex;
 }
 
 function getMoveTargetSpace() {

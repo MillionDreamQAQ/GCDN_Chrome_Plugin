@@ -14,10 +14,25 @@ const changeStatusTargetStatus = document.querySelector(
 );
 const changeStatusButton = document.querySelector("#changeStatus");
 
+const quickReply1 = document.querySelector("#reply-1");
+const quickReply2 = document.querySelector("#reply-2");
+const quickReply3 = document.querySelector("#reply-3");
+const quickReply4 = document.querySelector("#reply-4");
+
 function setDefaultData() {
   chrome.storage.sync.get(
-    ["moveSpace", "moveStatus", "changeStatus", "manual"],
+    [
+      "moveSpace",
+      "moveStatus",
+      "changeStatus",
+      "manual",
+      "quickReplyData1",
+      "quickReplyData2",
+      "quickReplyData3",
+      "quickReplyData4",
+    ],
     function (data) {
+      console.log(data);
       if (data?.moveSpace) {
         moveTargetSpace.value = data.moveSpace;
       }
@@ -29,6 +44,18 @@ function setDefaultData() {
       }
       if (data?.manual) {
         manualCheckBox.checked = data.manual;
+      }
+      if (data?.quickReplyData1) {
+        quickReply1.value = data.quickReplyData1;
+      }
+      if (data?.quickReplyData2) {
+        quickReply2.value = data.quickReplyData2;
+      }
+      if (data?.quickReplyData3) {
+        quickReply3.value = data.quickReplyData3;
+      }
+      if (data?.quickReplyData4) {
+        quickReply4.value = data.quickReplyData4;
       }
     }
   );
@@ -58,6 +85,26 @@ function attachChangedEvent() {
   manualCheckBox.addEventListener("change", (e) => {
     let manual = e.target.checked;
     chrome.storage.sync.set({ manual });
+  });
+
+  quickReply1.addEventListener("change", (e) => {
+    let quickReplyData1 = e.target.value;
+    chrome.storage.sync.set({ quickReplyData1 });
+  });
+
+  quickReply2.addEventListener("change", (e) => {
+    let quickReplyData2 = e.target.value;
+    chrome.storage.sync.set({ quickReplyData2 });
+  });
+
+  quickReply3.addEventListener("change", (e) => {
+    let quickReplyData3 = e.target.value;
+    chrome.storage.sync.set({ quickReplyData3 });
+  });
+
+  quickReply4.addEventListener("change", (e) => {
+    let quickReplyData4 = e.target.value;
+    chrome.storage.sync.set({ quickReplyData4 });
   });
 }
 

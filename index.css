@@ -99,6 +99,7 @@ body {
       height: 17px;
       width: 180px;
       margin: 0px 16px 0px 0px;
+      outline: none;
     }
 
     .button {
@@ -141,6 +142,7 @@ body {
       height: 17px;
       width: 180px;
       margin: 0px 16px 0px 0px;
+      outline: none;
     }
 
     .button {
@@ -170,6 +172,23 @@ body {
     .num {
       font-weight: bold;
       font-size: large;
+    }
+  }
+
+  .reply-container {
+    display: flex;
+    flex-direction: column;
+    font-size: 10pt;
+
+    .reply-item {
+      margin-bottom: 10px;
+
+      .input {
+        height: 17px;
+        width: 180px;
+        margin: 0px 16px 0px 0px;
+        outline: none;
+      }
     }
   }
 }
