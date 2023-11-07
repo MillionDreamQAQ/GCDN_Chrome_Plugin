@@ -225,13 +225,13 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 
   chrome.contextMenus.create({
-    id: "notebook",
-    title: "进入我的笔记本",
+    id: "move_bug_query",
+    title: "移至Bug板块调研中",
   });
 
   chrome.contextMenus.create({
-    id: "move_bug_query",
-    title: "移至Bug板块调研中",
+    id: "notebook",
+    title: "进入我的笔记本",
   });
 });
 
