@@ -21,15 +21,44 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 /******************************************************************************* */
 
 chrome.runtime.onInstalled.addListener(() => {
+  let quickReplyParent = chrome.contextMenus.create({
+    id: "quick_reply_parent",
+    type: "normal",
+    title: "快速回复",
+  });
+
+  chrome.contextMenus.create({
+    id: "quick_reply1",
+    type: "normal",
+    title: "快速回复1",
+    parentId: quickReplyParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "quick_reply2",
+    type: "normal",
+    title: "快速回复2",
+    parentId: quickReplyParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "quick_reply3",
+    type: "normal",
+    title: "快速回复3",
+    parentId: quickReplyParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "quick_reply4",
+    type: "normal",
+    title: "快速回复4",
+    parentId: quickReplyParent,
+  });
+
   chrome.contextMenus.create({
     id: "search_crm",
     title: "使用CRM搜索：%s",
     contexts: ["selection"],
-  });
-
-  chrome.contextMenus.create({
-    id: "notebook",
-    title: "进入我的笔记本",
   });
 
   chrome.contextMenus.create({
@@ -195,38 +224,9 @@ chrome.runtime.onInstalled.addListener(() => {
     title: "移除悬赏",
   });
 
-  let quickReplyParent = chrome.contextMenus.create({
-    id: "quick_reply_parent",
-    type: "normal",
-    title: "快速回复",
-  });
-
   chrome.contextMenus.create({
-    id: "quick_reply1",
-    type: "normal",
-    title: "快速回复1",
-    parentId: quickReplyParent,
-  });
-
-  chrome.contextMenus.create({
-    id: "quick_reply2",
-    type: "normal",
-    title: "快速回复2",
-    parentId: quickReplyParent,
-  });
-
-  chrome.contextMenus.create({
-    id: "quick_reply3",
-    type: "normal",
-    title: "快速回复3",
-    parentId: quickReplyParent,
-  });
-
-  chrome.contextMenus.create({
-    id: "quick_reply4",
-    type: "normal",
-    title: "快速回复4",
-    parentId: quickReplyParent,
+    id: "notebook",
+    title: "进入我的笔记本",
   });
 });
 
