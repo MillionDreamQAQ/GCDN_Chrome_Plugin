@@ -21,6 +21,18 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 /******************************************************************************* */
 
 chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: "search_crm",
+    title: "使用CRM搜索：%s",
+    contexts: ["selection"],
+  });
+
+  chrome.contextMenus.create({
+    id: "search",
+    title: "使用JIRA搜索：%s",
+    contexts: ["selection"],
+  });
+
   let quickReplyParent = chrome.contextMenus.create({
     id: "quick_reply_parent",
     type: "normal",
@@ -53,18 +65,6 @@ chrome.runtime.onInstalled.addListener(() => {
     type: "normal",
     title: "快速回复4",
     parentId: quickReplyParent,
-  });
-
-  chrome.contextMenus.create({
-    id: "search_crm",
-    title: "使用CRM搜索：%s",
-    contexts: ["selection"],
-  });
-
-  chrome.contextMenus.create({
-    id: "search",
-    title: "使用JIRA搜索：%s",
-    contexts: ["selection"],
   });
 
   let moveParent = chrome.contextMenus.create({
@@ -179,7 +179,7 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 
   let changeParent = chrome.contextMenus.create({
-    id: "changeParent",
+    id: "change-parent",
     type: "normal",
     title: "更改帖子状态",
   });
@@ -227,6 +227,11 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "notebook",
     title: "进入我的笔记本",
+  });
+
+  chrome.contextMenus.create({
+    id: "move_bug_query",
+    title: "移至Bug板块调研中",
   });
 });
 
@@ -315,6 +320,7 @@ async function contextClick(info, tab) {
       await handleMoveButtonClick(tabId);
       break;
     case "bug_query":
+    case "move_bug_query":
       moveTargetSpace = "Bug反馈";
       moveTargetStatus = "调研中";
       await handleMoveButtonClick(tabId);
