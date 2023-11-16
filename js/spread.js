@@ -140,16 +140,15 @@ function initSpread() {
 
       let sheet2 = spread.getSheet(1);
       let colInfos2 = [
-        { name: "板块", displayName: "板块", size: 180 },
-        { name: "帖子标题", displayName: "帖子标题", size: 300 },
-        { name: "处理状态", displayName: "处理状态", size: 100 },
-        { name: "发帖用户用户组", displayName: "发帖用户组", size: 120 },
         {
           name: "主题发布时间",
           displayName: "发帖时间",
           size: 100,
           formatter: "MM-dd hh:mm",
         },
+        { name: "帖子标题", displayName: "帖子标题", size: 300 },
+        { name: "处理状态", displayName: "处理状态", size: 100 },
+        { name: "发帖用户用户组", displayName: "发帖用户组", size: 120 },
         { name: "发帖用户", displayName: "发帖用户", size: 100 },
         { name: "主题类型", displayName: "帖子类型", size: 100 },
       ];
