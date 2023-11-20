@@ -4,83 +4,8 @@ body {
 }
 
 .container {
-  display: flex;
-  flex-direction: row-reverse;
-}
-
-.operation-container {
-  display: flex;
-  flex-direction: column;
-
-  .manual-container {
-    margin: 10px 4px;
-    display: flex;
-    font-size: 10pt;
-    align-items: center;
-    justify-content: flex-end;
-
-    .checkbox-container {
-      margin-right: 80px;
-    }
-
-    .button-container {
-      width: 50px;
-
-      .button {
-        height: 24px;
-      }
-    }
-  }
-
-  .move-container {
-    margin: 10px 4px;
-    display: flex;
-    font-size: 10pt;
-    align-items: center;
-    justify-content: flex-end;
-
-    .select-container {
-      width: 100px;
-
-      .select {
-        outline: none;
-        height: 24px;
-      }
-    }
-
-    .button-container {
-      width: 50px;
-
-      .button {
-        height: 24px;
-      }
-    }
-  }
-
-  .change-status-container {
-    margin: 10px 4px;
-    display: flex;
-    font-size: 10pt;
-    align-items: center;
-    justify-content: flex-end;
-
-    .select-container {
-      width: 100px;
-
-      .select {
-        outline: none;
-        height: 24px;
-      }
-    }
-
-    .button-container {
-      width: 50px;
-
-      .button {
-        height: 24px;
-      }
-    }
-  }
+  /* display: flex;
+  flex-direction: row-reverse; */
 }
 
 .spread-container {
@@ -130,6 +55,10 @@ body {
 
     .updateTime {
       margin-left: 44px;
+    }
+
+    #openNewTab {
+      background-color: yellow;
     }
   }
 
