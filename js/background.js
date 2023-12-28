@@ -67,6 +67,20 @@ chrome.runtime.onInstalled.addListener(() => {
     parentId: quickReplyParent,
   });
 
+  chrome.contextMenus.create({
+    id: "quick_reply5",
+    type: "normal",
+    title: "快速回复5",
+    parentId: quickReplyParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "quick_reply6",
+    type: "normal",
+    title: "快速回复6",
+    parentId: quickReplyParent,
+  });
+
   let moveParent = chrome.contextMenus.create({
     id: "move",
     type: "normal",
