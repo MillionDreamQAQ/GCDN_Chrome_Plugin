@@ -5,6 +5,8 @@ const quickReply1 = document.querySelector("#reply-1");
 const quickReply2 = document.querySelector("#reply-2");
 const quickReply3 = document.querySelector("#reply-3");
 const quickReply4 = document.querySelector("#reply-4");
+const quickReply5 = document.querySelector("#reply-5");
+const quickReply6 = document.querySelector("#reply-6");
 
 function setDefaultData() {
   chrome.storage.sync.get(
@@ -13,6 +15,8 @@ function setDefaultData() {
       "quickReplyData2",
       "quickReplyData3",
       "quickReplyData4",
+      "quickReplyData5",
+      "quickReplyData6",
     ],
     function (data) {
       if (data?.quickReplyData1) {
@@ -26,6 +30,12 @@ function setDefaultData() {
       }
       if (data?.quickReplyData4) {
         quickReply4.value = data.quickReplyData4;
+      }
+      if (data?.quickReplyData5) {
+        quickReply5.value = data.quickReplyData5;
+      }
+      if (data?.quickReplyData6) {
+        quickReply6.value = data.quickReplyData6;
       }
     }
   );
@@ -54,6 +64,16 @@ function attachChangedEvent() {
   quickReply4.addEventListener("change", (e) => {
     let quickReplyData4 = e.target.value;
     chrome.storage.sync.set({ quickReplyData4 });
+  });
+
+  quickReply5.addEventListener("change", (e) => {
+    let quickReplyData5 = e.target.value;
+    chrome.storage.sync.set({ quickReplyData5 });
+  });
+
+  quickReply6.addEventListener("change", (e) => {
+    let quickReplyData6 = e.target.value;
+    chrome.storage.sync.set({ quickReplyData6 });
   });
 }
 

@@ -506,7 +506,7 @@ async function handleMoveButtonClick(tabId) {
 
 function move_stage0() {
   let moveButton = document.querySelector("#modmenu > a:nth-child(17)");
-  if (document.querySelector("#modmenu > a:nth-child(17)").innerHTML != "移动") {
+  if (!moveButton || moveButton.innerHTML != "移动") {
     alert("未找到移动按钮！");
     return;
   }
@@ -589,7 +589,7 @@ async function handleChangeStatusButtonClick(tabId) {
 
 function change_status_stage0() {
   let statusButton = document.querySelector("#modmenu > a:nth-child(19)");
-  if (document.querySelector("#modmenu > a:nth-child(19)").innerHTML != "分类") {
+  if (!statusButton || statusButton.innerHTML != "分类") {
     alert("分类按钮未找到！");
     return;
   }
@@ -651,8 +651,7 @@ async function handleCloseButtonClick(tabId) {
 
 function close_stage0() {
   let closeButton = document.querySelector("#modmenu > a:nth-child(15)");
-  if (
-    document.querySelector("#modmenu > a:nth-child(15)").innerHTML != "关闭"
+  if (!closeButton || closeButton.innerHTML != "关闭"
   ) {
     alert("关闭按钮未找到！");
     return;
@@ -692,8 +691,7 @@ async function handleRemoveRewardButtonClick(tabId) {
 
 function remove_stage0() {
   let removeButton = document.querySelector("#modmenu > a:nth-child(29)");
-  if (
-    document.querySelector("#modmenu > a:nth-child(29)").innerHTML != "移除悬赏"
+  if (!removeButton || removeButton.innerHTML != "移除悬赏"
   ) {
     alert("移除悬赏按钮未找到！");
     return;
