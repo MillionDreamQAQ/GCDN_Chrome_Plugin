@@ -65,5 +65,11 @@
       },
       "description": "Close Project."
     }
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://gcdn.grapecity.com.cn/*"],
+      "js": ["./js/button.js"]
+    }
+  ]
 }
