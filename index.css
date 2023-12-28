@@ -110,11 +110,24 @@ body {
     font-size: 10pt;
 
     .reply-item {
+      display: flex;
       margin-bottom: 10px;
+      align-content: center;
+      flex-wrap: wrap;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
 
       .input {
         height: 17px;
         width: 450px;
+        margin: 4px 4px 0px 0px;
+        outline: none;
+      }
+
+      .input-short {
+        height: 17px;
+        width: 50px;
         margin: 4px 4px 0px 0px;
         outline: none;
       }

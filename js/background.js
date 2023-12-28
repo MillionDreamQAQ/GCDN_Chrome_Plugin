@@ -19,6 +19,25 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 });
 
 /******************************************************************************* */
+let hints = [];
+
+const hintKeys = [
+  "quickReplyHintData1",
+  "quickReplyHintData2",
+  "quickReplyHintData3",
+  "quickReplyHintData4",
+  "quickReplyHintData5",
+  "quickReplyHintData6",
+];
+
+chrome.storage.sync.get(hintKeys, function (data) {
+  hintKeys.forEach((key, index) => {
+    if (data?.[key]) {
+      console.log(data[key]);
+      hints[index] = data[key];
+    }
+  });
+});
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
@@ -42,42 +61,42 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "quick_reply1",
     type: "normal",
-    title: "快速回复1",
+    title: hints[0],
     parentId: quickReplyParent,
   });
 
   chrome.contextMenus.create({
     id: "quick_reply2",
     type: "normal",
-    title: "快速回复2",
+    title: hints[1],
     parentId: quickReplyParent,
   });
 
   chrome.contextMenus.create({
     id: "quick_reply3",
     type: "normal",
-    title: "快速回复3",
+    title: hints[2],
     parentId: quickReplyParent,
   });
 
   chrome.contextMenus.create({
     id: "quick_reply4",
     type: "normal",
-    title: "快速回复4",
+    title: hints[3],
     parentId: quickReplyParent,
   });
 
   chrome.contextMenus.create({
     id: "quick_reply5",
     type: "normal",
-    title: "快速回复5",
+    title: hints[4],
     parentId: quickReplyParent,
   });
 
   chrome.contextMenus.create({
     id: "quick_reply6",
     type: "normal",
-    title: "快速回复6",
+    title: hints[5],
     parentId: quickReplyParent,
   });
 
