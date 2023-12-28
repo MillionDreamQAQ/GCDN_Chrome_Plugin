@@ -30,13 +30,13 @@ let beforePageButton = createButton(
   "上一页",
   130,
   "#ct > div.cl > div.mn > div.box.cl > div.pgs.mtm.mbm.cl > div > a.prev",
-  "已经是第一页了！",
+  "未找到按钮或已经是第一页了！",
   null
 );
 let nextPageButton = createButton(
   "下一页",
   180,
   "#ct > div.cl > div.mn > div:nth-child(3) > div.pgs.mtm.mbm.cl > div > a.nxt",
-  "已经是最后一页了！",
+  "未找到按钮或已经是最后一页了！",
   null
 );
