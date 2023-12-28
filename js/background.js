@@ -472,7 +472,10 @@ chrome.commands.onCommand.addListener((command) => {
 
 async function handleMoveButtonClick(tabId) {
   if (!tabId) {
-    alert("无法获取TabId，请切换页面并重试！");
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      func: tabIdNotFoundAlert,
+    });
     return;
   }
   await chrome.scripting.executeScript({
@@ -503,6 +506,10 @@ async function handleMoveButtonClick(tabId) {
 
 function move_stage0() {
   let moveButton = document.querySelector("#modmenu > a:nth-child(17)");
+  if (document.querySelector("#modmenu > a:nth-child(17)").innerHTML != "移动") {
+    alert("未找到移动按钮！");
+    return;
+  }
   moveButton.click();
 }
 
@@ -554,7 +561,10 @@ function move_stage2(status) {
 
 async function handleChangeStatusButtonClick(tabId) {
   if (!tabId) {
-    alert("无法获取TabId，请切换页面并重试！");
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      func: tabIdNotFoundAlert,
+    });
     return;
   }
 
@@ -578,8 +588,12 @@ async function handleChangeStatusButtonClick(tabId) {
 }
 
 function change_status_stage0() {
-  let moveButton = document.querySelector("#modmenu > a:nth-child(19)");
-  moveButton.click();
+  let statusButton = document.querySelector("#modmenu > a:nth-child(19)");
+  if (document.querySelector("#modmenu > a:nth-child(19)").innerHTML != "分类") {
+    alert("分类按钮未找到！");
+    return;
+  }
+  statusButton.click();
 }
 
 function change_status_stage1(status) {
@@ -610,7 +624,10 @@ function change_status_stage1(status) {
 
 async function handleCloseButtonClick(tabId) {
   if (!tabId) {
-    alert("无法获取TabId，请切换页面并重试！");
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      func: tabIdNotFoundAlert,
+    });
     return;
   }
 
@@ -634,6 +651,12 @@ async function handleCloseButtonClick(tabId) {
 
 function close_stage0() {
   let closeButton = document.querySelector("#modmenu > a:nth-child(15)");
+  if (
+    document.querySelector("#modmenu > a:nth-child(15)").innerHTML != "关闭"
+  ) {
+    alert("关闭按钮未找到！");
+    return;
+  }
   closeButton.click();
 }
 
@@ -648,7 +671,10 @@ function close_stage1() {
 
 async function handleRemoveRewardButtonClick(tabId) {
   if (!tabId) {
-    alert("无法获取TabId，请切换页面并重试！");
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      func: tabIdNotFoundAlert,
+    });
     return;
   }
 
@@ -666,6 +692,12 @@ async function handleRemoveRewardButtonClick(tabId) {
 
 function remove_stage0() {
   let removeButton = document.querySelector("#modmenu > a:nth-child(29)");
+  if (
+    document.querySelector("#modmenu > a:nth-child(29)").innerHTML != "移除悬赏"
+  ) {
+    alert("移除悬赏按钮未找到！");
+    return;
+  }
   removeButton.click();
 }
 
@@ -673,7 +705,10 @@ function remove_stage0() {
 
 async function handleQuickReplay(tabId) {
   if (!tabId) {
-    alert("无法获取TabId，请切换页面并重试！");
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      func: tabIdNotFoundAlert,
+    });
     return;
   }
 
@@ -712,11 +747,22 @@ function quick_reply(index) {
         break;
     }
   } else {
-    alert("未找到指定元素！(#fastpostmessage)");
+    chrome.scripting.executeScript({
+      target: { tabId },
+      func: fastPostMessageNotFoundAlert,
+    });
   }
 }
 
 /******************************************************************************* */
+
+function tabIdNotFoundAlert() {
+  alert("无法获取TabId，请切换页面并重试！");
+}
+
+function fastPostMessageNotFoundAlert() {
+  alert("未找到指定元素！(#fastpostmessage)");
+}
 
 function submit() {
   chrome.storage.sync.get("manual", (data) => {
