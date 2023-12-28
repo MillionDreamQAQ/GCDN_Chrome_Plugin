@@ -763,6 +763,16 @@ function quick_reply(index) {
           textArea.value += data.quickReplyData4;
         });
         break;
+      case 5:
+        chrome.storage.sync.get("quickReplyData5", (data) => {
+          textArea.value += data.quickReplyData5;
+        });
+        break;
+      case 6:
+        chrome.storage.sync.get("quickReplyData6", (data) => {
+          textArea.value += data.quickReplyData6;
+        });
+        break;
       default:
         break;
     }
