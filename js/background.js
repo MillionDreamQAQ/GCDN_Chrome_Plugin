@@ -402,6 +402,16 @@ async function contextClick(info, tab) {
       await handleQuickReplay(tabId);
       break;
 
+    case "quick_reply5":
+      replySelectionIndex = 5;
+      await handleQuickReplay(tabId);
+      break;
+
+    case "quick_reply6":
+      replySelectionIndex = 6;
+      await handleQuickReplay(tabId);
+      break;
+
     /********************************************************************** */
 
     default:
@@ -651,8 +661,7 @@ async function handleCloseButtonClick(tabId) {
 
 function close_stage0() {
   let closeButton = document.querySelector("#modmenu > a:nth-child(15)");
-  if (!closeButton || closeButton.innerHTML != "关闭"
-  ) {
+  if (!closeButton || closeButton.innerHTML != "关闭") {
     alert("关闭按钮未找到！");
     return;
   }
@@ -691,8 +700,7 @@ async function handleRemoveRewardButtonClick(tabId) {
 
 function remove_stage0() {
   let removeButton = document.querySelector("#modmenu > a:nth-child(29)");
-  if (!removeButton || removeButton.innerHTML != "移除悬赏"
-  ) {
+  if (!removeButton || removeButton.innerHTML != "移除悬赏") {
     alert("移除悬赏按钮未找到！");
     return;
   }
