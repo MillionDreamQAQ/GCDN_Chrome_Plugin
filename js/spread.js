@@ -33,6 +33,16 @@ function attachEvent() {
   document
     .getElementById("setStartTime")
     .addEventListener("click", startTimeChange);
+
+  document
+    .getElementById("setReviewBoard")
+    .addEventListener("click", reviewBoardChange);
+  document
+    .getElementById("setReviewStartTime")
+    .addEventListener("click", reviewStartTimeChange);
+  document
+    .getElementById("setReviewEndTime")
+    .addEventListener("click", reviewEndTimeChange);
 }
 
 function setDefaultData() {
@@ -45,6 +55,9 @@ function setDefaultData() {
       "setArea",
       "bugBoard",
       "startTime",
+      "reviewBoard",
+      "reviewStartTime",
+      "reviewEndTime",
     ],
     function (result) {
       if (result?.board) {
@@ -67,6 +80,16 @@ function setDefaultData() {
       }
       if (result?.startTime) {
         document.getElementById("startTime").value = result.startTime;
+      }
+      if (result?.reviewBoard) {
+        document.getElementById("reviewBoard").value = result.reviewBoard;
+      }
+      if (result?.reviewStartTime) {
+        document.getElementById("reviewStartTime").value =
+          result.reviewStartTime;
+      }
+      if (result?.reviewEndTime) {
+        document.getElementById("reviewEndTime").value = result.reviewEndTime;
       }
     }
   );
@@ -158,8 +181,7 @@ function initSpread() {
       sheet2.autoGenerateColumns = false;
       sheet2.bindColumns(colInfos2);
 
-      let sheet3 = spread.getSheet(2);
-      let colInfos3 = [
+      let reviewColInfo = [
         { name: "forumname", displayName: "板块", size: 180 },
         { name: "subject", displayName: "帖子标题", size: 300 },
         { name: "name", displayName: "处理状态", size: 100 },
@@ -179,62 +201,25 @@ function initSpread() {
         },
         { name: "lastposter", displayName: "最后回帖用户", size: 100 },
       ];
+
+      let sheet3 = spread.getSheet(2);
       sheet3.autoGenerateColumns = false;
-      sheet3.bindColumns(colInfos3);
+      sheet3.bindColumns(reviewColInfo);
 
       let sheet4 = spread.getSheet(3);
-      let colInfos4 = [
-        { name: "forumname", displayName: "板块", size: 180 },
-        { name: "subject", displayName: "帖子标题", size: 300 },
-        { name: "name", displayName: "处理状态", size: 100 },
-        { name: "author", displayName: "发帖用户", size: 100 },
-        { name: "authorgroup", displayName: "发帖用户组", size: 120 },
-        {
-          name: "postdate",
-          displayName: "发帖时间",
-          size: 100,
-          formatter: "MM-dd hh:mm",
-        },
-        {
-          name: "lastpostdate",
-          displayName: "最后回复四件",
-          size: 100,
-          formatter: "MM-dd hh:mm",
-        },
-        { name: "lastposter", displayName: "最后回帖用户", size: 100 },
-      ];
       sheet4.autoGenerateColumns = false;
-      sheet4.bindColumns(colInfos4);
+      sheet4.bindColumns(reviewColInfo);
 
       let sheet5 = spread.getSheet(4);
-      let colInfos5 = [
-        { name: "forumname", displayName: "板块", size: 180 },
-        { name: "subject", displayName: "帖子标题", size: 300 },
-        { name: "name", displayName: "处理状态", size: 100 },
-        { name: "author", displayName: "发帖用户", size: 100 },
-        { name: "authorgroup", displayName: "发帖用户组", size: 120 },
-        {
-          name: "postdate",
-          displayName: "发帖时间",
-          size: 100,
-          formatter: "MM-dd hh:mm",
-        },
-        {
-          name: "lastpostdate",
-          displayName: "最后回复时间",
-          size: 100,
-          formatter: "MM-dd hh:mm",
-        },
-        { name: "lastposter", displayName: "最后回帖用户", size: 100 },
-      ];
       sheet5.autoGenerateColumns = false;
-      sheet5.bindColumns(colInfos4);
+      sheet5.bindColumns(reviewColInfo);
     }
 
     fetchHelpData();
     fetchBugData();
     fetchReviewData();
     fetchReview7Data();
+    fetchReviewCustomData();
   });
 }
 
@@ -1127,7 +1112,7 @@ function startTimeChange() {
 /**********************Sheet3 Review-1****************** */
 
 function fetchReviewData() {
-  let reviewBoard = 230;
+  let reviewBoard = document.getElementById("reviewBoard").value;
 
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
@@ -1140,6 +1125,7 @@ function fetchReviewData() {
       fid: reviewBoard,
       startdate: startTime,
       enddate: endTime,
+      key: "J5yP7hL8mK",
     }),
     headers: new Headers({
       "Content-Type": "application/json",
@@ -1299,12 +1285,30 @@ function bindingReviewData(data) {
   sheet.resumePaint();
 }
 
+function reviewBoardChange() {
+  chrome.storage.sync.set({
+    reviewBoard: document.getElementById("reviewBoard").value,
+  });
+
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(2);
+  sheet.setDataSource([]);
+  let sheet2 = spread.getSheet(3);
+  sheet2.setDataSource([]);
+  let sheet3 = spread.getSheet(4);
+  sheet3.setDataSource([]);
+
+  fetchReviewData();
+  fetchReview7Data();
+  fetchReviewCustomData();
+}
+
 /************************************************* */
 
 /**********************Sheet4 Review-7****************** */
 
 function fetchReview7Data() {
-  let reviewBoard = 230;
+  let reviewBoard = document.getElementById("reviewBoard").value;
 
   const lastWeek = new Date();
   lastWeek.setDate(lastWeek.getDate() - 7);
@@ -1320,6 +1324,7 @@ function fetchReview7Data() {
       fid: reviewBoard,
       startdate: startTime,
       enddate: endTime,
+      key: "J5yP7hL8mK",
     }),
     headers: new Headers({
       "Content-Type": "application/json",
@@ -1484,8 +1489,7 @@ function bindingReview7Data(data) {
 /**********************Sheet4 Review-Custom****************** */
 
 function fetchReviewCustomData() {
-  let reviewBoard = 230;
-
+  let reviewBoard = document.getElementById("reviewBoard").value;
   let startTime = document.getElementById("reviewStartTime").value;
   let endTime = document.getElementById("reviewEndTime").value;
 
@@ -1495,6 +1499,7 @@ function fetchReviewCustomData() {
       fid: reviewBoard,
       startdate: startTime,
       enddate: endTime,
+      key: "J5yP7hL8mK",
     }),
     headers: new Headers({
       "Content-Type": "application/json",
@@ -1502,7 +1507,7 @@ function fetchReviewCustomData() {
   })
     .then((res) => res.json())
     .catch((error) => console.error("Error:", error))
-    .then((response) => bindingReview7Data(response));
+    .then((response) => bindingReviewCustomData(response));
 }
 
 function bindingReviewCustomData(data) {
@@ -1652,6 +1657,30 @@ function bindingReviewCustomData(data) {
   sheet.rowFilter(rowFilter);
 
   sheet.resumePaint();
+}
+
+function reviewStartTimeChange() {
+  chrome.storage.sync.set({
+    reviewStartTime: document.getElementById("reviewStartTime").value,
+  });
+
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(4);
+  sheet.setDataSource([]);
+
+  fetchReviewCustomData();
+}
+
+function reviewEndTimeChange() {
+  chrome.storage.sync.set({
+    reviewEndTime: document.getElementById("reviewEndTime").value,
+  });
+
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(3);
+  sheet.setDataSource([]);
+
+  fetchReviewCustomData();
 }
 
 /************************************************* */
