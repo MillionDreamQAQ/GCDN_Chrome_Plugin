@@ -223,7 +223,7 @@ function initSpread() {
   });
 }
 
-/**********************Sheet1 FetchData****************** */
+/**********************Sheet1 Post****************** */
 
 function fetchHelpData() {
   let forumElement = document.getElementById("forumdata");
@@ -913,7 +913,7 @@ function filterByArea(setArea, sheet) {
 
 /************************************************* */
 
-/**********************Sheet2 FetchData****************** */
+/**********************Sheet2 Bug****************** */
 
 function fetchBugData() {
   let bugBoard = document.getElementById("bugBoard").value;
@@ -1677,7 +1677,7 @@ function reviewEndTimeChange() {
   });
 
   let spread = GC.Spread.Sheets.findControl("ss");
-  let sheet = spread.getSheet(3);
+  let sheet = spread.getSheet(4);
   sheet.setDataSource([]);
 
   fetchReviewCustomData();
