@@ -121,8 +121,21 @@ function initSpread() {
       let sheet = spread.getSheet(0);
       sheet.setDataSource([]);
 
-      let sheet2 = spread.getSheet(1);
-      sheet2.setDataSource([]);
+      let bugSheet = spread.getSheet(1);
+      bugSheet.setDataSource([]);
+      bugSheet.options.sheetTabColor = "red";
+
+      let reviewSheet = spread.getSheet(2);
+      reviewSheet.setDataSource([]);
+      reviewSheet.options.sheetTabColor = "Honeydew";
+
+      let reviewSheet7Days = spread.getSheet(3);
+      reviewSheet7Days.setDataSource([]);
+      reviewSheet7Days.options.sheetTabColor = "AliceBlue";
+
+      let reviewSheetCustom = spread.getSheet(4);
+      reviewSheetCustom.setDataSource([]);
+      reviewSheetCustom.options.sheetTabColor = "lavender";
     } else {
       spread.options.scrollbarMaxAlign = true;
       spread.options.newTabVisible = false;
@@ -164,8 +177,8 @@ function initSpread() {
       sheet.autoGenerateColumns = false;
       sheet.bindColumns(colInfos);
 
-      let sheet2 = spread.getSheet(1);
-      let colInfos2 = [
+      let bugSheet = spread.getSheet(1);
+      let bugColInfos = [
         {
           name: "主题发布时间",
           displayName: "发帖时间",
@@ -178,8 +191,9 @@ function initSpread() {
         { name: "发帖用户", displayName: "发帖用户", size: 100 },
         { name: "主题类型", displayName: "帖子类型", size: 100 },
       ];
-      sheet2.autoGenerateColumns = false;
-      sheet2.bindColumns(colInfos2);
+      bugSheet.autoGenerateColumns = false;
+      bugSheet.bindColumns(bugColInfos);
+      bugSheet.options.sheetTabColor = "red";
 
       let reviewColInfo = [
         { name: "forumname", displayName: "板块", size: 180 },
@@ -202,17 +216,20 @@ function initSpread() {
         { name: "lastposter", displayName: "最后回帖用户", size: 100 },
       ];
 
-      let sheet3 = spread.getSheet(2);
-      sheet3.autoGenerateColumns = false;
-      sheet3.bindColumns(reviewColInfo);
+      let reviewSheet = spread.getSheet(2);
+      reviewSheet.autoGenerateColumns = false;
+      reviewSheet.bindColumns(reviewColInfo);
+      reviewSheet.options.sheetTabColor = "Honeydew";
 
-      let sheet4 = spread.getSheet(3);
-      sheet4.autoGenerateColumns = false;
-      sheet4.bindColumns(reviewColInfo);
+      let reviewSheet7Days = spread.getSheet(3);
+      reviewSheet7Days.autoGenerateColumns = false;
+      reviewSheet7Days.bindColumns(reviewColInfo);
+      reviewSheet7Days.options.sheetTabColor = "AliceBlue";
 
-      let sheet5 = spread.getSheet(4);
-      sheet5.autoGenerateColumns = false;
-      sheet5.bindColumns(reviewColInfo);
+      let reviewSheetCustom = spread.getSheet(4);
+      reviewSheetCustom.autoGenerateColumns = false;
+      reviewSheetCustom.bindColumns(reviewColInfo);
+      reviewSheetCustom.options.sheetTabColor = "lavender";
     }
 
     fetchHelpData();
