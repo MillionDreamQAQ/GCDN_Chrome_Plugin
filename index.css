@@ -69,7 +69,7 @@ body {
 
     .input {
       height: 17px;
-      width: 180px;
+      width: 120px;
       margin: 0px 16px 0px 0px;
       outline: none;
     }
@@ -82,10 +82,45 @@ body {
     .board-container {
       display: flex;
       align-items: center;
-      margin-right: 54px;
+      margin-right: 253px;
     }
 
     .start-container {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .review-container {
+    display: flex;
+    align-items: center;
+    font-size: 10pt;
+    margin-top: 10px;
+
+    .input {
+      height: 17px;
+      width: 100px;
+      margin: 0px 16px 0px 0px;
+      outline: none;
+    }
+
+    .button {
+      margin-right: 8px;
+      height: 24px;
+    }
+
+    .board-container {
+      display: flex;
+      align-items: center;
+      margin-right: 10px;
+    }
+
+    .start-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .end-container {
       display: flex;
       align-items: center;
     }

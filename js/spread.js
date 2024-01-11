@@ -74,7 +74,10 @@ function setDefaultData() {
 
 function initSpread() {
   let spread = new GC.Spread.Sheets.Workbook(document.getElementById("ss"));
-  spread.addSheet(1, new GC.Spread.Sheets.Worksheet("Bug反馈"));
+  spread.addSheet(1, new GC.Spread.Sheets.Worksheet("Bug"));
+  spread.addSheet(2, new GC.Spread.Sheets.Worksheet("Review-1"));
+  spread.addSheet(3, new GC.Spread.Sheets.Worksheet("Review-7"));
+  spread.addSheet(4, new GC.Spread.Sheets.Worksheet("Review-Custom"));
   spread.bind(
     GC.Spread.Sheets.Events.ActiveSheetChanged,
     function (sender, args) {
@@ -154,9 +157,84 @@ function initSpread() {
       ];
       sheet2.autoGenerateColumns = false;
       sheet2.bindColumns(colInfos2);
+
+      let sheet3 = spread.getSheet(2);
+      let colInfos3 = [
+        { name: "forumname", displayName: "板块", size: 180 },
+        { name: "subject", displayName: "帖子标题", size: 300 },
+        { name: "name", displayName: "处理状态", size: 100 },
+        { name: "author", displayName: "发帖用户", size: 100 },
+        { name: "authorgroup", displayName: "发帖用户组", size: 120 },
+        {
+          name: "postdate",
+          displayName: "发帖时间",
+          size: 100,
+          formatter: "MM-dd hh:mm",
+        },
+        {
+          name: "lastpostdate",
+          displayName: "最后回复时间",
+          size: 100,
+          formatter: "MM-dd hh:mm",
+        },
+        { name: "lastposter", displayName: "最后回帖用户", size: 100 },
+      ];
+      sheet3.autoGenerateColumns = false;
+      sheet3.bindColumns(colInfos3);
+
+      let sheet4 = spread.getSheet(3);
+      let colInfos4 = [
+        { name: "forumname", displayName: "板块", size: 180 },
+        { name: "subject", displayName: "帖子标题", size: 300 },
+        { name: "name", displayName: "处理状态", size: 100 },
+        { name: "author", displayName: "发帖用户", size: 100 },
+        { name: "authorgroup", displayName: "发帖用户组", size: 120 },
+        {
+          name: "postdate",
+          displayName: "发帖时间",
+          size: 100,
+          formatter: "MM-dd hh:mm",
+        },
+        {
+          name: "lastpostdate",
+          displayName: "最后回复四件",
+          size: 100,
+          formatter: "MM-dd hh:mm",
+        },
+        { name: "lastposter", displayName: "最后回帖用户", size: 100 },
+      ];
+      sheet4.autoGenerateColumns = false;
+      sheet4.bindColumns(colInfos4);
+
+      let sheet5 = spread.getSheet(4);
+      let colInfos5 = [
+        { name: "forumname", displayName: "板块", size: 180 },
+        { name: "subject", displayName: "帖子标题", size: 300 },
+        { name: "name", displayName: "处理状态", size: 100 },
+        { name: "author", displayName: "发帖用户", size: 100 },
+        { name: "authorgroup", displayName: "发帖用户组", size: 120 },
+        {
+          name: "postdate",
+          displayName: "发帖时间",
+          size: 100,
+          formatter: "MM-dd hh:mm",
+        },
+        {
+          name: "lastpostdate",
+          displayName: "最后回复时间",
+          size: 100,
+          formatter: "MM-dd hh:mm",
+        },
+        { name: "lastposter", displayName: "最后回帖用户", size: 100 },
+      ];
+      sheet5.autoGenerateColumns = false;
+      sheet5.bindColumns(colInfos4);
     }
+
     fetchHelpData();
     fetchBugData();
+    fetchReviewData();
+    fetchReview7Data();
   });
 }
 
@@ -1042,6 +1120,538 @@ function startTimeChange() {
   sheet.setDataSource([]);
 
   fetchBugData();
+}
+
+/************************************************* */
+
+/**********************Sheet3 Review-1****************** */
+
+function fetchReviewData() {
+  let reviewBoard = 230;
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  let startTime = yesterday.toLocaleDateString();
+  let endTime = yesterday.toLocaleDateString();
+
+  fetch("https://gcdn.grapecity.com.cn/api/forumpoststatus.php", {
+    method: "POST",
+    body: JSON.stringify({
+      fid: reviewBoard,
+      startdate: startTime,
+      enddate: endTime,
+    }),
+    headers: new Headers({
+      "Content-Type": "application/json",
+    }),
+  })
+    .then((res) => res.json())
+    .catch((error) => console.error("Error:", error))
+    .then((response) => bindingReviewData(response));
+}
+
+function bindingReviewData(data) {
+  if (!data?.length) {
+    return;
+  }
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(2);
+
+  sheet.suspendPaint();
+
+  sheet.setDataSource(data);
+
+  let style1 = new GC.Spread.Sheets.Style();
+  style1.backColor = "#FB6573";
+
+  let style2 = new GC.Spread.Sheets.Style();
+  style2.backColor = "#C6E7EC";
+
+  let style3 = new GC.Spread.Sheets.Style();
+  style3.backColor = "#64E834";
+
+  let style4 = new GC.Spread.Sheets.Style();
+  style4.backColor = "#6A5ACD";
+
+  let style5 = new GC.Spread.Sheets.Style();
+  style5.foreColor = "#5b457c";
+
+  let style6 = new GC.Spread.Sheets.Style();
+  style6.foreColor = "#FFCB6C";
+
+  let row = sheet.getRowCount();
+
+  let ranges = [new GC.Spread.Sheets.Range(0, 2, row, 1)];
+  let ranges1 = [new GC.Spread.Sheets.Range(0, 4, row, 1)];
+
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "未处理",
+    style1,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "处理中",
+    style2,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "调研中",
+    style4,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已处理",
+    style3,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "合作伙伴",
+    style5,
+    ranges1
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "金牌服务用户",
+    style6,
+    ranges1
+  );
+
+  let img = null;
+  let w =
+    sheet.getColumnWidth(0) +
+    sheet.getColumnWidth(1) +
+    sheet.getColumnWidth(2) +
+    sheet.getColumnWidth(3) +
+    (sheet.getColumnWidth(4) / 7) * 5.8;
+  function GoldenUserCellType() {}
+  GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
+  GoldenUserCellType.prototype.paint = function (
+    ctx,
+    value,
+    x,
+    y,
+    width,
+    height,
+    style,
+    context
+  ) {
+    GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
+
+    if (img) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.drawImage(img, x + w, y, 20, 20);
+      ctx.restore();
+      return;
+    }
+    img = new Image();
+    img.src = "../images/golden.png";
+    img.onload = function () {
+      context.sheet.repaint();
+    };
+  };
+
+  for (let i = 0; i < row; i++) {
+    if (sheet.getCell(i, 4).value() == "金牌服务用户") {
+      sheet.setCellType(i, 0, new GoldenUserCellType());
+    }
+  }
+
+  let titleIndex = -1;
+  for (let i = 0; i < sheet.getColumnCount(); i++) {
+    if (
+      sheet.getText(0, i, GC.Spread.Sheets.SheetArea.colHeader) === "帖子标题"
+    ) {
+      titleIndex = i;
+      break;
+    }
+  }
+  if (titleIndex >= 0) {
+    for (let i = 0; i < data.length; i++) {
+      sheet.setHyperlink(
+        i,
+        titleIndex,
+        {
+          url:
+            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
+            data[i]["tid"],
+          tooltip:
+            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
+            data[i]["tid"],
+          linkColor: "#0066cc",
+          visitedLinkColor: "#3399ff",
+        },
+        GC.Spread.Sheets.SheetArea.viewport
+      );
+      sheet.setText(i, titleIndex, data[i]["subject"]);
+    }
+  }
+  let range = new GC.Spread.Sheets.Range(-1, 0, -1, sheet.getColumnCount());
+  let rowFilter = new GC.Spread.Sheets.Filter.HideRowFilter(range);
+  sheet.rowFilter(rowFilter);
+
+  sheet.resumePaint();
+}
+
+/************************************************* */
+
+/**********************Sheet4 Review-7****************** */
+
+function fetchReview7Data() {
+  let reviewBoard = 230;
+
+  const lastWeek = new Date();
+  lastWeek.setDate(lastWeek.getDate() - 7);
+  let startTime = lastWeek.toLocaleDateString();
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  let endTime = yesterday.toLocaleDateString();
+
+  fetch("https://gcdn.grapecity.com.cn/api/forumpoststatus.php", {
+    method: "POST",
+    body: JSON.stringify({
+      fid: reviewBoard,
+      startdate: startTime,
+      enddate: endTime,
+    }),
+    headers: new Headers({
+      "Content-Type": "application/json",
+    }),
+  })
+    .then((res) => res.json())
+    .catch((error) => console.error("Error:", error))
+    .then((response) => bindingReview7Data(response));
+}
+
+function bindingReview7Data(data) {
+  if (!data?.length) {
+    return;
+  }
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(3);
+
+  sheet.suspendPaint();
+
+  sheet.setDataSource(data);
+
+  let style1 = new GC.Spread.Sheets.Style();
+  style1.backColor = "#FB6573";
+
+  let style2 = new GC.Spread.Sheets.Style();
+  style2.backColor = "#C6E7EC";
+
+  let style3 = new GC.Spread.Sheets.Style();
+  style3.backColor = "#64E834";
+
+  let style4 = new GC.Spread.Sheets.Style();
+  style4.backColor = "#6A5ACD";
+
+  let style5 = new GC.Spread.Sheets.Style();
+  style5.foreColor = "#5b457c";
+
+  let style6 = new GC.Spread.Sheets.Style();
+  style6.foreColor = "#FFCB6C";
+
+  let row = sheet.getRowCount();
+
+  let ranges = [new GC.Spread.Sheets.Range(0, 2, row, 1)];
+  let ranges1 = [new GC.Spread.Sheets.Range(0, 4, row, 1)];
+
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "未处理",
+    style1,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "处理中",
+    style2,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "调研中",
+    style4,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已处理",
+    style3,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "合作伙伴",
+    style5,
+    ranges1
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "金牌服务用户",
+    style6,
+    ranges1
+  );
+
+  let img = null;
+  let w =
+    sheet.getColumnWidth(0) +
+    sheet.getColumnWidth(1) +
+    sheet.getColumnWidth(2) +
+    sheet.getColumnWidth(3) +
+    (sheet.getColumnWidth(4) / 7) * 5.8;
+  function GoldenUserCellType() {}
+  GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
+  GoldenUserCellType.prototype.paint = function (
+    ctx,
+    value,
+    x,
+    y,
+    width,
+    height,
+    style,
+    context
+  ) {
+    GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
+
+    if (img) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.drawImage(img, x + w, y, 20, 20);
+      ctx.restore();
+      return;
+    }
+    img = new Image();
+    img.src = "../images/golden.png";
+    img.onload = function () {
+      context.sheet.repaint();
+    };
+  };
+
+  for (let i = 0; i < row; i++) {
+    if (sheet.getCell(i, 4).value() == "金牌服务用户") {
+      sheet.setCellType(i, 0, new GoldenUserCellType());
+    }
+  }
+
+  let titleIndex = -1;
+  for (let i = 0; i < sheet.getColumnCount(); i++) {
+    if (
+      sheet.getText(0, i, GC.Spread.Sheets.SheetArea.colHeader) === "帖子标题"
+    ) {
+      titleIndex = i;
+      break;
+    }
+  }
+  if (titleIndex >= 0) {
+    for (let i = 0; i < data.length; i++) {
+      sheet.setHyperlink(
+        i,
+        titleIndex,
+        {
+          url:
+            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
+            data[i]["tid"],
+          tooltip:
+            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
+            data[i]["tid"],
+          linkColor: "#0066cc",
+          visitedLinkColor: "#3399ff",
+        },
+        GC.Spread.Sheets.SheetArea.viewport
+      );
+      sheet.setText(i, titleIndex, data[i]["subject"]);
+    }
+  }
+  let range = new GC.Spread.Sheets.Range(-1, 0, -1, sheet.getColumnCount());
+  let rowFilter = new GC.Spread.Sheets.Filter.HideRowFilter(range);
+  sheet.rowFilter(rowFilter);
+
+  sheet.resumePaint();
+}
+
+/************************************************* */
+
+/**********************Sheet4 Review-Custom****************** */
+
+function fetchReviewCustomData() {
+  let reviewBoard = 230;
+
+  let startTime = document.getElementById("reviewStartTime").value;
+  let endTime = document.getElementById("reviewEndTime").value;
+
+  fetch("https://gcdn.grapecity.com.cn/api/forumpoststatus.php", {
+    method: "POST",
+    body: JSON.stringify({
+      fid: reviewBoard,
+      startdate: startTime,
+      enddate: endTime,
+    }),
+    headers: new Headers({
+      "Content-Type": "application/json",
+    }),
+  })
+    .then((res) => res.json())
+    .catch((error) => console.error("Error:", error))
+    .then((response) => bindingReview7Data(response));
+}
+
+function bindingReviewCustomData(data) {
+  if (!data?.length) {
+    return;
+  }
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(4);
+
+  sheet.suspendPaint();
+
+  sheet.setDataSource(data);
+
+  let style1 = new GC.Spread.Sheets.Style();
+  style1.backColor = "#FB6573";
+
+  let style2 = new GC.Spread.Sheets.Style();
+  style2.backColor = "#C6E7EC";
+
+  let style3 = new GC.Spread.Sheets.Style();
+  style3.backColor = "#64E834";
+
+  let style4 = new GC.Spread.Sheets.Style();
+  style4.backColor = "#6A5ACD";
+
+  let style5 = new GC.Spread.Sheets.Style();
+  style5.foreColor = "#5b457c";
+
+  let style6 = new GC.Spread.Sheets.Style();
+  style6.foreColor = "#FFCB6C";
+
+  let row = sheet.getRowCount();
+
+  let ranges = [new GC.Spread.Sheets.Range(0, 2, row, 1)];
+  let ranges1 = [new GC.Spread.Sheets.Range(0, 4, row, 1)];
+
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "未处理",
+    style1,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "处理中",
+    style2,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "调研中",
+    style4,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已处理",
+    style3,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "合作伙伴",
+    style5,
+    ranges1
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "金牌服务用户",
+    style6,
+    ranges1
+  );
+
+  let img = null;
+  let w =
+    sheet.getColumnWidth(0) +
+    sheet.getColumnWidth(1) +
+    sheet.getColumnWidth(2) +
+    sheet.getColumnWidth(3) +
+    (sheet.getColumnWidth(4) / 7) * 5.8;
+  function GoldenUserCellType() {}
+  GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
+  GoldenUserCellType.prototype.paint = function (
+    ctx,
+    value,
+    x,
+    y,
+    width,
+    height,
+    style,
+    context
+  ) {
+    GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
+
+    if (img) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.drawImage(img, x + w, y, 20, 20);
+      ctx.restore();
+      return;
+    }
+    img = new Image();
+    img.src = "../images/golden.png";
+    img.onload = function () {
+      context.sheet.repaint();
+    };
+  };
+
+  for (let i = 0; i < row; i++) {
+    if (sheet.getCell(i, 4).value() == "金牌服务用户") {
+      sheet.setCellType(i, 0, new GoldenUserCellType());
+    }
+  }
+
+  let titleIndex = -1;
+  for (let i = 0; i < sheet.getColumnCount(); i++) {
+    if (
+      sheet.getText(0, i, GC.Spread.Sheets.SheetArea.colHeader) === "帖子标题"
+    ) {
+      titleIndex = i;
+      break;
+    }
+  }
+  if (titleIndex >= 0) {
+    for (let i = 0; i < data.length; i++) {
+      sheet.setHyperlink(
+        i,
+        titleIndex,
+        {
+          url:
+            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
+            data[i]["tid"],
+          tooltip:
+            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
+            data[i]["tid"],
+          linkColor: "#0066cc",
+          visitedLinkColor: "#3399ff",
+        },
+        GC.Spread.Sheets.SheetArea.viewport
+      );
+      sheet.setText(i, titleIndex, data[i]["subject"]);
+    }
+  }
+  let range = new GC.Spread.Sheets.Range(-1, 0, -1, sheet.getColumnCount());
+  let rowFilter = new GC.Spread.Sheets.Filter.HideRowFilter(range);
+  sheet.rowFilter(rowFilter);
+
+  sheet.resumePaint();
 }
 
 /************************************************* */
