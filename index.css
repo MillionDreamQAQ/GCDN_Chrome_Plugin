@@ -142,6 +142,7 @@ body {
 
   .data-container {
     font-size: 10pt;
+    margin-top: 8px;
 
     #forumdata {
       height: 15px;
@@ -161,7 +162,7 @@ body {
 
     .reply-item {
       display: flex;
-      margin-bottom: 10px;
+      margin: 4px 0;
       align-content: center;
       flex-wrap: wrap;
       flex-direction: row;
@@ -171,14 +172,14 @@ body {
       .input {
         height: 17px;
         width: 450px;
-        margin: 4px 4px 0px 0px;
+        margin: 2px 2px 0px 0px;
         outline: none;
       }
 
       .input-short {
         height: 17px;
         width: 50px;
-        margin: 4px 4px 0px 0px;
+        margin: 2px 2px 0px 0px;
         outline: none;
       }
     }
