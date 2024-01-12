@@ -243,8 +243,6 @@ function initSpread() {
 /**********************Sheet1 Post****************** */
 
 function fetchHelpData() {
-  let forumElement = document.getElementById("forumdata");
-  forumElement.innerHTML = "加载中...";
   let numElement = document.getElementById("num");
 
   let xhr = new XMLHttpRequest();
@@ -269,7 +267,8 @@ function fetchHelpData() {
             numElement.innerText = "辛苦啦，帖子已被你清空！！！";
             bindingHelpData(resp);
             fetchCustomerType();
-            forumElement.innerHTML = "";
+            document.querySelector('.loading').remove();
+            document.querySelector('.text').remove();
 
             let spread = GC.Spread.Sheets.findControl("ss");
             spread.options.scrollIgnoreHidden = true;
@@ -281,11 +280,13 @@ function fetchHelpData() {
             let setArea = parseFloat(document.getElementById("setArea").value);
             filterByArea(setArea, sheet);
           } else {
-            forumElement.innerHTML = "没有要处理的帖子";
+            document.querySelector('.loading').remove();
+            document.querySelector('.text').remove();
           }
         }
       } catch (e) {
-        forumElement.innerHTML = "获取失败，请重新获取";
+        document.querySelector('.loading').remove();
+        document.querySelector('.text').remove();
       }
     }
   };

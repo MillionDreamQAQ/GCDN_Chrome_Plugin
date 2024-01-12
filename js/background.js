@@ -33,7 +33,6 @@ const hintKeys = [
 chrome.storage.sync.get(hintKeys, function (data) {
   hintKeys.forEach((key, index) => {
     if (data?.[key]) {
-      console.log(data[key]);
       hints[index] = data[key];
     }
   });
