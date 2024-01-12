@@ -43,6 +43,8 @@ function attachEvent() {
   document
     .getElementById("setReviewEndTime")
     .addEventListener("click", reviewEndTimeChange);
+
+  // document.getElementById("test").addEventListener("click", dailyReviewExport);
 }
 
 function setDefaultData() {
@@ -267,8 +269,8 @@ function fetchHelpData() {
             numElement.innerText = "辛苦啦，帖子已被你清空！！！";
             bindingHelpData(resp);
             fetchCustomerType();
-            document.querySelector('.loading').remove();
-            document.querySelector('.text').remove();
+            document.querySelector(".loading").remove();
+            document.querySelector(".text").remove();
 
             let spread = GC.Spread.Sheets.findControl("ss");
             spread.options.scrollIgnoreHidden = true;
@@ -280,13 +282,13 @@ function fetchHelpData() {
             let setArea = parseFloat(document.getElementById("setArea").value);
             filterByArea(setArea, sheet);
           } else {
-            document.querySelector('.loading').remove();
-            document.querySelector('.text').remove();
+            document.querySelector(".loading").remove();
+            document.querySelector(".text").remove();
           }
         }
       } catch (e) {
-        document.querySelector('.loading').remove();
-        document.querySelector('.text').remove();
+        document.querySelector(".loading").remove();
+        document.querySelector(".text").remove();
       }
     }
   };
@@ -677,23 +679,98 @@ async function openNewTab() {
 
 function exportExcel() {
   let spread = GC.Spread.Sheets.findControl(document.getElementById("ss"));
-
-  let excelIo = new GC.Spread.Excel.IO();
-  let serializationOption = {
-    includeBindingSource: true,
-    columnHeadersAsFrozenRows: true,
-  };
-  let json = spread.toJSON(serializationOption);
-  let fileName = "forum.xlsx";
-  excelIo.save(
-    json,
+  // Review
+  if (spread.getActiveSheetIndex() > 1) {
+    dailyReviewExport(spread);
+    return;
+  }
+  // Others
+  spread.export(
     function (blob) {
-      saveAs(blob, fileName);
+      saveAs(blob, "forum.xlsx");
     },
     function (e) {
       console.log(e);
+    },
+    {
+      fileType: GC.Spread.Sheets.FileType.excel,
+      includeBindingSource: true,
     }
   );
+}
+
+function dailyReviewExport(spread) {
+  let exportSpread = new GC.Spread.Sheets.Workbook();
+  fetch("../template/template.sjs")
+    .then((response) => response.blob())
+    .then((blob) => {
+      exportSpread.open(
+        blob,
+        function () {
+          let sheet = exportSpread.getActiveSheet();
+          sheet.setValue(1, 3, "Joestar.Xu");
+
+          sheet.tables.findByName("考勤记录").expandBoundRows(true);
+          let dataSource = {
+            record: [],
+          };
+          spread
+            .getActiveSheet()
+            .getDataSource()
+            .forEach((data) => {
+              dataSource.record.push({
+                帖子链接: `http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=${data.tid}`,
+                负责人: data.lastposter,
+              });
+            });
+
+          let source = new GC.Spread.Sheets.Bindings.CellBindingSource(
+            dataSource
+          );
+          sheet.setDataSource(source);
+
+          let rowHeight = sheet.getRowHeight(3);
+          for (let i = 0; i < dataSource.record.length; i++) {
+            sheet.setRowHeight(3 + i, rowHeight);
+            let urlCell = sheet.getCell(3 + i, 1);
+            urlCell.font("14pt Microsoft YaHei UI");
+            let posterCell = sheet.getCell(3 + i, 2);
+            posterCell.font("14pt Microsoft YaHei UI");
+            let urlValue = urlCell.value();
+            sheet.setHyperlink(
+              3 + i,
+              1,
+              {
+                url: urlValue,
+                tooltip: urlValue,
+                linkColor: "#0066cc",
+                visitedLinkColor: "#3399ff",
+              },
+              GC.Spread.Sheets.SheetArea.viewport
+            );
+          }
+
+          exportSpread.export(
+            function (blob) {
+              saveAs(
+                blob,
+                `(${new Date().toLocaleDateString()})DailyReviewExport.xlsx`
+              );
+            },
+            function (e) {
+              console.log(e);
+            },
+            {
+              fileType: GC.Spread.Sheets.FileType.excel,
+              includeBindingSource: true,
+            }
+          );
+        },
+        function (e) {
+          console.log(e);
+        }
+      );
+    });
 }
 
 function showAll() {
