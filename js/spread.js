@@ -44,7 +44,12 @@ function attachEvent() {
     .getElementById("setReviewEndTime")
     .addEventListener("click", reviewEndTimeChange);
 
-  // document.getElementById("test").addEventListener("click", dailyReviewExport);
+  document
+    .getElementById("confirm-button")
+    .addEventListener("click", confirmExport);
+  document
+    .getElementById("cancel-button")
+    .addEventListener("click", closeExport);
 }
 
 function setDefaultData() {
@@ -530,7 +535,25 @@ function bindingHelpData(data) {
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "暂不采纳",
+    style1,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "处理中",
+    style2,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "沟通中",
+    style2,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已采纳",
     style2,
     ranges
   );
@@ -543,6 +566,12 @@ function bindingHelpData(data) {
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "已处理",
+    style3,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已支持",
     style3,
     ranges
   );
@@ -681,7 +710,7 @@ function exportExcel() {
   let spread = GC.Spread.Sheets.findControl(document.getElementById("ss"));
   // Review
   if (spread.getActiveSheetIndex() > 1) {
-    dailyReviewExport(spread);
+    showExportDialog();
     return;
   }
   // Others
@@ -699,7 +728,7 @@ function exportExcel() {
   );
 }
 
-function dailyReviewExport(spread) {
+function dailyReviewExport(spread, name) {
   let exportSpread = new GC.Spread.Sheets.Workbook();
   fetch("../template/template.sjs")
     .then((response) => response.blob())
@@ -708,7 +737,7 @@ function dailyReviewExport(spread) {
         blob,
         function () {
           let sheet = exportSpread.getActiveSheet();
-          sheet.setValue(1, 3, "Joestar.Xu");
+          sheet.setValue(1, 3, name);
 
           sheet.tables.findByName("考勤记录").expandBoundRows(true);
           let dataSource = {
@@ -771,6 +800,25 @@ function dailyReviewExport(spread) {
         }
       );
     });
+}
+
+function showExportDialog() {
+  let dialog = document.querySelector("#export-dialog");
+  dialog.showModal();
+}
+
+function confirmExport() {
+  let spread = GC.Spread.Sheets.findControl(document.getElementById("ss"));
+
+  let selectBox = document.querySelector("#export-select");
+  let selectedOption = selectBox.options[selectBox.selectedIndex].text;
+  dailyReviewExport(spread, selectedOption);
+  closeExport();
+}
+
+function closeExport() {
+  let dialog = document.querySelector("#export-dialog");
+  dialog.close();
 }
 
 function showAll() {
@@ -1072,7 +1120,25 @@ function bindingBugData(data) {
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "暂不采纳",
+    style1,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "处理中",
+    style2,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "沟通中",
+    style2,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已采纳",
     style2,
     ranges
   );
@@ -1085,6 +1151,12 @@ function bindingBugData(data) {
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "已处理",
+    style3,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已支持",
     style3,
     ranges
   );
@@ -1273,7 +1345,25 @@ function bindingReviewData(data) {
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "暂不采纳",
+    style1,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "处理中",
+    style2,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "沟通中",
+    style2,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已采纳",
     style2,
     ranges
   );
@@ -1286,6 +1376,12 @@ function bindingReviewData(data) {
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "已处理",
+    style3,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已支持",
     style3,
     ranges
   );
@@ -1472,7 +1568,25 @@ function bindingReview7Data(data) {
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "暂不采纳",
+    style1,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "处理中",
+    style2,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "沟通中",
+    style2,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已采纳",
     style2,
     ranges
   );
@@ -1485,6 +1599,12 @@ function bindingReview7Data(data) {
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "已处理",
+    style3,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已支持",
     style3,
     ranges
   );
@@ -1647,7 +1767,25 @@ function bindingReviewCustomData(data) {
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "暂不采纳",
+    style1,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "处理中",
+    style2,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "沟通中",
+    style2,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已采纳",
     style2,
     ranges
   );
@@ -1660,6 +1798,12 @@ function bindingReviewCustomData(data) {
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "已处理",
+    style3,
+    ranges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已支持",
     style3,
     ranges
   );

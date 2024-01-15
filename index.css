@@ -151,7 +151,7 @@ body {
     .num {
       font-weight: bold;
       font-size: large;
-      margin: 8px 0
+      margin: 8px 0;
     }
   }
 
@@ -187,5 +187,25 @@ body {
 
   .shortcut-key-container {
     font-size: 10pt;
+  }
+
+  #export-dialog {
+    display: flex;
+    align-items: center;
+    top: -50%;
+    font-size: 10pt;
+
+    select {
+      margin: 8px 8px 8px 0px;
+
+      outline: none;
+      height: 24px;
+      width: 100px;
+    }
+
+    button {
+      margin-left: 8px;
+      height: 24px;
+    }
   }
 }
