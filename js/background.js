@@ -192,21 +192,28 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "story_doing",
     type: "normal",
-    title: "处理中",
+    title: "沟通中",
     parentId: storyParent,
   });
 
   chrome.contextMenus.create({
-    id: "story_query",
+    id: "story_adopt",
     type: "normal",
-    title: "调研中",
+    title: "已采纳",
     parentId: storyParent,
   });
 
   chrome.contextMenus.create({
-    id: "story_done",
+    id: "story_support",
     type: "normal",
-    title: "已处理",
+    title: "已支持",
+    parentId: storyParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "story_reserve",
+    type: "normal",
+    title: "暂不采纳",
     parentId: storyParent,
   });
 
@@ -231,6 +238,13 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 
   chrome.contextMenus.create({
+    id: "communicate",
+    type: "normal",
+    title: "沟通中",
+    parentId: changeParent,
+  });
+
+  chrome.contextMenus.create({
     id: "query",
     type: "normal",
     title: "调研中",
@@ -238,9 +252,30 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 
   chrome.contextMenus.create({
+    id: "adopt",
+    type: "normal",
+    title: "已采纳",
+    parentId: changeParent,
+  });
+
+  chrome.contextMenus.create({
     id: "done",
     type: "normal",
     title: "已处理",
+    parentId: changeParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "support",
+    type: "normal",
+    title: "已支持",
+    parentId: changeParent,
+  });
+
+  chrome.contextMenus.create({
+    id: "reserve",
+    type: "normal",
+    title: "暂不采纳",
     parentId: changeParent,
   });
 
@@ -271,9 +306,9 @@ chrome.contextMenus.onClicked.addListener(contextClick);
 async function contextClick(info, tab) {
   tabInfo = tab;
   tabId = tabInfo.id;
+  let text = info.selectionText;
   switch (info.menuItemId) {
     case "search":
-      let text = info.selectionText;
       if (text.indexOf("(") != -1 || text.indexOf(")") != -1) {
         text = text.replaceAll("(", "");
         text = text.replaceAll(")", "");
@@ -318,19 +353,24 @@ async function contextClick(info, tab) {
       moveTargetStatus = "未处理";
       await handleMoveButtonClick(tabId);
       break;
-    case "story_doing":
+    case "story_communication":
       moveTargetSpace = "产品需求";
-      moveTargetStatus = "处理中";
+      moveTargetStatus = "沟通中";
       await handleMoveButtonClick(tabId);
       break;
-    case "story_done":
+    case "story_adopt":
       moveTargetSpace = "产品需求";
-      moveTargetStatus = "已处理";
+      moveTargetStatus = "已采纳";
       await handleMoveButtonClick(tabId);
       break;
-    case "story_query":
+    case "story_support":
       moveTargetSpace = "产品需求";
-      moveTargetStatus = "调研中";
+      moveTargetStatus = "已支持";
+      await handleMoveButtonClick(tabId);
+      break;
+    case "story_reserve":
+      moveTargetSpace = "产品需求";
+      moveTargetStatus = "暂不采纳";
       await handleMoveButtonClick(tabId);
       break;
 
@@ -391,12 +431,28 @@ async function contextClick(info, tab) {
       changeStatusTargetStatus = "处理中";
       await handleChangeStatusButtonClick(tabId);
       break;
+    case "communicate":
+      changeStatusTargetStatus = "沟通中";
+      await handleChangeStatusButtonClick(tabId);
+      break;
+    case "adopt":
+      changeStatusTargetStatus = "已采纳";
+      await handleChangeStatusButtonClick(tabId);
+      break;
     case "done":
       changeStatusTargetStatus = "已处理";
       await handleChangeStatusButtonClick(tabId);
       break;
+    case "support":
+      changeStatusTargetStatus = "已支持";
+      await handleChangeStatusButtonClick(tabId);
+      break;
     case "query":
       changeStatusTargetStatus = "调研中";
+      await handleChangeStatusButtonClick(tabId);
+      break;
+    case "reserve":
+      changeStatusTargetStatus = "暂不采纳";
       await handleChangeStatusButtonClick(tabId);
       break;
 
@@ -578,7 +634,7 @@ function move_stage1(space) {
 function move_stage2(status) {
   let statusSelect = document.querySelector("#threadtypes > select");
   let offset = 0;
-  if (statusSelect.options.length == 5) {
+  if (statusSelect.options.length >= 5) {
     offset = 1;
   }
   switch (status) {
@@ -586,13 +642,19 @@ function move_stage2(status) {
       statusSelect.options.selectedIndex = offset + 0;
       break;
     case "处理中":
+    case "沟通中":
       statusSelect.options.selectedIndex = offset + 1;
       break;
     case "调研中":
+    case "已采纳":
       statusSelect.options.selectedIndex = offset + 2;
       break;
     case "已处理":
+    case "已支持":
       statusSelect.options.selectedIndex = offset + 3;
+      break;
+    case "暂不采纳":
+      statusSelect.options.selectedIndex = offset + 4;
       break;
     default:
       break;
@@ -641,7 +703,7 @@ function change_status_stage0() {
 function change_status_stage1(status) {
   let statusSelect = document.querySelector("#typeid");
   let offset = 0;
-  if (statusSelect.options.length == 5) {
+  if (statusSelect.options.length >= 5) {
     offset = 1;
   }
   switch (status) {
@@ -649,13 +711,19 @@ function change_status_stage1(status) {
       statusSelect.options.selectedIndex = offset + 0;
       break;
     case "处理中":
+    case "沟通中":
       statusSelect.options.selectedIndex = offset + 1;
       break;
     case "调研中":
+    case "已采纳":
       statusSelect.options.selectedIndex = offset + 2;
       break;
     case "已处理":
+    case "已支持":
       statusSelect.options.selectedIndex = offset + 3;
+      break;
+    case "暂不采纳":
+      statusSelect.options.selectedIndex = offset + 4;
       break;
     default:
       break;
