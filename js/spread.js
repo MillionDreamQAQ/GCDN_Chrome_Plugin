@@ -813,6 +813,7 @@ function confirmExport() {
   let selectBox = document.querySelector("#export-select");
   let selectedOption = selectBox.options[selectBox.selectedIndex].text;
   dailyReviewExport(spread, selectedOption);
+  
   closeExport();
 }
 
