@@ -634,7 +634,10 @@ function move_stage1(space) {
 function move_stage2(status) {
   let statusSelect = document.querySelector("#threadtypes > select");
   let offset = 0;
-  if (statusSelect.options.length >= 5) {
+  if (
+    statusSelect.options.length === 5 &&
+    statusSelect.options[0].innerHTML !== "未处理"
+  ) {
     offset = 1;
   }
   switch (status) {
