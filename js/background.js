@@ -190,7 +190,7 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 
   chrome.contextMenus.create({
-    id: "story_doing",
+    id: "story_communication",
     type: "normal",
     title: "沟通中",
     parentId: storyParent,
