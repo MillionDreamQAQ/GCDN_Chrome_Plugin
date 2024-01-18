@@ -765,6 +765,10 @@ function dailyReviewExport(spread, name) {
             urlCell.font("14pt Microsoft YaHei UI");
             let posterCell = sheet.getCell(3 + i, 2);
             posterCell.font("14pt Microsoft YaHei UI");
+            let commentCell = sheet.getCell(3 + i, 3);
+            commentCell.font("14pt Microsoft YaHei UI");
+            let markCell = sheet.getCell(3 + i, 4);
+            markCell.font("14pt Microsoft YaHei UI");
             let urlValue = urlCell.value();
             sheet.setHyperlink(
               3 + i,
