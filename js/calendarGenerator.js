@@ -63,7 +63,10 @@ function generator(year, month, startPersonName) {
       sheet.getCell(row + 1, col).hAlign(GC.Spread.Sheets.HorizontalAlign.center);
       sheet.getCell(row + 1, col).font("bold 11pt Calibri");
 
-      sheet.setValue(row + 2, col, new Date(year, month - 1, day - 1).toLocaleDateString() + "\n" + new Date(year, month - 1, day - 8).toLocaleDateString());
+      // if monday, skip saturday % sunday.
+      let review1DateString = new Date(year, month - 1, day - 1).getDay()== 0 ? new Date(year, month - 1, day - 3).toLocaleDateString() : new Date(year, month - 1, day - 1).toLocaleDateString();
+      let review7DateString = new Date(year, month - 1, day - 8).getDay() == 0 ? new Date(year, month - 1, day - 10).toLocaleDateString() : new Date(year, month - 1, day - 8).toLocaleDateString();
+      sheet.setValue(row + 2, col, review1DateString + "\n" + review7DateString);
       sheet.getCell(row + 2, col).wordWrap(true);
       sheet.getCell(row + 2, col).hAlign(GC.Spread.Sheets.HorizontalAlign.center);
       sheet.autoFitRow(row + 2);
