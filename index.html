@@ -126,6 +126,10 @@
         <div>Alt+V：结贴</div>
       </div>
 
+      <div class="tools-container">
+        <input class="button" type="button" id='calendar' value="生成日历" />
+      </div>
+
       <dialog id="export-dialog">
         请选择Reviewer：
         <select id="export-select">
@@ -139,6 +143,22 @@
         <button id="confirm-button">确认</button>
         <button id="cancel-button">取消</button>
       </dialog>
+
+      <dialog id="calendar-dialog">
+        年份：<input class="input" type="text" placeholder="如：2024" id='calendarYear' />
+        月份：<input class="input" type="text" placeholder="如：2" id='calendarMonth' />
+        请选择本月的第一个Reviewer：
+        <select id="calendar-select">
+          <option value="option1">许秦俊豪</option>
+          <option value="option2">窦梦林</option>
+          <option value="option3">潘达威</option>
+          <option value="option4">黄学雷</option>
+          <option value="option5">段函</option>
+          <option value="option6">马黎鑫</option>
+        </select>
+        <button id="calendar-confirm-button">确认</button>
+        <button id="calendar-cancel-button">取消</button>
+      </dialog>
     </div>
 
     <script src="node_modules/@grapecity/spread-sheets/dist/gc.spread.sheets.all.min.js"></script>
@@ -147,6 +167,7 @@
     <script src="node_modules/file-saver/dist/FileSaver.min.js"></script>
     <script src="js/operation.js"></script>
     <script src="js/spread.js"></script>
+    <script src="js/calendarGenerator.js"></script>
 </body>
 
 </html>
