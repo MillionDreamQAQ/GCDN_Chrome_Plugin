@@ -12,61 +12,65 @@
     <div class="loading"></div>
     <div class="text">数据加载中，请稍后...</div>
     <div class="spread-container">
-      <div class="class-container">
-        <div class="hint">设置关注板块ID，英文逗号分割，默认显示全部。</div>
-        <input class="input" type="text" id='board' />
-        <input class="button" type="button" id='setBoard' value="设置" />
-        <input class="button" type="button" id='export' value="导出excel"></input>
-      </div>
-
       <div class="config-container">
-        <div>
-          <select class="select" name="setGold" id="setGold">
-            <option value="0" selected>显示所有</option>
-            <option value="1">金牌/伙伴</option>
+        <div class="options-container">
+          <label class="updateTime" for="updateTime">刷新间隔：</label>
+          <select class="select" name="updateTime" id="updateTime">
+            <option value="0" selected>关闭</option>
+            <option value="1">1分钟</option>
+            <option value="2">2分钟</option>
+            <option value="5">5分钟</option>
+            <option value="10">10分钟</option>
+            <option value="15">15分钟</option>
+            <option value="30">30分钟</option>
           </select>
 
-          <select class="select" name="setArea" id="setArea">
-            <option value="0" selected>所有区域</option>
-            <option value="1">北方区</option>
-            <option value="2">华东区</option>
-            <option value="3">南方区</option>
-            <option value="4">西部区</option>
+          <label for="notifyTime">通知间隔：</label>
+          <select class="select" name="notifyTime" id="notifyTime">
+            <option value="0" selected>关闭</option>
+            <option value="2">2分钟</option>
+            <option value="5">5分钟</option>
+            <option value="15">15分钟</option>
+            <option value="30">30分钟</option>
+            <option value="60">1小时</option>
+            <option value="120">2小时</option>
           </select>
+          <input class="button" type="button" id="openNewTab" value="新页面" />
+          <input class="button" type="button" id='export' value="导出excel"></input>
         </div>
 
-        <label class="updateTime" for="updateTime">刷新间隔时间：</label>
-        <select class="select" name="updateTime" id="updateTime">
-          <option value="0" selected>关闭</option>
-          <option value="1">1分钟</option>
-          <option value="2">2分钟</option>
-          <option value="5">5分钟</option>
-          <option value="10">10分钟</option>
-          <option value="15">15分钟</option>
-          <option value="30">30分钟</option>
-        </select>
+        <div class="check-container">
+          <div>
+            <label for="setGold">发帖用户组：</label>
+            <select class="select" name="setGold" id="setGold">
+              <option value="0" selected>显示所有</option>
+              <option value="1">金牌/伙伴</option>
+            </select>
 
-        <label for="notifyTime">通知间隔时间：</label>
-        <select class="select" name="notifyTime" id="notifyTime">
-          <option value="0" selected>关闭</option>
-          <option value="2">2分钟</option>
-          <option value="5">5分钟</option>
-          <option value="15">15分钟</option>
-          <option value="30">30分钟</option>
-          <option value="60">1小时</option>
-          <option value="120">2小时</option>
-        </select>
-        <input type="button" id="openNewTab" value="新页面" />
+            <label for="setArea">发帖区域：</label>
+            <select class="select" name="setArea" id="setArea">
+              <option value="0" selected>所有区域</option>
+              <option value="1">北方区</option>
+              <option value="2">华东区</option>
+              <option value="3">南方区</option>
+              <option value="4">西部区</option>
+            </select>
+          </div>
+
+          <label class="check-label">Check板块Id：</label>
+          <input class="input" type="text" id='board' />
+          <input class="button" type="button" id='setBoard' value="设置" />
+        </div>
 
         <div class="bug-container">
           <div class="board-container">
-            <label>BugId：</label>
+            <label>Bug板块Id：</label>
             <input class="input" type="text" placeholder="248" id='bugBoard' />
             <input class="button" type="button" id='setBugBoard' value="设置" />
           </div>
 
           <div class="start-container">
-            <label>Bug起始：</label>
+            <label>Bug起始时间：</label>
             <input class="input" type="text" placeholder="2024-04-01" id='startTime' />
             <input class="button" type="button" id='setStartTime' value="设置" />
           </div>

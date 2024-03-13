@@ -106,8 +106,7 @@ function initSpread() {
   let spread = new GC.Spread.Sheets.Workbook(document.getElementById("ss"));
   spread.addSheet(1, new GC.Spread.Sheets.Worksheet("Bug"));
   spread.addSheet(2, new GC.Spread.Sheets.Worksheet("Review-1"));
-  spread.addSheet(3, new GC.Spread.Sheets.Worksheet("Review-7"));
-  spread.addSheet(4, new GC.Spread.Sheets.Worksheet("Review-Custom"));
+  spread.addSheet(3, new GC.Spread.Sheets.Worksheet("Review-Custom"));
   spread.bind(
     GC.Spread.Sheets.Events.ActiveSheetChanged,
     function (sender, args) {
@@ -119,6 +118,9 @@ function initSpread() {
         numElement.innerText =
           "你关注的版块还有" + count + "个帖子待处理。加油，胜利在望！";
       }
+
+      let newSheetIndex = spread.getSheetIndex(args.newSheet.name());
+      configPanelShow(newSheetIndex);
     }
   );
 
@@ -228,12 +230,7 @@ function initSpread() {
       reviewSheet.bindColumns(reviewColInfo);
       reviewSheet.options.sheetTabColor = "Honeydew";
 
-      let reviewSheet7Days = spread.getSheet(3);
-      reviewSheet7Days.autoGenerateColumns = false;
-      reviewSheet7Days.bindColumns(reviewColInfo);
-      reviewSheet7Days.options.sheetTabColor = "AliceBlue";
-
-      let reviewSheetCustom = spread.getSheet(4);
+      let reviewSheetCustom = spread.getSheet(3);
       reviewSheetCustom.autoGenerateColumns = false;
       reviewSheetCustom.bindColumns(reviewColInfo);
       reviewSheetCustom.options.sheetTabColor = "lavender";
@@ -242,7 +239,6 @@ function initSpread() {
     fetchHelpData();
     fetchBugData();
     fetchReviewData();
-    fetchReview7Data();
     fetchReviewCustomData();
   });
 }
@@ -316,7 +312,7 @@ function fetchCustomerType() {
         let sheet = spread.getActiveSheet();
         let img1 = null;
 
-        function PartnerCellType() {}
+        function PartnerCellType() { }
         PartnerCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
         PartnerCellType.prototype.paint = function (
           ctx,
@@ -595,7 +591,7 @@ function bindingHelpData(data) {
     sheet.getColumnWidth(2) +
     sheet.getColumnWidth(3) +
     (sheet.getColumnWidth(4) / 7) * 5.8;
-  function GoldenUserCellType() {}
+  function GoldenUserCellType() { }
   GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
   GoldenUserCellType.prototype.paint = function (
     ctx,
@@ -819,7 +815,7 @@ function confirmExport() {
   let selectBox = document.querySelector("#export-select");
   let selectedOption = selectBox.options[selectBox.selectedIndex].text;
   dailyReviewExport(spread, selectedOption);
-  
+
   closeExport();
 }
 
@@ -1186,7 +1182,7 @@ function bindingBugData(data) {
     sheet.getColumnWidth(1) +
     sheet.getColumnWidth(2) +
     (sheet.getColumnWidth(3) / 7) * 5.8;
-  function GoldenUserCellType() {}
+  function GoldenUserCellType() { }
   GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
   GoldenUserCellType.prototype.paint = function (
     ctx,
@@ -1412,7 +1408,7 @@ function bindingReviewData(data) {
     sheet.getColumnWidth(2) +
     sheet.getColumnWidth(3) +
     (sheet.getColumnWidth(4) / 7) * 5.8;
-  function GoldenUserCellType() {}
+  function GoldenUserCellType() { }
   GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
   GoldenUserCellType.prototype.paint = function (
     ctx,
@@ -1497,24 +1493,17 @@ function reviewBoardChange() {
   sheet3.setDataSource([]);
 
   fetchReviewData();
-  fetchReview7Data();
   fetchReviewCustomData();
 }
 
 /************************************************* */
 
-/**********************Sheet4 Review-7****************** */
+/**********************Sheet4 Review-Custom****************** */
 
-function fetchReview7Data() {
+function fetchReviewCustomData() {
   let reviewBoard = document.getElementById("reviewBoard").value;
-
-  const lastWeek = new Date();
-  lastWeek.setDate(lastWeek.getDate() - 7);
-  let startTime = lastWeek.toLocaleDateString();
-
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  let endTime = yesterday.toLocaleDateString();
+  let startTime = document.getElementById("reviewStartTime").value;
+  let endTime = document.getElementById("reviewEndTime").value;
 
   fetch("https://gcdn.grapecity.com.cn/api/forumpoststatus.php", {
     method: "POST",
@@ -1530,10 +1519,10 @@ function fetchReview7Data() {
   })
     .then((res) => res.json())
     .catch((error) => console.error("Error:", error))
-    .then((response) => bindingReview7Data(response));
+    .then((response) => bindingReviewCustomData(response));
 }
 
-function bindingReview7Data(data) {
+function bindingReviewCustomData(data) {
   if (!data?.length) {
     return;
   }
@@ -1635,206 +1624,7 @@ function bindingReview7Data(data) {
     sheet.getColumnWidth(2) +
     sheet.getColumnWidth(3) +
     (sheet.getColumnWidth(4) / 7) * 5.8;
-  function GoldenUserCellType() {}
-  GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
-  GoldenUserCellType.prototype.paint = function (
-    ctx,
-    value,
-    x,
-    y,
-    width,
-    height,
-    style,
-    context
-  ) {
-    GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
-
-    if (img) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.drawImage(img, x + w, y, 20, 20);
-      ctx.restore();
-      return;
-    }
-    img = new Image();
-    img.src = "../images/golden.png";
-    img.onload = function () {
-      context.sheet.repaint();
-    };
-  };
-
-  for (let i = 0; i < row; i++) {
-    if (sheet.getCell(i, 4).value() == "金牌服务用户") {
-      sheet.setCellType(i, 0, new GoldenUserCellType());
-    }
-  }
-
-  let titleIndex = -1;
-  for (let i = 0; i < sheet.getColumnCount(); i++) {
-    if (
-      sheet.getText(0, i, GC.Spread.Sheets.SheetArea.colHeader) === "帖子标题"
-    ) {
-      titleIndex = i;
-      break;
-    }
-  }
-  if (titleIndex >= 0) {
-    for (let i = 0; i < data.length; i++) {
-      sheet.setHyperlink(
-        i,
-        titleIndex,
-        {
-          url:
-            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
-            data[i]["tid"],
-          tooltip:
-            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
-            data[i]["tid"],
-          linkColor: "#0066cc",
-          visitedLinkColor: "#3399ff",
-        },
-        GC.Spread.Sheets.SheetArea.viewport
-      );
-      sheet.setText(i, titleIndex, data[i]["subject"]);
-    }
-  }
-  let range = new GC.Spread.Sheets.Range(-1, 0, -1, sheet.getColumnCount());
-  let rowFilter = new GC.Spread.Sheets.Filter.HideRowFilter(range);
-  sheet.rowFilter(rowFilter);
-
-  sheet.resumePaint();
-}
-
-/************************************************* */
-
-/**********************Sheet4 Review-Custom****************** */
-
-function fetchReviewCustomData() {
-  let reviewBoard = document.getElementById("reviewBoard").value;
-  let startTime = document.getElementById("reviewStartTime").value;
-  let endTime = document.getElementById("reviewEndTime").value;
-
-  fetch("https://gcdn.grapecity.com.cn/api/forumpoststatus.php", {
-    method: "POST",
-    body: JSON.stringify({
-      fid: reviewBoard,
-      startdate: startTime,
-      enddate: endTime,
-      key: "J5yP7hL8mK",
-    }),
-    headers: new Headers({
-      "Content-Type": "application/json",
-    }),
-  })
-    .then((res) => res.json())
-    .catch((error) => console.error("Error:", error))
-    .then((response) => bindingReviewCustomData(response));
-}
-
-function bindingReviewCustomData(data) {
-  if (!data?.length) {
-    return;
-  }
-  let spread = GC.Spread.Sheets.findControl("ss");
-  let sheet = spread.getSheet(4);
-
-  sheet.suspendPaint();
-
-  sheet.setDataSource(data);
-
-  let style1 = new GC.Spread.Sheets.Style();
-  style1.backColor = "#FB6573";
-
-  let style2 = new GC.Spread.Sheets.Style();
-  style2.backColor = "#C6E7EC";
-
-  let style3 = new GC.Spread.Sheets.Style();
-  style3.backColor = "#64E834";
-
-  let style4 = new GC.Spread.Sheets.Style();
-  style4.backColor = "#6A5ACD";
-
-  let style5 = new GC.Spread.Sheets.Style();
-  style5.foreColor = "#5b457c";
-
-  let style6 = new GC.Spread.Sheets.Style();
-  style6.foreColor = "#FFCB6C";
-
-  let row = sheet.getRowCount();
-
-  let ranges = [new GC.Spread.Sheets.Range(0, 2, row, 1)];
-  let ranges1 = [new GC.Spread.Sheets.Range(0, 4, row, 1)];
-
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "未处理",
-    style1,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "暂不采纳",
-    style1,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "处理中",
-    style2,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "沟通中",
-    style2,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "已采纳",
-    style2,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "调研中",
-    style4,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "已处理",
-    style3,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "已支持",
-    style3,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "合作伙伴",
-    style5,
-    ranges1
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "金牌服务用户",
-    style6,
-    ranges1
-  );
-
-  let img = null;
-  let w =
-    sheet.getColumnWidth(0) +
-    sheet.getColumnWidth(1) +
-    sheet.getColumnWidth(2) +
-    sheet.getColumnWidth(3) +
-    (sheet.getColumnWidth(4) / 7) * 5.8;
-  function GoldenUserCellType() {}
+  function GoldenUserCellType() { }
   GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
   GoldenUserCellType.prototype.paint = function (
     ctx,
@@ -1931,7 +1721,7 @@ function reviewEndTimeChange() {
 
 /************************************************* */
 
-/**********************统计隐藏行****************** */
+/**********************其他*********************** */
 
 function countRow() {
   let spread = GC.Spread.Sheets.findControl("ss");
@@ -1955,6 +1745,32 @@ function countRow() {
     chrome.action.setBadgeText({
       text: j.toString(),
     });
+  }
+}
+
+function configPanelShow(index) {
+  let checkPanel = document.querySelector(".check-container");
+  let bugPanel = document.querySelector(".bug-container");
+  let reviewPanel = document.querySelector(".review-container");
+
+  switch (index) {
+    case 0:
+      checkPanel.style.display = "flex";
+      bugPanel.style.display = "none";
+      reviewPanel.style.display = "none";
+      break;
+    case 1:
+      checkPanel.style.display = "none";
+      bugPanel.style.display = "flex";
+      reviewPanel.style.display = "none";
+      break;
+    case 2:
+    case 3:
+      checkPanel.style.display = "none";
+      bugPanel.style.display = "none";
+      reviewPanel.style.display = "flex";
+    default:
+      break;
   }
 }
 

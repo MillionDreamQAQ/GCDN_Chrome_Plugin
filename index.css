@@ -23,31 +23,7 @@ body {
 }
 
 .spread-container {
-  .class-container {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-
-    .hint {
-      font-size: large;
-      font-weight: bold;
-      margin-right: 20px;
-    }
-
-    .input {
-      height: 17px;
-      width: 180px;
-      margin: 0px 16px 0px 0px;
-      outline: none;
-    }
-
-    .button {
-      margin-right: 16px;
-      height: 24px;
-    }
-  }
-
-  .config-container {
+  .options-container {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -67,17 +43,54 @@ body {
       width: 100px;
     }
 
-    .updateTime {
-      margin-left: 44px;
+    .button {
+      background-color: yellow;
+      margin-right: 10px;
     }
 
     #openNewTab {
-      background-color: yellow;
+      margin-left: 237px;
+    }
+  }
+
+  .check-container {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    font-size: 10pt;
+
+    .hint {
+      font-size: large;
+      font-weight: bold;
+      margin-right: 20px;
+    }
+
+    .input {
+      height: 17px;
+      width: 180px;
+      margin: 0px 16px 0px 0px;
+      outline: none;
+    }
+
+    .select {
+      margin: 0px 8px 0px 0px;
+      outline: none;
+      height: 24px;
+      width: 100px;
+    }
+
+    .button {
+      margin-right: 16px;
+      height: 24px;
+    }
+
+    .check-label {
+      margin-left: 35px;
     }
   }
 
   .bug-container {
-    display: flex;
+    display: none;
     align-items: center;
     font-size: 10pt;
 
@@ -96,7 +109,7 @@ body {
     .board-container {
       display: flex;
       align-items: center;
-      margin-right: 253px;
+      margin-right: 189px;
     }
 
     .start-container {
@@ -106,10 +119,9 @@ body {
   }
 
   .review-container {
-    display: flex;
+    display: none;
     align-items: center;
     font-size: 10pt;
-    margin-top: 10px;
 
     .input {
       height: 17px;
@@ -119,19 +131,20 @@ body {
     }
 
     .button {
-      margin-right: 8px;
+      margin-right: 3px;
       height: 24px;
     }
 
     .board-container {
       display: flex;
       align-items: center;
-      margin-right: 10px;
+      margin-right: 5px;
     }
 
     .start-container {
       display: flex;
       align-items: center;
+      margin-right: 5px;
     }
 
     .end-container {
