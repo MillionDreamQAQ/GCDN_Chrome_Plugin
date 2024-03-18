@@ -141,10 +141,6 @@ function initSpread() {
       let reviewSheet7Days = spread.getSheet(3);
       reviewSheet7Days.setDataSource([]);
       reviewSheet7Days.options.sheetTabColor = "AliceBlue";
-
-      let reviewSheetCustom = spread.getSheet(4);
-      reviewSheetCustom.setDataSource([]);
-      reviewSheetCustom.options.sheetTabColor = "lavender";
     } else {
       spread.options.scrollbarMaxAlign = true;
       spread.options.newTabVisible = false;
@@ -1489,8 +1485,6 @@ function reviewBoardChange() {
   sheet.setDataSource([]);
   let sheet2 = spread.getSheet(3);
   sheet2.setDataSource([]);
-  let sheet3 = spread.getSheet(4);
-  sheet3.setDataSource([]);
 
   fetchReviewData();
   fetchReviewCustomData();
