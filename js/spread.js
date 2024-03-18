@@ -1701,7 +1701,7 @@ function reviewStartTimeChange() {
   });
 
   let spread = GC.Spread.Sheets.findControl("ss");
-  let sheet = spread.getSheet(4);
+  let sheet = spread.getSheet(3);
   sheet.setDataSource([]);
 
   fetchReviewCustomData();
@@ -1713,7 +1713,7 @@ function reviewEndTimeChange() {
   });
 
   let spread = GC.Spread.Sheets.findControl("ss");
-  let sheet = spread.getSheet(4);
+  let sheet = spread.getSheet(3);
   sheet.setDataSource([]);
 
   fetchReviewCustomData();
