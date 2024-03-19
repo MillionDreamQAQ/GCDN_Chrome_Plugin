@@ -742,6 +742,7 @@ function dailyReviewExport(spread, name) {
               dataSource.record.push({
                 帖子链接: `http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=${data.tid}`,
                 负责人: data.lastposter,
+                详情: data.name == "已处理" ? "本帖已处理。" : "",
               });
             });
 
