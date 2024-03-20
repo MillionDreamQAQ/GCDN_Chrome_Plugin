@@ -1,7 +1,7 @@
 window.onload = function () {
   let pattern = /(DOCXLS|SJS)-\d+/g;
 
-  if (window.location.href.includes("mod=viewthread") || window.location.href.includes("showforum")) {
+  if (window.location.href.includes("mod=viewthread") || window.location.href.includes("showforum") || window.location.href.includes("showtopic")) {
     let pageHTML = document.body.innerHTML;
 
     let matches = pageHTML.match(pattern);
