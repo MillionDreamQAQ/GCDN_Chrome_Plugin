@@ -187,8 +187,8 @@ function initSpread() {
         {
           name: "主题发布时间",
           displayName: "发帖时间",
-          size: 100,
-          formatter: "MM-dd hh:mm",
+          size: 80,
+          formatter: "yyyy-MM-dd",
         },
         { name: "帖子标题", displayName: "帖子标题", size: 300 },
         { name: "处理状态", displayName: "处理状态", size: 100 },
