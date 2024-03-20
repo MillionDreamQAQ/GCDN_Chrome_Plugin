@@ -1,21 +1,23 @@
 window.onload = function () {
   let pattern = /(DOCXLS|SJS)-\d+/g;
 
-  let pageHTML = document.body.innerHTML;
+  if (window.location.href.includes("mod=viewthread") || window.location.href.includes("showforum")) {
+    let pageHTML = document.body.innerHTML;
 
-  let matches = pageHTML.match(pattern);
+    let matches = pageHTML.match(pattern);
 
-  if (matches) {
-    matches.forEach((match) => {
-      const jiraLink = `<a target="_blank" href="https://grapecity.atlassian.net/browse/${match}">${match}</a>`;
-      pageHTML = pageHTML.replace(match, jiraLink);
-    });
+    if (matches) {
+      matches.forEach((match) => {
+        const jiraLink = `<a target="_blank" href="https://grapecity.atlassian.net/browse/${match}">${match}</a>`;
+        pageHTML = pageHTML.replace(match, jiraLink);
+      });
+      document.body.innerHTML = pageHTML;
+    }
   }
-  document.body.innerHTML = pageHTML;
 
   let posterName = document.querySelector("#postauthor");
-  let posterNameText = posterName.innerText;
   if (posterName) {
+    let posterNameText = posterName.innerText;
     let crmButton = posterName.appendChild(document.createElement("a"));
     crmButton.style.marginLeft = "10px";
     crmButton.style.color = "#0078d4";
