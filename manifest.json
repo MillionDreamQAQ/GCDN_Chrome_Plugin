@@ -69,7 +69,7 @@
   "content_scripts": [
     {
       "matches": ["https://gcdn.grapecity.com.cn/*"],
-      "js": ["./js/hyperLink.js", "./js/button.js"]
+      "js": ["./js/tools.js"]
     }
   ]
 }
