@@ -16,7 +16,9 @@ window.onload = function () {
       jiraButton.href = "https://grapecity.atlassian.net/browse/" + match;
 
       let dom = document.querySelector("#topicreplies").parentElement;
-      dom.appendChild(jiraButton);
+      if (dom) {
+        dom.appendChild(jiraButton);
+      }
     });
   }
 
