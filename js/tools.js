@@ -1,25 +1,23 @@
 window.onload = function () {
   console.log("plugin enabled");
 
-  let pattern = /(DOCXLS|SJS)-\d+/g;
+  const regex = /(DOCXLS|SJS)-\d+/g;
+  let matches = document.body.innerText.match(regex);
+  matches = [...new Set(matches)];
 
-  if (
-    window.location.href.includes("viewthread") ||
-    window.location.href.includes("showforum") ||
-    window.location.href.includes("showtopic")
-  ) {
-    let pageHTML = document.body.innerHTML;
+  if (matches) {
+    matches.forEach((match) => {
+      let jiraButton = document.createElement("a");
+      jiraButton.style.marginLeft = "6px";
+      jiraButton.style.color = "#0078d4";
+      jiraButton.style.textDecoration = "underline";
+      jiraButton.innerText = match;
+      jiraButton.target = "_blank";
+      jiraButton.href = "https://grapecity.atlassian.net/browse/" + match;
 
-    let matches = pageHTML.match(pattern);
-    matches = [...new Set(matches)];
-
-    if (matches) {
-      matches.forEach((match) => {
-        const jiraLink = `<a target="_blank" href="https://grapecity.atlassian.net/browse/${match}">${match}</a>`;
-        pageHTML = pageHTML.replace(match, jiraLink);
-      });
-      document.body.innerHTML = pageHTML;
-    }
+      let dom = document.querySelector("#topicreplies").parentElement;
+      dom.appendChild(jiraButton);
+    });
   }
 
   let posterName = document.querySelector("#postauthor");
