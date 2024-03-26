@@ -2,7 +2,11 @@ window.onload = function () {
   console.log("plugin enabled");
 
   const regex = /(DOCXLS|SJS)-\d+/g;
-  let matches = document.body.innerText.match(regex);
+
+  let domClone = document.body.cloneNode(true);
+  domClone.querySelector(".gcdn_author_info").removeChild(domClone.querySelector(".gcdn_author_info_3"));
+
+  let matches = domClone.innerText.match(regex);
   matches = [...new Set(matches)];
 
   if (matches) {
@@ -34,6 +38,15 @@ window.onload = function () {
     crmButton.href =
       "https://developersolutions.crm5.dynamics.com/main.aspx?appid=69dffb8e-ae36-e811-817f-e0071b6927a1&forceUCI=1&pagetype=search&searchText=" +
       encodeURI(posterNameText);
+
+    let customerExcel = posterName.appendChild(document.createElement("a"));
+    customerExcel.style.marginLeft = "10px";
+    customerExcel.style.color = "#0078d4";
+    customerExcel.style.textDecoration = "underline";
+    customerExcel.innerText = "CRM里没找到？去这找找...";
+    customerExcel.target = "_blank";
+    customerExcel.href =
+      "https://grapecityglobal.sharepoint.com/:x:/r/sites/gcscn/_layouts/15/Doc.aspx?sourcedoc=%7B8DC832FD-A95D-4E10-93A0-CB806CCCDAD9%7D&file=%E9%87%91%E7%89%8C%E8%B4%A6%E5%8F%B7%E7%BB%B4%E6%8A%A4%E8%AE%B0%E5%BD%95.xlsx&action=default&mobileredirect=true";
   }
 
   let mainButton = document.createElement("button");
