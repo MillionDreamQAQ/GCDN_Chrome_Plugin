@@ -49,6 +49,7 @@ body {
     }
 
     #openNewTab {
+      z-index: 1000;
       margin-left: 237px;
     }
   }
