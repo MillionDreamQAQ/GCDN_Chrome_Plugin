@@ -1,3 +1,5 @@
+let defaultSleepTime = 1000;
+
 let tabInfo = null;
 let tabId = null;
 
@@ -581,21 +583,21 @@ async function handleMoveButtonClick(tabId) {
     func: move_stage0,
   });
 
-  await sleep(800);
+  await sleep(defaultSleepTime);
   await chrome.scripting.executeScript({
     target: { tabId },
     func: move_stage1,
     args: [getMoveTargetSpace()],
   });
 
-  await sleep(800);
+  await sleep(defaultSleepTime);
   await chrome.scripting.executeScript({
     target: { tabId },
     func: move_stage2,
     args: [getMoveTargetStatus()],
   });
 
-  await sleep(500);
+  await sleep(defaultSleepTime);
   await chrome.scripting.executeScript({
     target: { tabId },
     func: submit,
@@ -680,14 +682,14 @@ async function handleChangeStatusButtonClick(tabId) {
     func: change_status_stage0,
   });
 
-  await sleep(1000);
+  await sleep(defaultSleepTime);
   await chrome.scripting.executeScript({
     target: { tabId },
     func: change_status_stage1,
     args: [getChangeStatusTargetStatus()],
   });
 
-  await sleep(500);
+  await sleep(defaultSleepTime);
   await chrome.scripting.executeScript({
     target: { tabId },
     func: submit,
@@ -749,13 +751,13 @@ async function handleCloseButtonClick(tabId) {
     func: close_stage0,
   });
 
-  await sleep(1000);
+  await sleep(defaultSleepTime);
   await chrome.scripting.executeScript({
     target: { tabId },
     func: close_stage1,
   });
 
-  await sleep(500);
+  await sleep(defaultSleepTime);
   await chrome.scripting.executeScript({
     target: { tabId },
     func: submit,
@@ -794,7 +796,7 @@ async function handleRemoveRewardButtonClick(tabId) {
     func: remove_stage0,
   });
 
-  await sleep(500);
+  await sleep(defaultSleepTime);
   await chrome.scripting.executeScript({
     target: { tabId },
     func: submit,
