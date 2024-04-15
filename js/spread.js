@@ -436,11 +436,11 @@ function bindingHelpData(data) {
   let east = ["上海", "江苏", "浙江", "安徽", "湖北"];
   let south = ["广东", "深圳", "福建", "湖南", "云南", "重庆", "四川"];
 
-  let addressIndex = 12;
-  let areaIndex = 11;
+  let addressIndex = 11;
+  let areaIndex = 10;
 
   for (let i = 0; i < sheet.getRowCount(); i++) {
-    let value = sheet.getValue(i, areaIndex);
+    let value = sheet.getValue(i, addressIndex);
     for (const province of north) {
       if (value.indexOf(province) != -1) {
         sheet.setValue(i, areaIndex, area[0]);
