@@ -153,7 +153,7 @@ function initSpread() {
         { name: "处理状态", displayName: "处理状态", size: 100 },
         { name: "倒数第二层回复用户", displayName: "上次回帖用户", size: 120 },
         { name: "发帖用户用户组", displayName: "发帖用户组", size: 120 },
-        { name: "客户类型", displayName: "", size: 120 },
+        // { name: "客户类型", displayName: "", size: 120 },
         {
           name: "发帖时间",
           displayName: "发帖时间",
@@ -265,7 +265,8 @@ function fetchHelpData() {
             }
             numElement.innerText = "辛苦啦，帖子已被你清空！！！";
             bindingHelpData(resp);
-            fetchCustomerType();
+            // 接口无权限
+            // fetchCustomerType();
             document.querySelector(".loading").remove();
             document.querySelector(".text").remove();
 
@@ -308,7 +309,7 @@ function fetchCustomerType() {
         let sheet = spread.getActiveSheet();
         let img1 = null;
 
-        function PartnerCellType() { }
+        function PartnerCellType() {}
         PartnerCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
         PartnerCellType.prototype.paint = function (
           ctx,
@@ -421,43 +422,25 @@ function bindingHelpData(data) {
 
   sheet.setDataSource(data);
 
-  let area = ["北方区", "华东区", "南方区", "西部区"];
+  let area = ["华北区", "华东区及其他", "华南区"];
   let north = [
     "北京",
     "天津",
     "山西",
     "河北",
     "山东",
-    "内蒙古",
     "河南",
-    "黑龙江",
     "吉林",
-    "辽宁",
+    "陕西",
   ];
   let east = ["上海", "江苏", "浙江", "安徽", "湖北"];
-  let south = ["广东", "广西", "海南", "福建", "江西", "湖南"];
-  let west = [
-    "陕西",
-    "甘肃",
-    "青海",
-    "宁夏",
-    "新疆",
-    "四川",
-    "贵州",
-    "云南",
-    "重庆",
-    "西藏",
-    "香港",
-    "台湾",
-    "澳门",
-    "澳大利亚",
-  ];
+  let south = ["广东", "深圳", "福建", "湖南", "云南", "重庆", "四川"];
 
   let addressIndex = 12;
   let areaIndex = 11;
 
   for (let i = 0; i < sheet.getRowCount(); i++) {
-    let value = sheet.getValue(i, addressIndex);
+    let value = sheet.getValue(i, areaIndex);
     for (const province of north) {
       if (value.indexOf(province) != -1) {
         sheet.setValue(i, areaIndex, area[0]);
@@ -473,22 +456,16 @@ function bindingHelpData(data) {
         sheet.setValue(i, areaIndex, area[2]);
       }
     }
-    for (const province of west) {
-      if (value.indexOf(province) != -1) {
-        sheet.setValue(i, areaIndex, area[3]);
-      }
-    }
   }
 
   for (let i = 0; i < sheet.getRowCount(); i++) {
     let value = sheet.getValue(i, areaIndex);
     if (
-      value !== "北方区" &&
-      value !== "华东区" &&
-      value !== "南方区" &&
-      value !== "西部区"
+      value !== "华北区" &&
+      value !== "华东区及其他" &&
+      value !== "华南区"
     ) {
-      sheet.setValue(i, areaIndex, area[2]);
+      sheet.setValue(i, areaIndex, area[1]);
     }
   }
 
@@ -587,7 +564,7 @@ function bindingHelpData(data) {
     sheet.getColumnWidth(2) +
     sheet.getColumnWidth(3) +
     (sheet.getColumnWidth(4) / 7) * 5.8;
-  function GoldenUserCellType() { }
+  function GoldenUserCellType() {}
   GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
   GoldenUserCellType.prototype.paint = function (
     ctx,
@@ -1179,7 +1156,7 @@ function bindingBugData(data) {
     sheet.getColumnWidth(1) +
     sheet.getColumnWidth(2) +
     (sheet.getColumnWidth(3) / 7) * 5.8;
-  function GoldenUserCellType() { }
+  function GoldenUserCellType() {}
   GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
   GoldenUserCellType.prototype.paint = function (
     ctx,
@@ -1405,7 +1382,7 @@ function bindingReviewData(data) {
     sheet.getColumnWidth(2) +
     sheet.getColumnWidth(3) +
     (sheet.getColumnWidth(4) / 7) * 5.8;
-  function GoldenUserCellType() { }
+  function GoldenUserCellType() {}
   GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
   GoldenUserCellType.prototype.paint = function (
     ctx,
@@ -1619,7 +1596,7 @@ function bindingReviewCustomData(data) {
     sheet.getColumnWidth(2) +
     sheet.getColumnWidth(3) +
     (sheet.getColumnWidth(4) / 7) * 5.8;
-  function GoldenUserCellType() { }
+  function GoldenUserCellType() {}
   GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
   GoldenUserCellType.prototype.paint = function (
     ctx,
