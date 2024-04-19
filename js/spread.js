@@ -309,45 +309,6 @@ function fetchCustomerType() {
         let sheet = spread.getActiveSheet();
         let img1 = null;
 
-        function PartnerCellType() {}
-        PartnerCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
-        PartnerCellType.prototype.paint = function (
-          ctx,
-          value,
-          x,
-          y,
-          width,
-          height,
-          style,
-          context
-        ) {
-          GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(
-            this,
-            arguments
-          );
-
-          if (img1) {
-            ctx.save();
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-            ctx.drawImage(
-              img1,
-              x + (sheet.getColumnWidth(4) / 7) * 5.8,
-              y,
-              20,
-              20
-            );
-            ctx.restore();
-            return;
-          }
-
-          img1 = new Image();
-          img1.src = "../images/partner.png";
-          img1.onload = function () {
-            context.sheet.repaint();
-          };
-        };
-
         let partnerList = [],
           importantCustomerList = [];
         let resResult = resp.partnerGCDN;
@@ -380,7 +341,7 @@ function fetchCustomerType() {
           for (const element of partnerList) {
             if (GCDN_ID == element) {
               sheet.setValue(i, 5, "合作伙伴");
-              sheet.setCellType(i, 5, new PartnerCellType());
+              sheet.setCellType(i, 5, new PartnerCellType(img1));
               break;
             }
           }
@@ -422,17 +383,38 @@ function bindingHelpData(data) {
 
   sheet.setDataSource(data);
 
-  let area = ["华北区", "华东区及其他", "华南区"];
-  let north = [
-    "北京",
-    "天津",
-    "山西",
-    "河北",
-    "山东",
-    "河南",
-    "吉林",
-    "陕西",
+  let sjs_developer = [
+    "夏莫听雨",
+    "阿花",
+    "trace",
+    "AKA_HSTS",
+    "香香",
+    "summer_",
+    "前端小白",
+    "yankfu",
+    "刘刁强谢双王",
+    "wainwell",
+    "OTimeCoder",
+    "Michael.Lu",
+    "刘老太",
+    "不吐葡萄皮",
   ];
+
+  let gc_developer = [
+    "Lewis",
+    "三火",
+    "RoyAji",
+    "放浪雀士",
+    "baiyuan",
+    "游侠",
+    "WhiteSong",
+    "小七2704",
+    "Sophia",
+    "天天向上Sun",
+  ];
+
+  let area = ["华北区", "华东区及其他", "华南区"];
+  let north = ["北京", "天津", "山西", "河北", "山东", "河南", "吉林", "陕西"];
   let east = ["上海", "江苏", "浙江", "安徽", "湖北"];
   let south = ["广东", "深圳", "福建", "湖南", "云南", "重庆", "四川"];
 
@@ -460,11 +442,7 @@ function bindingHelpData(data) {
 
   for (let i = 0; i < sheet.getRowCount(); i++) {
     let value = sheet.getValue(i, areaIndex);
-    if (
-      value !== "华北区" &&
-      value !== "华东区及其他" &&
-      value !== "华南区"
-    ) {
+    if (value !== "华北区" && value !== "华东区及其他" && value !== "华南区") {
       sheet.setValue(i, areaIndex, area[1]);
     }
   }
@@ -557,45 +535,53 @@ function bindingHelpData(data) {
     ranges1
   );
 
-  let img = null;
-  let w =
+  let goldenCellTypeImg = null;
+  let goldenCellTypeWidth =
     sheet.getColumnWidth(0) +
     sheet.getColumnWidth(1) +
     sheet.getColumnWidth(2) +
     sheet.getColumnWidth(3) +
     (sheet.getColumnWidth(4) / 7) * 5.8;
-  function GoldenUserCellType() {}
-  GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
-  GoldenUserCellType.prototype.paint = function (
-    ctx,
-    value,
-    x,
-    y,
-    width,
-    height,
-    style,
-    context
-  ) {
-    GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
-
-    if (img) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.drawImage(img, x + w, y, 20, 20);
-      ctx.restore();
-      return;
-    }
-    img = new Image();
-    img.src = "../images/golden.png";
-    img.onload = function () {
-      context.sheet.repaint();
-    };
-  };
 
   for (let i = 0; i < row; i++) {
     if (sheet.getCell(i, 4).value() == "金牌服务用户") {
-      sheet.setCellType(i, 0, new GoldenUserCellType());
+      sheet.setCellType(
+        i,
+        0,
+        new GoldenUserCellType(goldenCellTypeImg, goldenCellTypeWidth)
+      );
+    }
+  }
+
+  let developerCellTypeImg = null;
+  let developerCellTypeWidth =
+    sheet.getColumnWidth(0) +
+    sheet.getColumnWidth(1) +
+    sheet.getColumnWidth(2) +
+    (sheet.getColumnWidth(3) / 7) * 5.8;
+
+  for (let i = 0; i < row; i++) {
+    if (gc_developer.includes(sheet.getCell(i, 3).value())) {
+      sheet.setCellType(
+        i,
+        0,
+        new DeveloperCellType(
+          developerCellTypeImg,
+          developerCellTypeWidth,
+          "gcexcel"
+        )
+      );
+    }
+    if (sjs_developer.includes(sheet.getCell(i, 3).value())) {
+      sheet.setCellType(
+        i,
+        0,
+        new DeveloperCellType(
+          developerCellTypeImg,
+          developerCellTypeWidth,
+          "sjs"
+        )
+      );
     }
   }
 
@@ -1156,38 +1142,10 @@ function bindingBugData(data) {
     sheet.getColumnWidth(1) +
     sheet.getColumnWidth(2) +
     (sheet.getColumnWidth(3) / 7) * 5.8;
-  function GoldenUserCellType() {}
-  GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
-  GoldenUserCellType.prototype.paint = function (
-    ctx,
-    value,
-    x,
-    y,
-    width,
-    height,
-    style,
-    context
-  ) {
-    GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
-
-    if (img) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.drawImage(img, x + w, y, 20, 20);
-      ctx.restore();
-      return;
-    }
-    img = new Image();
-    img.src = "../images/golden.png";
-    img.onload = function () {
-      context.sheet.repaint();
-    };
-  };
 
   for (let i = 0; i < row; i++) {
     if (sheet.getCell(i, 3).value() == "金牌服务用户") {
-      sheet.setCellType(i, 0, new GoldenUserCellType());
+      sheet.setCellType(i, 0, new GoldenUserCellType(img, w));
     }
   }
 
@@ -1382,38 +1340,10 @@ function bindingReviewData(data) {
     sheet.getColumnWidth(2) +
     sheet.getColumnWidth(3) +
     (sheet.getColumnWidth(4) / 7) * 5.8;
-  function GoldenUserCellType() {}
-  GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
-  GoldenUserCellType.prototype.paint = function (
-    ctx,
-    value,
-    x,
-    y,
-    width,
-    height,
-    style,
-    context
-  ) {
-    GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
-
-    if (img) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.drawImage(img, x + w, y, 20, 20);
-      ctx.restore();
-      return;
-    }
-    img = new Image();
-    img.src = "../images/golden.png";
-    img.onload = function () {
-      context.sheet.repaint();
-    };
-  };
 
   for (let i = 0; i < row; i++) {
     if (sheet.getCell(i, 4).value() == "金牌服务用户") {
-      sheet.setCellType(i, 0, new GoldenUserCellType());
+      sheet.setCellType(i, 0, new GoldenUserCellType(img, w));
     }
   }
 
@@ -1596,38 +1526,10 @@ function bindingReviewCustomData(data) {
     sheet.getColumnWidth(2) +
     sheet.getColumnWidth(3) +
     (sheet.getColumnWidth(4) / 7) * 5.8;
-  function GoldenUserCellType() {}
-  GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
-  GoldenUserCellType.prototype.paint = function (
-    ctx,
-    value,
-    x,
-    y,
-    width,
-    height,
-    style,
-    context
-  ) {
-    GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
-
-    if (img) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.drawImage(img, x + w, y, 20, 20);
-      ctx.restore();
-      return;
-    }
-    img = new Image();
-    img.src = "../images/golden.png";
-    img.onload = function () {
-      context.sheet.repaint();
-    };
-  };
 
   for (let i = 0; i < row; i++) {
     if (sheet.getCell(i, 4).value() == "金牌服务用户") {
-      sheet.setCellType(i, 0, new GoldenUserCellType());
+      sheet.setCellType(i, 0, new GoldenUserCellType(img, w));
     }
   }
 
@@ -1745,5 +1647,112 @@ function configPanelShow(index) {
       break;
   }
 }
+
+function PartnerCellType(img1) {
+  this.img1 = img1;
+}
+PartnerCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
+PartnerCellType.prototype.paint = function (
+  ctx,
+  value,
+  x,
+  y,
+  width,
+  height,
+  style,
+  context
+) {
+  GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
+
+  if (this.img1) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.drawImage(
+      this.img1,
+      x + (sheet.getColumnWidth(4) / 7) * 5.8,
+      y,
+      20,
+      20
+    );
+    ctx.restore();
+    return;
+  }
+
+  this.img1 = new Image();
+  this.img1.src = "../images/partner.png";
+  this.img1.onload = function () {
+    context.sheet.repaint();
+  };
+};
+
+function GoldenUserCellType(img, w) {
+  this.img = img;
+  this.w = w;
+}
+GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
+GoldenUserCellType.prototype.paint = function (
+  ctx,
+  value,
+  x,
+  y,
+  width,
+  height,
+  style,
+  context
+) {
+  GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
+
+  if (this.img) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.drawImage(this.img, x + this.w, y, 20, 20);
+    ctx.restore();
+    return;
+  }
+  this.img = new Image();
+  this.img.src = "../images/golden.png";
+  this.img.onload = function () {
+    context.sheet.repaint();
+  };
+};
+
+function DeveloperCellType(img, w, type) {
+  this.type = type;
+  this.img = img;
+  this.w = w;
+}
+DeveloperCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
+DeveloperCellType.prototype.paint = function (
+  ctx,
+  value,
+  x,
+  y,
+  width,
+  height,
+  style,
+  context
+) {
+  GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
+  style.foreColor = 'red';
+  if (this.img) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.drawImage(this.img, x + this.w, y, 20, 20);
+    ctx.restore();
+    return;
+  }
+  this.img = new Image();
+  if (this.type == "sjs") {
+    this.img.src = "../images/sjs.jpg";
+  } else {
+    this.img.src = "../images/gcexcel.png";
+  }
+  this.img.onload = function () {
+    context.sheet.repaint();
+  };
+};
 
 /************************************************* */
