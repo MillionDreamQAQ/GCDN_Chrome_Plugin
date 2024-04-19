@@ -153,6 +153,7 @@ function initSpread() {
         { name: "处理状态", displayName: "处理状态", size: 100 },
         { name: "倒数第二层回复用户", displayName: "上次回帖用户", size: 120 },
         { name: "发帖用户用户组", displayName: "发帖用户组", size: 120 },
+        // 无权限
         // { name: "客户类型", displayName: "", size: 120 },
         {
           name: "发帖时间",
@@ -1735,7 +1736,6 @@ DeveloperCellType.prototype.paint = function (
   context
 ) {
   GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
-  style.foreColor = 'red';
   if (this.img) {
     ctx.save();
     ctx.beginPath();
