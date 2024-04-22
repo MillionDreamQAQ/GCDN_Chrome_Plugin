@@ -536,53 +536,80 @@ function bindingHelpData(data) {
     ranges1
   );
 
-  let goldenCellTypeImg = null;
-  let goldenCellTypeWidth =
-    sheet.getColumnWidth(0) +
-    sheet.getColumnWidth(1) +
-    sheet.getColumnWidth(2) +
-    sheet.getColumnWidth(3) +
-    (sheet.getColumnWidth(4) / 7) * 5.8;
-
   for (let i = 0; i < row; i++) {
     if (sheet.getCell(i, 4).value() == "金牌服务用户") {
-      sheet.setCellType(
-        i,
-        0,
-        new GoldenUserCellType(goldenCellTypeImg, goldenCellTypeWidth)
-      );
+      let style = new GC.Spread.Sheets.Style();
+      style.decoration = {
+        icons: [
+          {
+            src: "../images/golden.png",
+            width: 16,
+            height: 16,
+            position: GC.Spread.Sheets.IconPosition.right,
+          },
+        ],
+      };
+      sheet.getCell(i, 4).setStyle(style);
     }
   }
 
-  let developerCellTypeImg = null;
-  let developerCellTypeWidth =
-    sheet.getColumnWidth(0) +
-    sheet.getColumnWidth(1) +
-    sheet.getColumnWidth(2) +
-    (sheet.getColumnWidth(3) / 7) * 5.8;
-
   for (let i = 0; i < row; i++) {
     if (gc_developer.includes(sheet.getCell(i, 3).value())) {
-      sheet.setCellType(
-        i,
-        0,
-        new DeveloperCellType(
-          developerCellTypeImg,
-          developerCellTypeWidth,
-          "gcexcel"
-        )
-      );
+      let style = new GC.Spread.Sheets.Style();
+      style.decoration = {
+        icons: [
+          {
+            src: "../images/sjs.jpg",
+            width: 16,
+            height: 16,
+            position: GC.Spread.Sheets.IconPosition.right,
+          },
+        ],
+      };
+      sheet.getCell(i, 3).setStyle(style);
     }
     if (sjs_developer.includes(sheet.getCell(i, 3).value())) {
-      sheet.setCellType(
-        i,
-        0,
-        new DeveloperCellType(
-          developerCellTypeImg,
-          developerCellTypeWidth,
-          "sjs"
-        )
-      );
+      let style = new GC.Spread.Sheets.Style();
+      style.decoration = {
+        icons: [
+          {
+            src: "../images/gcexcel.png",
+            width: 16,
+            height: 16,
+            position: GC.Spread.Sheets.IconPosition.right,
+          },
+        ],
+      };
+      sheet.getCell(i, 3).setStyle(style);
+    }
+
+    if (gc_developer.includes(sheet.getCell(i, 8).value())) {
+      let style = new GC.Spread.Sheets.Style();
+      style.decoration = {
+        icons: [
+          {
+            src: "../images/sjs.jpg",
+            width: 16,
+            height: 16,
+            position: GC.Spread.Sheets.IconPosition.right,
+          },
+        ],
+      };
+      sheet.getCell(i, 8).setStyle(style);
+    }
+    if (sjs_developer.includes(sheet.getCell(i, 8).value())) {
+      let style = new GC.Spread.Sheets.Style();
+      style.decoration = {
+        icons: [
+          {
+            src: "../images/gcexcel.png",
+            width: 16,
+            height: 16,
+            position: GC.Spread.Sheets.IconPosition.right,
+          },
+        ],
+      };
+      sheet.getCell(i, 8).setStyle(style);
     }
   }
 
@@ -1137,16 +1164,20 @@ function bindingBugData(data) {
     ranges1
   );
 
-  let img = null;
-  let w =
-    sheet.getColumnWidth(0) +
-    sheet.getColumnWidth(1) +
-    sheet.getColumnWidth(2) +
-    (sheet.getColumnWidth(3) / 7) * 5.8;
-
   for (let i = 0; i < row; i++) {
     if (sheet.getCell(i, 3).value() == "金牌服务用户") {
-      sheet.setCellType(i, 0, new GoldenUserCellType(img, w));
+      let style = new GC.Spread.Sheets.Style();
+      style.decoration = {
+        icons: [
+          {
+            src: "../images/golden.png",
+            width: 16,
+            height: 16,
+            position: GC.Spread.Sheets.IconPosition.right,
+          },
+        ],
+      };
+      sheet.getCell(i, 3).setStyle(style);
     }
   }
 
@@ -1334,17 +1365,20 @@ function bindingReviewData(data) {
     ranges1
   );
 
-  let img = null;
-  let w =
-    sheet.getColumnWidth(0) +
-    sheet.getColumnWidth(1) +
-    sheet.getColumnWidth(2) +
-    sheet.getColumnWidth(3) +
-    (sheet.getColumnWidth(4) / 7) * 5.8;
-
   for (let i = 0; i < row; i++) {
     if (sheet.getCell(i, 4).value() == "金牌服务用户") {
-      sheet.setCellType(i, 0, new GoldenUserCellType(img, w));
+      let style = new GC.Spread.Sheets.Style();
+      style.decoration = {
+        icons: [
+          {
+            src: "../images/golden.png",
+            width: 16,
+            height: 16,
+            position: GC.Spread.Sheets.IconPosition.right,
+          },
+        ],
+      };
+      sheet.getCell(i, 4).setStyle(style);
     }
   }
 
@@ -1520,17 +1554,20 @@ function bindingReviewCustomData(data) {
     ranges1
   );
 
-  let img = null;
-  let w =
-    sheet.getColumnWidth(0) +
-    sheet.getColumnWidth(1) +
-    sheet.getColumnWidth(2) +
-    sheet.getColumnWidth(3) +
-    (sheet.getColumnWidth(4) / 7) * 5.8;
-
   for (let i = 0; i < row; i++) {
     if (sheet.getCell(i, 4).value() == "金牌服务用户") {
-      sheet.setCellType(i, 0, new GoldenUserCellType(img, w));
+      let style = new GC.Spread.Sheets.Style();
+      style.decoration = {
+        icons: [
+          {
+            src: "../images/golden.png",
+            width: 16,
+            height: 16,
+            position: GC.Spread.Sheets.IconPosition.right,
+          },
+        ],
+      };
+      sheet.getCell(i, 4).setStyle(style);
     }
   }
 
@@ -1648,111 +1685,5 @@ function configPanelShow(index) {
       break;
   }
 }
-
-function PartnerCellType(img1) {
-  this.img1 = img1;
-}
-PartnerCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
-PartnerCellType.prototype.paint = function (
-  ctx,
-  value,
-  x,
-  y,
-  width,
-  height,
-  style,
-  context
-) {
-  GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
-
-  if (this.img1) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.drawImage(
-      this.img1,
-      x + (sheet.getColumnWidth(4) / 7) * 5.8,
-      y,
-      20,
-      20
-    );
-    ctx.restore();
-    return;
-  }
-
-  this.img1 = new Image();
-  this.img1.src = "../images/partner.png";
-  this.img1.onload = function () {
-    context.sheet.repaint();
-  };
-};
-
-function GoldenUserCellType(img, w) {
-  this.img = img;
-  this.w = w;
-}
-GoldenUserCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
-GoldenUserCellType.prototype.paint = function (
-  ctx,
-  value,
-  x,
-  y,
-  width,
-  height,
-  style,
-  context
-) {
-  GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
-
-  if (this.img) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.drawImage(this.img, x + this.w, y, 20, 20);
-    ctx.restore();
-    return;
-  }
-  this.img = new Image();
-  this.img.src = "../images/golden.png";
-  this.img.onload = function () {
-    context.sheet.repaint();
-  };
-};
-
-function DeveloperCellType(img, w, type) {
-  this.type = type;
-  this.img = img;
-  this.w = w;
-}
-DeveloperCellType.prototype = new GC.Spread.Sheets.CellTypes.Text();
-DeveloperCellType.prototype.paint = function (
-  ctx,
-  value,
-  x,
-  y,
-  width,
-  height,
-  style,
-  context
-) {
-  GC.Spread.Sheets.CellTypes.RowHeader.prototype.paint.apply(this, arguments);
-  if (this.img) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.drawImage(this.img, x + this.w, y, 20, 20);
-    ctx.restore();
-    return;
-  }
-  this.img = new Image();
-  if (this.type == "sjs") {
-    this.img.src = "../images/sjs.jpg";
-  } else {
-    this.img.src = "../images/gcexcel.png";
-  }
-  this.img.onload = function () {
-    context.sheet.repaint();
-  };
-};
 
 /************************************************* */
