@@ -150,11 +150,10 @@ function initSpread() {
       let colInfos = [
         { name: "板块", displayName: "板块", size: 180 },
         { name: "帖子标题", displayName: "帖子标题", size: 300 },
-        { name: "处理状态", displayName: "处理状态", size: 100 },
+        { name: "处理状态", displayName: "处理状态", size: 80 },
         { name: "倒数第二层回复用户", displayName: "上次回帖用户", size: 120 },
-        { name: "发帖用户用户组", displayName: "发帖用户组", size: 120 },
-        // 无权限
-        // { name: "客户类型", displayName: "", size: 120 },
+        { name: "发帖用户用户组", displayName: "发帖用户组", size: 110 },
+        { name: "客户类型", displayName: "", size: 100 },
         {
           name: "发帖时间",
           displayName: "发帖时间",
@@ -266,8 +265,7 @@ function fetchHelpData() {
             }
             numElement.innerText = "辛苦啦，帖子已被你清空！！！";
             bindingHelpData(resp);
-            // 接口无权限
-            // fetchCustomerType();
+            fetchCustomerType();
             document.querySelector(".loading").remove();
             document.querySelector(".text").remove();
 
@@ -308,7 +306,6 @@ function fetchCustomerType() {
         let resp = JSON.parse(xhr1.response);
         let spread = GC.Spread.Sheets.findControl("ss");
         let sheet = spread.getActiveSheet();
-        let img1 = null;
 
         let partnerList = [],
           importantCustomerList = [];
@@ -342,7 +339,18 @@ function fetchCustomerType() {
           for (const element of partnerList) {
             if (GCDN_ID == element) {
               sheet.setValue(i, 5, "合作伙伴");
-              sheet.setCellType(i, 5, new PartnerCellType(img1));
+              let style = new GC.Spread.Sheets.Style();
+              style.decoration = {
+                icons: [
+                  {
+                    src: "../images/partner.png",
+                    width: 16,
+                    height: 16,
+                    position: GC.Spread.Sheets.IconPosition.right,
+                  },
+                ],
+              };
+              sheet.getCell(i, 5).setStyle(style);
               break;
             }
           }
@@ -419,8 +427,8 @@ function bindingHelpData(data) {
   let east = ["上海", "江苏", "浙江", "安徽", "湖北"];
   let south = ["广东", "深圳", "福建", "湖南", "云南", "重庆", "四川"];
 
-  let addressIndex = 11;
-  let areaIndex = 10;
+  let addressIndex = 12;
+  let areaIndex = 11;
 
   for (let i = 0; i < sheet.getRowCount(); i++) {
     let value = sheet.getValue(i, addressIndex);
@@ -472,68 +480,68 @@ function bindingHelpData(data) {
       "注意，还有" + row + "个帖子待处理。加油，胜利在望！！！";
   }
 
-  let ranges = [new GC.Spread.Sheets.Range(0, 2, row, 1)];
-  let ranges1 = [new GC.Spread.Sheets.Range(0, 4, row, 1)];
+  let statusRanges = [new GC.Spread.Sheets.Range(0, 2, row, 1)];
+  let userTypeRanges = [new GC.Spread.Sheets.Range(0, 4, row, 1)];
 
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "未处理",
     style1,
-    ranges
+    statusRanges
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "暂不采纳",
     style1,
-    ranges
+    statusRanges
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "处理中",
     style2,
-    ranges
+    statusRanges
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "沟通中",
     style2,
-    ranges
+    statusRanges
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "已采纳",
     style2,
-    ranges
+    statusRanges
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "调研中",
     style4,
-    ranges
+    statusRanges
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "已处理",
     style3,
-    ranges
+    statusRanges
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "已支持",
     style3,
-    ranges
+    statusRanges
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "合作伙伴",
     style5,
-    ranges1
+    userTypeRanges
   );
   sheet.conditionalFormats.addSpecificTextRule(
     GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
     "金牌服务用户",
     style6,
-    ranges1
+    userTypeRanges
   );
 
   for (let i = 0; i < row; i++) {
@@ -583,7 +591,7 @@ function bindingHelpData(data) {
       sheet.getCell(i, 3).setStyle(style);
     }
 
-    if (gc_developer.includes(sheet.getCell(i, 8).value())) {
+    if (gc_developer.includes(sheet.getCell(i, 9).value())) {
       let style = new GC.Spread.Sheets.Style();
       style.decoration = {
         icons: [
@@ -595,9 +603,9 @@ function bindingHelpData(data) {
           },
         ],
       };
-      sheet.getCell(i, 8).setStyle(style);
+      sheet.getCell(i, 9).setStyle(style);
     }
-    if (sjs_developer.includes(sheet.getCell(i, 8).value())) {
+    if (sjs_developer.includes(sheet.getCell(i, 9).value())) {
       let style = new GC.Spread.Sheets.Style();
       style.decoration = {
         icons: [
@@ -609,7 +617,7 @@ function bindingHelpData(data) {
           },
         ],
       };
-      sheet.getCell(i, 8).setStyle(style);
+      sheet.getCell(i, 9).setStyle(style);
     }
   }
 
@@ -660,6 +668,596 @@ function boardChange() {
 
   fetchHelpData();
 }
+
+/************************************************* */
+
+/**********************Sheet2 Bug****************** */
+
+function fetchBugData() {
+  let bugBoard = document.getElementById("bugBoard").value;
+  let startTime = document.getElementById("startTime").value;
+
+  fetch("https://gcdn.grapecity.com.cn/api/forumbugfeeds.php", {
+    method: "POST",
+    body: JSON.stringify({
+      begin: startTime,
+      fid: [bugBoard],
+      code: "vbA3i=rtiEG",
+    }),
+    headers: new Headers({
+      "Content-Type": "application/json",
+    }),
+  })
+    .then((res) => res.json())
+    .catch((error) => console.error("Error:", error))
+    .then((response) => bindingBugData(response));
+}
+
+function bindingBugData(data) {
+  if (!data?.length) {
+    return;
+  }
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(1);
+
+  sheet.suspendPaint();
+
+  sheet.setDataSource(data);
+
+  let style1 = new GC.Spread.Sheets.Style();
+  style1.backColor = "#FB6573";
+
+  let style2 = new GC.Spread.Sheets.Style();
+  style2.backColor = "#C6E7EC";
+
+  let style3 = new GC.Spread.Sheets.Style();
+  style3.backColor = "#64E834";
+
+  let style4 = new GC.Spread.Sheets.Style();
+  style4.backColor = "#6A5ACD";
+
+  let style5 = new GC.Spread.Sheets.Style();
+  style5.foreColor = "#5b457c";
+
+  let style6 = new GC.Spread.Sheets.Style();
+  style6.foreColor = "#FFCB6C";
+
+  let row = sheet.getRowCount();
+
+  let statusRanges = [new GC.Spread.Sheets.Range(0, 2, row, 1)];
+  let userTypeRanges = [new GC.Spread.Sheets.Range(0, 3, row, 1)];
+
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "未处理",
+    style1,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "暂不采纳",
+    style1,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "处理中",
+    style2,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "沟通中",
+    style2,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已采纳",
+    style2,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "调研中",
+    style4,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已处理",
+    style3,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已支持",
+    style3,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "合作伙伴",
+    style5,
+    userTypeRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "金牌服务用户",
+    style6,
+    userTypeRanges
+  );
+
+  for (let i = 0; i < row; i++) {
+    if (sheet.getCell(i, 3).value() == "金牌服务用户") {
+      let style = new GC.Spread.Sheets.Style();
+      style.decoration = {
+        icons: [
+          {
+            src: "../images/golden.png",
+            width: 16,
+            height: 16,
+            position: GC.Spread.Sheets.IconPosition.right,
+          },
+        ],
+      };
+      sheet.getCell(i, 3).setStyle(style);
+    }
+  }
+
+  let titleIndex = -1;
+  for (let i = 0; i < sheet.getColumnCount(); i++) {
+    if (
+      sheet.getText(0, i, GC.Spread.Sheets.SheetArea.colHeader) === "帖子标题"
+    ) {
+      titleIndex = i;
+      break;
+    }
+  }
+  if (titleIndex >= 0) {
+    for (let i = 0; i < data.length; i++) {
+      sheet.setHyperlink(
+        i,
+        titleIndex,
+        {
+          url:
+            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
+            data[i]["tid"],
+          tooltip:
+            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
+            data[i]["tid"],
+          linkColor: "#0066cc",
+          visitedLinkColor: "#3399ff",
+        },
+        GC.Spread.Sheets.SheetArea.viewport
+      );
+      sheet.setText(i, titleIndex, data[i]["帖子标题"]);
+    }
+  }
+  let range = new GC.Spread.Sheets.Range(-1, 0, -1, sheet.getColumnCount());
+  let rowFilter = new GC.Spread.Sheets.Filter.HideRowFilter(range);
+  sheet.rowFilter(rowFilter);
+
+  sheet.resumePaint();
+}
+
+function bugBoardChange() {
+  chrome.storage.sync.set({
+    bugBoard: document.getElementById("bugBoard").value,
+  });
+
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(1);
+  sheet.setDataSource([]);
+
+  fetchBugData();
+}
+
+function startTimeChange() {
+  chrome.storage.sync.set({
+    startTime: document.getElementById("startTime").value,
+  });
+
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(1);
+  sheet.setDataSource([]);
+
+  fetchBugData();
+}
+
+/************************************************* */
+
+/**********************Sheet3/4 Review****************** */
+
+function fetchReviewData() {
+  let reviewBoard = document.getElementById("reviewBoard").value;
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  let startTime = yesterday.toLocaleDateString();
+  let endTime = yesterday.toLocaleDateString();
+
+  fetch("https://gcdn.grapecity.com.cn/api/forumpoststatus.php", {
+    method: "POST",
+    body: JSON.stringify({
+      fid: reviewBoard,
+      startdate: startTime,
+      enddate: endTime,
+      key: "J5yP7hL8mK",
+    }),
+    headers: new Headers({
+      "Content-Type": "application/json",
+    }),
+  })
+    .then((res) => res.json())
+    .catch((error) => console.error("Error:", error))
+    .then((response) => bindingReviewData(response));
+}
+
+function bindingReviewData(data) {
+  if (!data?.length) {
+    return;
+  }
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(2);
+
+  sheet.suspendPaint();
+
+  sheet.setDataSource(data);
+
+  let style1 = new GC.Spread.Sheets.Style();
+  style1.backColor = "#FB6573";
+
+  let style2 = new GC.Spread.Sheets.Style();
+  style2.backColor = "#C6E7EC";
+
+  let style3 = new GC.Spread.Sheets.Style();
+  style3.backColor = "#64E834";
+
+  let style4 = new GC.Spread.Sheets.Style();
+  style4.backColor = "#6A5ACD";
+
+  let style5 = new GC.Spread.Sheets.Style();
+  style5.foreColor = "#5b457c";
+
+  let style6 = new GC.Spread.Sheets.Style();
+  style6.foreColor = "#FFCB6C";
+
+  let row = sheet.getRowCount();
+
+  let statusRanges = [new GC.Spread.Sheets.Range(0, 2, row, 1)];
+  let userTypeRanges = [new GC.Spread.Sheets.Range(0, 4, row, 1)];
+
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "未处理",
+    style1,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "暂不采纳",
+    style1,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "处理中",
+    style2,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "沟通中",
+    style2,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已采纳",
+    style2,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "调研中",
+    style4,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已处理",
+    style3,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已支持",
+    style3,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "合作伙伴",
+    style5,
+    userTypeRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "金牌服务用户",
+    style6,
+    userTypeRanges
+  );
+
+  for (let i = 0; i < row; i++) {
+    if (sheet.getCell(i, 4).value() == "金牌服务用户") {
+      let style = new GC.Spread.Sheets.Style();
+      style.decoration = {
+        icons: [
+          {
+            src: "../images/golden.png",
+            width: 16,
+            height: 16,
+            position: GC.Spread.Sheets.IconPosition.right,
+          },
+        ],
+      };
+      sheet.getCell(i, 4).setStyle(style);
+    }
+  }
+
+  let titleIndex = -1;
+  for (let i = 0; i < sheet.getColumnCount(); i++) {
+    if (
+      sheet.getText(0, i, GC.Spread.Sheets.SheetArea.colHeader) === "帖子标题"
+    ) {
+      titleIndex = i;
+      break;
+    }
+  }
+  if (titleIndex >= 0) {
+    for (let i = 0; i < data.length; i++) {
+      sheet.setHyperlink(
+        i,
+        titleIndex,
+        {
+          url:
+            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
+            data[i]["tid"],
+          tooltip:
+            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
+            data[i]["tid"],
+          linkColor: "#0066cc",
+          visitedLinkColor: "#3399ff",
+        },
+        GC.Spread.Sheets.SheetArea.viewport
+      );
+      sheet.setText(i, titleIndex, data[i]["subject"]);
+    }
+  }
+  let range = new GC.Spread.Sheets.Range(-1, 0, -1, sheet.getColumnCount());
+  let rowFilter = new GC.Spread.Sheets.Filter.HideRowFilter(range);
+  sheet.rowFilter(rowFilter);
+
+  sheet.resumePaint();
+}
+
+function reviewBoardChange() {
+  chrome.storage.sync.set({
+    reviewBoard: document.getElementById("reviewBoard").value,
+  });
+
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let reviewOneDaySheet = spread.getSheet(2);
+  reviewOneDaySheet.setDataSource([]);
+  let reviewCustomSheet = spread.getSheet(3);
+  reviewCustomSheet.setDataSource([]);
+
+  fetchReviewData();
+  fetchReviewCustomData();
+}
+
+/************************************************* */
+
+/**********************Sheet4 Review-Custom****************** */
+
+function fetchReviewCustomData() {
+  let reviewBoard = document.getElementById("reviewBoard").value;
+  let startTime = document.getElementById("reviewStartTime").value;
+  let endTime = document.getElementById("reviewEndTime").value;
+
+  fetch("https://gcdn.grapecity.com.cn/api/forumpoststatus.php", {
+    method: "POST",
+    body: JSON.stringify({
+      fid: reviewBoard,
+      startdate: startTime,
+      enddate: endTime,
+      key: "J5yP7hL8mK",
+    }),
+    headers: new Headers({
+      "Content-Type": "application/json",
+    }),
+  })
+    .then((res) => res.json())
+    .catch((error) => console.error("Error:", error))
+    .then((response) => bindingReviewCustomData(response));
+}
+
+function bindingReviewCustomData(data) {
+  if (!data?.length) {
+    return;
+  }
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(3);
+
+  sheet.suspendPaint();
+
+  sheet.setDataSource(data);
+
+  let style1 = new GC.Spread.Sheets.Style();
+  style1.backColor = "#FB6573";
+
+  let style2 = new GC.Spread.Sheets.Style();
+  style2.backColor = "#C6E7EC";
+
+  let style3 = new GC.Spread.Sheets.Style();
+  style3.backColor = "#64E834";
+
+  let style4 = new GC.Spread.Sheets.Style();
+  style4.backColor = "#6A5ACD";
+
+  let style5 = new GC.Spread.Sheets.Style();
+  style5.foreColor = "#5b457c";
+
+  let style6 = new GC.Spread.Sheets.Style();
+  style6.foreColor = "#FFCB6C";
+
+  let row = sheet.getRowCount();
+
+  let statusRanges = [new GC.Spread.Sheets.Range(0, 2, row, 1)];
+  let userTypeRanges = [new GC.Spread.Sheets.Range(0, 4, row, 1)];
+
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "未处理",
+    style1,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "暂不采纳",
+    style1,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "处理中",
+    style2,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "沟通中",
+    style2,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已采纳",
+    style2,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "调研中",
+    style4,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已处理",
+    style3,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "已支持",
+    style3,
+    statusRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "合作伙伴",
+    style5,
+    userTypeRanges
+  );
+  sheet.conditionalFormats.addSpecificTextRule(
+    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
+    "金牌服务用户",
+    style6,
+    userTypeRanges
+  );
+
+  for (let i = 0; i < row; i++) {
+    if (sheet.getCell(i, 4).value() == "金牌服务用户") {
+      let style = new GC.Spread.Sheets.Style();
+      style.decoration = {
+        icons: [
+          {
+            src: "../images/golden.png",
+            width: 16,
+            height: 16,
+            position: GC.Spread.Sheets.IconPosition.right,
+          },
+        ],
+      };
+      sheet.getCell(i, 4).setStyle(style);
+    }
+  }
+
+  let titleIndex = -1;
+  for (let i = 0; i < sheet.getColumnCount(); i++) {
+    if (
+      sheet.getText(0, i, GC.Spread.Sheets.SheetArea.colHeader) === "帖子标题"
+    ) {
+      titleIndex = i;
+      break;
+    }
+  }
+  if (titleIndex >= 0) {
+    for (let i = 0; i < data.length; i++) {
+      sheet.setHyperlink(
+        i,
+        titleIndex,
+        {
+          url:
+            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
+            data[i]["tid"],
+          tooltip:
+            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
+            data[i]["tid"],
+          linkColor: "#0066cc",
+          visitedLinkColor: "#3399ff",
+        },
+        GC.Spread.Sheets.SheetArea.viewport
+      );
+      sheet.setText(i, titleIndex, data[i]["subject"]);
+    }
+  }
+  let range = new GC.Spread.Sheets.Range(-1, 0, -1, sheet.getColumnCount());
+  let rowFilter = new GC.Spread.Sheets.Filter.HideRowFilter(range);
+  sheet.rowFilter(rowFilter);
+
+  sheet.resumePaint();
+}
+
+function reviewStartTimeChange() {
+  chrome.storage.sync.set({
+    reviewStartTime: document.getElementById("reviewStartTime").value,
+  });
+
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(3);
+  sheet.setDataSource([]);
+
+  fetchReviewCustomData();
+}
+
+function reviewEndTimeChange() {
+  chrome.storage.sync.set({
+    reviewEndTime: document.getElementById("reviewEndTime").value,
+  });
+
+  let spread = GC.Spread.Sheets.findControl("ss");
+  let sheet = spread.getSheet(3);
+  sheet.setDataSource([]);
+
+  fetchReviewCustomData();
+}
+
+/************************************************* */
+
+/**********************其他*********************** */
 
 function updateTimeChange() {
   chrome.storage.sync.set({
@@ -875,7 +1473,7 @@ function showArea() {
         {
           compareType:
             GC.Spread.Sheets.ConditionalFormatting.TextCompareType.contains,
-          expected: "*北方区*",
+          expected: "*华北区*",
         }
       );
       sheet.rowFilter().addFilterItem(11, condition);
@@ -890,7 +1488,7 @@ function showArea() {
         {
           compareType:
             GC.Spread.Sheets.ConditionalFormatting.TextCompareType.contains,
-          expected: "*华东区*",
+          expected: "*华东区及其他*",
         }
       );
       sheet.rowFilter().addFilterItem(11, condition);
@@ -905,22 +1503,7 @@ function showArea() {
         {
           compareType:
             GC.Spread.Sheets.ConditionalFormatting.TextCompareType.contains,
-          expected: "*南方区*",
-        }
-      );
-      sheet.rowFilter().addFilterItem(11, condition);
-      sheet.rowFilter().filter(11);
-      sheet.rowFilter().filterButtonVisible(true);
-      countRow();
-    } else if (result["setArea"] == 4) {
-      sheet.rowFilter().removeFilterItems(11);
-      sheet.rowFilter().filterButtonVisible(false);
-      let condition = new GC.Spread.Sheets.ConditionalFormatting.Condition(
-        GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
-        {
-          compareType:
-            GC.Spread.Sheets.ConditionalFormatting.TextCompareType.contains,
-          expected: "*西部区*",
+          expected: "*华南区*",
         }
       );
       sheet.rowFilter().addFilterItem(11, condition);
@@ -997,7 +1580,7 @@ function filterByArea(setArea, sheet) {
     {
       compareType:
         GC.Spread.Sheets.ConditionalFormatting.TextCompareType.contains,
-      expected: "*北方区*",
+      expected: "*华北区*",
     }
   );
   let eastCondition = new GC.Spread.Sheets.ConditionalFormatting.Condition(
@@ -1005,7 +1588,7 @@ function filterByArea(setArea, sheet) {
     {
       compareType:
         GC.Spread.Sheets.ConditionalFormatting.TextCompareType.contains,
-      expected: "*华东区*",
+      expected: "*华东区及其他*",
     }
   );
   let southCondition = new GC.Spread.Sheets.ConditionalFormatting.Condition(
@@ -1013,18 +1596,9 @@ function filterByArea(setArea, sheet) {
     {
       compareType:
         GC.Spread.Sheets.ConditionalFormatting.TextCompareType.contains,
-      expected: "*南方区*",
+      expected: "*华南区*",
     }
   );
-  let westCondition = new GC.Spread.Sheets.ConditionalFormatting.Condition(
-    GC.Spread.Sheets.ConditionalFormatting.ConditionType.textCondition,
-    {
-      compareType:
-        GC.Spread.Sheets.ConditionalFormatting.TextCompareType.contains,
-      expected: "*西部区*",
-    }
-  );
-
   switch (setArea) {
     case 1:
       sheet.rowFilter().addFilterItem(11, northCondition);
@@ -1044,596 +1618,6 @@ function filterByArea(setArea, sheet) {
   sheet.rowFilter().filterButtonVisible(true);
   countRow();
 }
-
-/************************************************* */
-
-/**********************Sheet2 Bug****************** */
-
-function fetchBugData() {
-  let bugBoard = document.getElementById("bugBoard").value;
-  let startTime = document.getElementById("startTime").value;
-
-  fetch("https://gcdn.grapecity.com.cn/api/forumbugfeeds.php", {
-    method: "POST",
-    body: JSON.stringify({
-      begin: startTime,
-      fid: [bugBoard],
-      code: "vbA3i=rtiEG",
-    }),
-    headers: new Headers({
-      "Content-Type": "application/json",
-    }),
-  })
-    .then((res) => res.json())
-    .catch((error) => console.error("Error:", error))
-    .then((response) => bindingBugData(response));
-}
-
-function bindingBugData(data) {
-  if (!data?.length) {
-    return;
-  }
-  let spread = GC.Spread.Sheets.findControl("ss");
-  let sheet = spread.getSheet(1);
-
-  sheet.suspendPaint();
-
-  sheet.setDataSource(data);
-
-  let style1 = new GC.Spread.Sheets.Style();
-  style1.backColor = "#FB6573";
-
-  let style2 = new GC.Spread.Sheets.Style();
-  style2.backColor = "#C6E7EC";
-
-  let style3 = new GC.Spread.Sheets.Style();
-  style3.backColor = "#64E834";
-
-  let style4 = new GC.Spread.Sheets.Style();
-  style4.backColor = "#6A5ACD";
-
-  let style5 = new GC.Spread.Sheets.Style();
-  style5.foreColor = "#5b457c";
-
-  let style6 = new GC.Spread.Sheets.Style();
-  style6.foreColor = "#FFCB6C";
-
-  let row = sheet.getRowCount();
-
-  let ranges = [new GC.Spread.Sheets.Range(0, 2, row, 1)];
-  let ranges1 = [new GC.Spread.Sheets.Range(0, 3, row, 1)];
-
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "未处理",
-    style1,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "暂不采纳",
-    style1,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "处理中",
-    style2,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "沟通中",
-    style2,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "已采纳",
-    style2,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "调研中",
-    style4,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "已处理",
-    style3,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "已支持",
-    style3,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "合作伙伴",
-    style5,
-    ranges1
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "金牌服务用户",
-    style6,
-    ranges1
-  );
-
-  for (let i = 0; i < row; i++) {
-    if (sheet.getCell(i, 3).value() == "金牌服务用户") {
-      let style = new GC.Spread.Sheets.Style();
-      style.decoration = {
-        icons: [
-          {
-            src: "../images/golden.png",
-            width: 16,
-            height: 16,
-            position: GC.Spread.Sheets.IconPosition.right,
-          },
-        ],
-      };
-      sheet.getCell(i, 3).setStyle(style);
-    }
-  }
-
-  let titleIndex = -1;
-  for (let i = 0; i < sheet.getColumnCount(); i++) {
-    if (
-      sheet.getText(0, i, GC.Spread.Sheets.SheetArea.colHeader) === "帖子标题"
-    ) {
-      titleIndex = i;
-      break;
-    }
-  }
-  if (titleIndex >= 0) {
-    for (let i = 0; i < data.length; i++) {
-      sheet.setHyperlink(
-        i,
-        titleIndex,
-        {
-          url:
-            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
-            data[i]["tid"],
-          tooltip:
-            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
-            data[i]["tid"],
-          linkColor: "#0066cc",
-          visitedLinkColor: "#3399ff",
-        },
-        GC.Spread.Sheets.SheetArea.viewport
-      );
-      sheet.setText(i, titleIndex, data[i]["帖子标题"]);
-    }
-  }
-  let range = new GC.Spread.Sheets.Range(-1, 0, -1, sheet.getColumnCount());
-  let rowFilter = new GC.Spread.Sheets.Filter.HideRowFilter(range);
-  sheet.rowFilter(rowFilter);
-
-  sheet.resumePaint();
-}
-
-function bugBoardChange() {
-  chrome.storage.sync.set({
-    bugBoard: document.getElementById("bugBoard").value,
-  });
-
-  let spread = GC.Spread.Sheets.findControl("ss");
-  let sheet = spread.getSheet(1);
-  sheet.setDataSource([]);
-
-  fetchBugData();
-}
-
-function startTimeChange() {
-  chrome.storage.sync.set({
-    startTime: document.getElementById("startTime").value,
-  });
-
-  let spread = GC.Spread.Sheets.findControl("ss");
-  let sheet = spread.getSheet(1);
-  sheet.setDataSource([]);
-
-  fetchBugData();
-}
-
-/************************************************* */
-
-/**********************Sheet3 Review-1****************** */
-
-function fetchReviewData() {
-  let reviewBoard = document.getElementById("reviewBoard").value;
-
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  let startTime = yesterday.toLocaleDateString();
-  let endTime = yesterday.toLocaleDateString();
-
-  fetch("https://gcdn.grapecity.com.cn/api/forumpoststatus.php", {
-    method: "POST",
-    body: JSON.stringify({
-      fid: reviewBoard,
-      startdate: startTime,
-      enddate: endTime,
-      key: "J5yP7hL8mK",
-    }),
-    headers: new Headers({
-      "Content-Type": "application/json",
-    }),
-  })
-    .then((res) => res.json())
-    .catch((error) => console.error("Error:", error))
-    .then((response) => bindingReviewData(response));
-}
-
-function bindingReviewData(data) {
-  if (!data?.length) {
-    return;
-  }
-  let spread = GC.Spread.Sheets.findControl("ss");
-  let sheet = spread.getSheet(2);
-
-  sheet.suspendPaint();
-
-  sheet.setDataSource(data);
-
-  let style1 = new GC.Spread.Sheets.Style();
-  style1.backColor = "#FB6573";
-
-  let style2 = new GC.Spread.Sheets.Style();
-  style2.backColor = "#C6E7EC";
-
-  let style3 = new GC.Spread.Sheets.Style();
-  style3.backColor = "#64E834";
-
-  let style4 = new GC.Spread.Sheets.Style();
-  style4.backColor = "#6A5ACD";
-
-  let style5 = new GC.Spread.Sheets.Style();
-  style5.foreColor = "#5b457c";
-
-  let style6 = new GC.Spread.Sheets.Style();
-  style6.foreColor = "#FFCB6C";
-
-  let row = sheet.getRowCount();
-
-  let ranges = [new GC.Spread.Sheets.Range(0, 2, row, 1)];
-  let ranges1 = [new GC.Spread.Sheets.Range(0, 4, row, 1)];
-
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "未处理",
-    style1,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "暂不采纳",
-    style1,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "处理中",
-    style2,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "沟通中",
-    style2,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "已采纳",
-    style2,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "调研中",
-    style4,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "已处理",
-    style3,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "已支持",
-    style3,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "合作伙伴",
-    style5,
-    ranges1
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "金牌服务用户",
-    style6,
-    ranges1
-  );
-
-  for (let i = 0; i < row; i++) {
-    if (sheet.getCell(i, 4).value() == "金牌服务用户") {
-      let style = new GC.Spread.Sheets.Style();
-      style.decoration = {
-        icons: [
-          {
-            src: "../images/golden.png",
-            width: 16,
-            height: 16,
-            position: GC.Spread.Sheets.IconPosition.right,
-          },
-        ],
-      };
-      sheet.getCell(i, 4).setStyle(style);
-    }
-  }
-
-  let titleIndex = -1;
-  for (let i = 0; i < sheet.getColumnCount(); i++) {
-    if (
-      sheet.getText(0, i, GC.Spread.Sheets.SheetArea.colHeader) === "帖子标题"
-    ) {
-      titleIndex = i;
-      break;
-    }
-  }
-  if (titleIndex >= 0) {
-    for (let i = 0; i < data.length; i++) {
-      sheet.setHyperlink(
-        i,
-        titleIndex,
-        {
-          url:
-            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
-            data[i]["tid"],
-          tooltip:
-            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
-            data[i]["tid"],
-          linkColor: "#0066cc",
-          visitedLinkColor: "#3399ff",
-        },
-        GC.Spread.Sheets.SheetArea.viewport
-      );
-      sheet.setText(i, titleIndex, data[i]["subject"]);
-    }
-  }
-  let range = new GC.Spread.Sheets.Range(-1, 0, -1, sheet.getColumnCount());
-  let rowFilter = new GC.Spread.Sheets.Filter.HideRowFilter(range);
-  sheet.rowFilter(rowFilter);
-
-  sheet.resumePaint();
-}
-
-function reviewBoardChange() {
-  chrome.storage.sync.set({
-    reviewBoard: document.getElementById("reviewBoard").value,
-  });
-
-  let spread = GC.Spread.Sheets.findControl("ss");
-  let sheet = spread.getSheet(2);
-  sheet.setDataSource([]);
-  let sheet2 = spread.getSheet(3);
-  sheet2.setDataSource([]);
-
-  fetchReviewData();
-  fetchReviewCustomData();
-}
-
-/************************************************* */
-
-/**********************Sheet4 Review-Custom****************** */
-
-function fetchReviewCustomData() {
-  let reviewBoard = document.getElementById("reviewBoard").value;
-  let startTime = document.getElementById("reviewStartTime").value;
-  let endTime = document.getElementById("reviewEndTime").value;
-
-  fetch("https://gcdn.grapecity.com.cn/api/forumpoststatus.php", {
-    method: "POST",
-    body: JSON.stringify({
-      fid: reviewBoard,
-      startdate: startTime,
-      enddate: endTime,
-      key: "J5yP7hL8mK",
-    }),
-    headers: new Headers({
-      "Content-Type": "application/json",
-    }),
-  })
-    .then((res) => res.json())
-    .catch((error) => console.error("Error:", error))
-    .then((response) => bindingReviewCustomData(response));
-}
-
-function bindingReviewCustomData(data) {
-  if (!data?.length) {
-    return;
-  }
-  let spread = GC.Spread.Sheets.findControl("ss");
-  let sheet = spread.getSheet(3);
-
-  sheet.suspendPaint();
-
-  sheet.setDataSource(data);
-
-  let style1 = new GC.Spread.Sheets.Style();
-  style1.backColor = "#FB6573";
-
-  let style2 = new GC.Spread.Sheets.Style();
-  style2.backColor = "#C6E7EC";
-
-  let style3 = new GC.Spread.Sheets.Style();
-  style3.backColor = "#64E834";
-
-  let style4 = new GC.Spread.Sheets.Style();
-  style4.backColor = "#6A5ACD";
-
-  let style5 = new GC.Spread.Sheets.Style();
-  style5.foreColor = "#5b457c";
-
-  let style6 = new GC.Spread.Sheets.Style();
-  style6.foreColor = "#FFCB6C";
-
-  let row = sheet.getRowCount();
-
-  let ranges = [new GC.Spread.Sheets.Range(0, 2, row, 1)];
-  let ranges1 = [new GC.Spread.Sheets.Range(0, 4, row, 1)];
-
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "未处理",
-    style1,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "暂不采纳",
-    style1,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "处理中",
-    style2,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "沟通中",
-    style2,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "已采纳",
-    style2,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "调研中",
-    style4,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "已处理",
-    style3,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "已支持",
-    style3,
-    ranges
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "合作伙伴",
-    style5,
-    ranges1
-  );
-  sheet.conditionalFormats.addSpecificTextRule(
-    GC.Spread.Sheets.ConditionalFormatting.TextComparisonOperators.contains,
-    "金牌服务用户",
-    style6,
-    ranges1
-  );
-
-  for (let i = 0; i < row; i++) {
-    if (sheet.getCell(i, 4).value() == "金牌服务用户") {
-      let style = new GC.Spread.Sheets.Style();
-      style.decoration = {
-        icons: [
-          {
-            src: "../images/golden.png",
-            width: 16,
-            height: 16,
-            position: GC.Spread.Sheets.IconPosition.right,
-          },
-        ],
-      };
-      sheet.getCell(i, 4).setStyle(style);
-    }
-  }
-
-  let titleIndex = -1;
-  for (let i = 0; i < sheet.getColumnCount(); i++) {
-    if (
-      sheet.getText(0, i, GC.Spread.Sheets.SheetArea.colHeader) === "帖子标题"
-    ) {
-      titleIndex = i;
-      break;
-    }
-  }
-  if (titleIndex >= 0) {
-    for (let i = 0; i < data.length; i++) {
-      sheet.setHyperlink(
-        i,
-        titleIndex,
-        {
-          url:
-            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
-            data[i]["tid"],
-          tooltip:
-            "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
-            data[i]["tid"],
-          linkColor: "#0066cc",
-          visitedLinkColor: "#3399ff",
-        },
-        GC.Spread.Sheets.SheetArea.viewport
-      );
-      sheet.setText(i, titleIndex, data[i]["subject"]);
-    }
-  }
-  let range = new GC.Spread.Sheets.Range(-1, 0, -1, sheet.getColumnCount());
-  let rowFilter = new GC.Spread.Sheets.Filter.HideRowFilter(range);
-  sheet.rowFilter(rowFilter);
-
-  sheet.resumePaint();
-}
-
-function reviewStartTimeChange() {
-  chrome.storage.sync.set({
-    reviewStartTime: document.getElementById("reviewStartTime").value,
-  });
-
-  let spread = GC.Spread.Sheets.findControl("ss");
-  let sheet = spread.getSheet(3);
-  sheet.setDataSource([]);
-
-  fetchReviewCustomData();
-}
-
-function reviewEndTimeChange() {
-  chrome.storage.sync.set({
-    reviewEndTime: document.getElementById("reviewEndTime").value,
-  });
-
-  let spread = GC.Spread.Sheets.findControl("ss");
-  let sheet = spread.getSheet(3);
-  sheet.setDataSource([]);
-
-  fetchReviewCustomData();
-}
-
-/************************************************* */
-
-/**********************其他*********************** */
 
 function countRow() {
   let spread = GC.Spread.Sheets.findControl("ss");
