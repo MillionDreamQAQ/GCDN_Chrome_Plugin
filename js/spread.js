@@ -473,7 +473,7 @@ function bindingHelpData(data) {
   let row = sheet.getRowCount();
   setConditionFormat(sheet, row, null, null);
   bindDecoration(sheet, row, 4, 3, 9);
-  setHyperlink(sheet, data);
+  setHyperlink(sheet, data, "帖子链接", "帖子标题");
 
   sheet.resumePaint();
 }
@@ -530,7 +530,7 @@ function bindingBugData(data) {
     new GC.Spread.Sheets.Range(0, 3, row, 1),
   ]);
   bindDecoration(sheet, row, 3, null, null);
-  setHyperlink(sheet, data);
+  setHyperlink(sheet, data, "tid", "帖子标题");
 
   sheet.resumePaint();
 }
@@ -602,7 +602,7 @@ function bindingReviewData(data) {
   let row = sheet.getRowCount();
   setConditionFormat(sheet, row, null, null);
   bindDecoration(sheet, row, 4, null, null);
-  setHyperlink(sheet, data);
+  setHyperlink(sheet, data, "tid", "subject");
 
   sheet.resumePaint();
 }
@@ -662,7 +662,7 @@ function bindingReviewCustomData(data) {
   let row = sheet.getRowCount();
   setConditionFormat(sheet, row, null, null);
   bindDecoration(sheet, row, 4, null, null);
-  setHyperlink(sheet, data);
+  setHyperlink(sheet, data, "tid", "subject");
 
   sheet.resumePaint();
 }
@@ -693,8 +693,8 @@ function reviewEndTimeChange() {
 
 /************************************************* */
 
-/**********************其他*********************** */
-function setHyperlink(sheet, data) {
+/**********************Others*********************** */
+function setHyperlink(sheet, data, fieldName, fieldName2) {
   let titleIndex = -1;
   for (let i = 0; i < sheet.getColumnCount(); i++) {
     if (
@@ -712,16 +712,16 @@ function setHyperlink(sheet, data) {
         {
           url:
             "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
-            data[i]["tid"],
+            data[i][fieldName],
           tooltip:
             "http://gcdn.grapecity.com.cn/forum.php?mod=viewthread&tid=" +
-            data[i]["tid"],
+            data[i][fieldName],
           linkColor: "#0066cc",
           visitedLinkColor: "#3399ff",
         },
         GC.Spread.Sheets.SheetArea.viewport
       );
-      sheet.setText(i, titleIndex, data[i]["帖子标题"]);
+      sheet.setText(i, titleIndex, data[i][fieldName2]);
     }
   }
   let range = new GC.Spread.Sheets.Range(-1, 0, -1, sheet.getColumnCount());
