@@ -11,12 +11,14 @@ let changeStatusTargetStatus = null;
 let replySelectionIndex = null;
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
+  console.log("LOG: chrome.tabs.onActivated -> activeInfo", activeInfo);
   chrome.tabs.query(
     { active: true, lastFocusedWindow: true, currentWindow: true },
     function (tabs) {
       if (!tabs) {
-        console.error(tabs);
+        console.error("DEBUG: chrome.tabs.query -> tabs", tabs);
       }
+      console.log("LOG: chrome.tabs.query -> tabs", tabs);
       tabInfo = tabs[0];
       tabId = tabInfo.id;
     }
@@ -51,7 +53,7 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 
   chrome.contextMenus.create({
-    id: "search",
+    id: "search_jira",
     title: "使用JIRA搜索：%s",
     contexts: ["selection"],
   });
@@ -308,7 +310,7 @@ async function contextClick(info, tab) {
   tabId = tabInfo.id;
   let text = info.selectionText;
   switch (info.menuItemId) {
-    case "search":
+    case "search_jira":
       if (text.indexOf("(") != -1 || text.indexOf(")") != -1) {
         text = text.replaceAll("(", "");
         text = text.replaceAll(")", "");
