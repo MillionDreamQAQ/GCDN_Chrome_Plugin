@@ -14,6 +14,9 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.query(
     { active: true, lastFocusedWindow: true, currentWindow: true },
     function (tabs) {
+      if (!tabs) {
+        console.error(tabs);
+      }
       tabInfo = tabs[0];
       tabId = tabInfo.id;
     }
@@ -832,14 +835,8 @@ function fastPostMessageNotFoundAlert() {
 }
 
 function submit() {
-  chrome.storage.sync.get("manual", (data) => {
-    let res = data.manual;
-
-    if (!res) {
-      let confirmButton = document.querySelector("#modsubmit");
-      confirmButton.click();
-    }
-  });
+  let confirmButton = document.querySelector("#modsubmit");
+  confirmButton.click();
 }
 
 function getReplySelectionIndex() {
