@@ -1,6 +1,4 @@
 window.onload = function () {
-  console.log("plugin enabled");
-
   const regex = /(DOCXLS|SJS)-\d+/g;
 
   let domClone = document.body.cloneNode(true);
