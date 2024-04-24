@@ -756,7 +756,7 @@ function bindDecoration(
       continue;
     }
 
-    if (gc_developer.includes(sheet.getCell(i, lastReplyIndex).value())) {
+    if (sjs_developer.includes(sheet.getCell(i, lastReplyIndex).value())) {
       let style = new GC.Spread.Sheets.Style();
       style.decoration = {
         icons: [
@@ -770,7 +770,7 @@ function bindDecoration(
       };
       sheet.getCell(i, lastReplyIndex).setStyle(style);
     }
-    if (sjs_developer.includes(sheet.getCell(i, lastReplyIndex).value())) {
+    if (gc_developer.includes(sheet.getCell(i, lastReplyIndex).value())) {
       let style = new GC.Spread.Sheets.Style();
       style.decoration = {
         icons: [
@@ -785,7 +785,7 @@ function bindDecoration(
       sheet.getCell(i, lastReplyIndex).setStyle(style);
     }
 
-    if (gc_developer.includes(sheet.getCell(i, lastReplyIndex2).value())) {
+    if (sjs_developer.includes(sheet.getCell(i, lastReplyIndex2).value())) {
       let style = new GC.Spread.Sheets.Style();
       style.decoration = {
         icons: [
@@ -799,7 +799,7 @@ function bindDecoration(
       };
       sheet.getCell(i, lastReplyIndex2).setStyle(style);
     }
-    if (sjs_developer.includes(sheet.getCell(i, lastReplyIndex2).value())) {
+    if (gc_developer.includes(sheet.getCell(i, lastReplyIndex2).value())) {
       let style = new GC.Spread.Sheets.Style();
       style.decoration = {
         icons: [
