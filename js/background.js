@@ -560,13 +560,6 @@ chrome.commands.onCommand.addListener((command) => {
 /******************************************************************************* */
 
 async function handleMoveButtonClick(tabId) {
-  if (!tabId) {
-    await chrome.scripting.executeScript({
-      target: { tabId },
-      func: tabIdNotFoundAlert,
-    });
-    return;
-  }
   await chrome.scripting.executeScript({
     target: { tabId },
     func: move_stage0,
@@ -658,14 +651,6 @@ function move_stage2(status) {
 /******************************************************************************* */
 
 async function handleChangeStatusButtonClick(tabId) {
-  if (!tabId) {
-    await chrome.scripting.executeScript({
-      target: { tabId },
-      func: tabIdNotFoundAlert,
-    });
-    return;
-  }
-
   await chrome.scripting.executeScript({
     target: { tabId },
     func: change_status_stage0,
@@ -727,14 +712,6 @@ function change_status_stage1(status) {
 /******************************************************************************* */
 
 async function handleCloseButtonClick(tabId) {
-  if (!tabId) {
-    await chrome.scripting.executeScript({
-      target: { tabId },
-      func: tabIdNotFoundAlert,
-    });
-    return;
-  }
-
   await chrome.scripting.executeScript({
     target: { tabId },
     func: close_stage0,
@@ -772,14 +749,6 @@ function close_stage1() {
 /******************************************************************************* */
 
 async function handleRemoveRewardButtonClick(tabId) {
-  if (!tabId) {
-    await chrome.scripting.executeScript({
-      target: { tabId },
-      func: tabIdNotFoundAlert,
-    });
-    return;
-  }
-
   await chrome.scripting.executeScript({
     target: { tabId },
     func: remove_stage0,
@@ -804,14 +773,6 @@ function remove_stage0() {
 /******************************************************************************* */
 
 async function handleQuickReplay(tabId) {
-  if (!tabId) {
-    await chrome.scripting.executeScript({
-      target: { tabId },
-      func: tabIdNotFoundAlert,
-    });
-    return;
-  }
-
   await chrome.scripting.executeScript({
     target: { tabId },
     func: quick_reply,
@@ -865,10 +826,6 @@ function quick_reply(index) {
 }
 
 /******************************************************************************* */
-
-function tabIdNotFoundAlert() {
-  alert("无法获取TabId，请切换页面并重试！");
-}
 
 function fastPostMessageNotFoundAlert() {
   alert("未找到指定元素！(#fastpostmessage)");

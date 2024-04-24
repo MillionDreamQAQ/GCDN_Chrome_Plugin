@@ -2,7 +2,9 @@ window.onload = function () {
   const regex = /(DOCXLS|SJS)-\d+/g;
 
   let domClone = document.body.cloneNode(true);
-  domClone.querySelector(".gcdn_author_info").removeChild(domClone.querySelector(".gcdn_author_info_3"));
+  domClone
+    .querySelector(".gcdn_author_info")
+    .removeChild(domClone.querySelector(".gcdn_author_info_3"));
 
   let matches = domClone.innerText.match(regex);
   matches = [...new Set(matches)];
@@ -47,6 +49,8 @@ window.onload = function () {
       "https://grapecityglobal.sharepoint.com/:x:/r/sites/gcscn/_layouts/15/Doc.aspx?sourcedoc=%7B8DC832FD-A95D-4E10-93A0-CB806CCCDAD9%7D&file=%E9%87%91%E7%89%8C%E8%B4%A6%E5%8F%B7%E7%BB%B4%E6%8A%A4%E8%AE%B0%E5%BD%95.xlsx&action=default&mobileredirect=true";
   }
 
+  /**************************************************************************************************************************************/
+
   let mainButton = document.createElement("button");
   mainButton.innerHTML = "→";
   mainButton.style.position = "fixed";
@@ -77,25 +81,29 @@ window.onload = function () {
 
   document.body.appendChild(popup);
 
-  let editButton = createButton(
+  createButton(
+    popup,
     "编辑帖子",
     "#viewthread_foot\\ cl > div > div > em > a.times_editp",
     "未找到编辑按钮！",
     false
   );
-  let beforePageButton = createButton(
+  createButton(
+    popup,
     "上一页",
     "#ct > div.cl > div.mn > div.box.cl > div.pgs.mtm.mbm.cl > div > a.prev",
     "未找到按钮或已经是第一页了！",
     false
   );
-  let nextPageButton = createButton(
+  createButton(
+    popup,
     "下一页",
     "#ct > div.cl > div.mn > div.box.cl > div.pgs.mtm.mbm.cl > div > a.nxt",
     "未找到按钮或已经是最后一页了！",
     false
   );
-  let editArea = createButton(
+  createButton(
+    popup,
     "跳转回复",
     "#fastpostform > table > tbody > tr > td",
     "未找到按钮！",
@@ -103,13 +111,20 @@ window.onload = function () {
   );
 };
 
-function createButton(innerText, targetSelector, clickMessage, isScroll) {
+function createButton(
+  parentElement,
+  innerText,
+  targetSelector,
+  clickMessage,
+  isScroll
+) {
   let button = document.createElement("button");
   button.innerText = innerText;
   button.style.marginBottom = "10px";
   button.style.width = "70px";
   button.style.height = "25px";
-  document.querySelector("#chrome-plugin-popup").appendChild(button);
+
+  parentElement.appendChild(button);
 
   button.addEventListener("click", function () {
     let element = document.querySelector(targetSelector);
