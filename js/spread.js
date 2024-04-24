@@ -149,6 +149,8 @@ function setDefaultData() {
 
 function initSpread() {
   let spread = new GC.Spread.Sheets.Workbook(document.getElementById("ss"));
+  let statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
+  statusBar.bind(spread);
   spread.addSheet(1, new GC.Spread.Sheets.Worksheet("Bug"));
   spread.addSheet(2, new GC.Spread.Sheets.Worksheet("Review-Yesterday"));
   spread.addSheet(3, new GC.Spread.Sheets.Worksheet("Review-Custom"));
