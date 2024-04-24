@@ -297,11 +297,6 @@ chrome.runtime.onInstalled.addListener(() => {
     id: "move_bug_query",
     title: "移至Bug板块调研中",
   });
-
-  chrome.contextMenus.create({
-    id: "notebook",
-    title: "进入我的笔记本",
-  });
 });
 
 chrome.contextMenus.onClicked.addListener(contextClick);
@@ -339,12 +334,6 @@ async function contextClick(info, tab) {
           "https://developersolutions.crm5.dynamics.com/main.aspx?appid=69dffb8e-ae36-e811-817f-e0071b6927a1&forceUCI=1&pagetype=search&searchText=" +
           encodeURI(info.selectionText) +
           "&searchType=0",
-      });
-      break;
-
-    case "notebook":
-      chrome.tabs.create({
-        url: "http://xa-gcscn-sys/gc_worksupport/%E5%94%AE%E5%90%8E%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86%E9%A1%B5%E9%9D%A2",
       });
       break;
 
