@@ -211,11 +211,12 @@ function initSpread() {
           name: "回帖间隔时长",
           displayName: "回帖间隔时长",
           size: 40,
+          formatter: "0.00",
           value: function (item, newValue) {
             if (arguments.length == 1) {
-              return parseInt(item["回帖间隔时长"]);
+              return parseInt(item["回帖间隔时长"]) / 60;
             } else {
-              item["回帖间隔时长"] = newValue;
+              item["回帖间隔时长"] = newValue / 60;
             }
           },
         },

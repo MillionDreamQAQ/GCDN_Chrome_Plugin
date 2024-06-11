@@ -39,6 +39,7 @@ function generator(year, month, startPersonName) {
   // header
   let person = ["许秦俊豪", "窦梦林", "潘达威", "黄学雷", "段函", "马黎鑫"];
   let new_person = ["许秦俊豪", "潘达威", "黄学雷", "段函", "马黎鑫"];
+  let new_person2 = ["许秦俊豪", "潘达威", "马黎鑫", "段函"];
 
   sheet.setValue(0, 0, "Review日历");
   sheet.addSpan(0, 0, 1, 7);
@@ -53,7 +54,7 @@ function generator(year, month, startPersonName) {
   // body
   let daysInMonth = new Date(year, month, 0).getDate();
   let firstDay = new Date(year, month - 1, 1).getDay();
-  let personIndex = new_person.findIndex((e) => e == startPersonName);
+  let personIndex = new_person2.findIndex((e) => e == startPersonName);
   let row = 2;
   let col = firstDay - 1; // minus one to let sunday shows at the end.
   for (let day = 1; day <= daysInMonth; day++) {
@@ -62,7 +63,7 @@ function generator(year, month, startPersonName) {
     sheet.getCell(row, col).hAlign(GC.Spread.Sheets.HorizontalAlign.center);
 
     if (col < 5) {
-      sheet.setValue(row + 1, col, new_person[personIndex % 5]);
+      sheet.setValue(row + 1, col, new_person2[personIndex % 5]);
       sheet
         .getCell(row + 1, col)
         .hAlign(GC.Spread.Sheets.HorizontalAlign.center);
