@@ -149,7 +149,9 @@ function setDefaultData() {
 
 function initSpread() {
   let spread = new GC.Spread.Sheets.Workbook(document.getElementById("ss"));
-  let statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
+  let statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(
+    document.getElementById("statusBar")
+  );
   statusBar.bind(spread);
   spread.addSheet(1, new GC.Spread.Sheets.Worksheet("Bug"));
   spread.addSheet(2, new GC.Spread.Sheets.Worksheet("Review-Yesterday"));
@@ -444,6 +446,7 @@ function bindingHelpData(data) {
   let east = ["上海", "江苏", "浙江", "安徽", "湖北"];
   let south = ["广东", "深圳", "福建", "湖南", "云南", "重庆", "四川"];
 
+  let customerTypeIndex = 4;
   let addressIndex = 12;
   let areaIndex = 11;
 
@@ -466,10 +469,24 @@ function bindingHelpData(data) {
     }
   }
 
+  let border = new GC.Spread.Sheets.LineBorder();
+  border.color = "yellow";
+  border.style = GC.Spread.Sheets.LineStyle.medium;
+
   for (let i = 0; i < sheet.getRowCount(); i++) {
-    let value = sheet.getValue(i, areaIndex);
-    if (value !== "华北区" && value !== "华东区及其他" && value !== "华南区") {
+    let areaValue = sheet.getValue(i, areaIndex);
+    if (
+      areaValue !== "华北区" &&
+      areaValue !== "华东区及其他" &&
+      areaValue !== "华南区"
+    ) {
       sheet.setValue(i, areaIndex, area[1]);
+    }
+
+    let userTypeValue = sheet.getValue(i, customerTypeIndex);
+    if (userTypeValue === "金牌服务用户") {
+      sheet.getRange(i, -1, 1, -1).borderBottom(border).borderLeft(border).borderRight(border).borderTop(border).backColor("lightyellow");
+      // sheet.getRange(i, -1, 1, -1).borderBottom(border).borderLeft(border).borderRight(border).borderTop(border).backColor("lightyellow");
     }
   }
 
