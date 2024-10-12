@@ -1,4 +1,4 @@
-let defaultSleepTime = 1000;
+let defaultSleepTime = 1500;
 
 let tabInfo = null;
 let tabId = null;
@@ -570,7 +570,7 @@ async function handleMoveButtonClick(tabId) {
     func: move_stage0,
   });
 
-  await sleep(defaultSleepTime);
+  // below is the code which is open dialog, so need use interval to check if the dialog open.
   await chrome.scripting.executeScript({
     target: { tabId },
     func: move_stage1,
@@ -601,23 +601,31 @@ function move_stage0() {
 }
 
 function move_stage1(space) {
-  let spaceSelect = document.querySelector("#moveto");
+  let selector = "#moveto";
+  let intervalId = setInterval(() => {
+    let element = document.querySelector(selector);
+    console.log(`Checking ${selector} element...`);
 
-  switch (space) {
-    case "求助中心":
-      spaceSelect.options.selectedIndex = 23;
-      break;
-    case "Bug反馈":
-      spaceSelect.options.selectedIndex = 27;
-      break;
-    case "产品需求":
-      spaceSelect.options.selectedIndex = 26;
-      break;
-    default:
-      break;
-  }
+    if (element) {
+      clearInterval(intervalId);
 
-  spaceSelect.dispatchEvent(new Event("change"));
+      switch (space) {
+        case "求助中心":
+          element.options.selectedIndex = 23;
+          break;
+        case "Bug反馈":
+          element.options.selectedIndex = 27;
+          break;
+        case "产品需求":
+          element.options.selectedIndex = 26;
+          break;
+        default:
+          break;
+      }
+
+      element.dispatchEvent(new Event("change"));
+    }
+  }, 500);
 }
 
 function move_stage2(status) {
@@ -661,7 +669,7 @@ async function handleChangeStatusButtonClick(tabId) {
     func: change_status_stage0,
   });
 
-  await sleep(defaultSleepTime);
+  // below is the code which is open dialog, so need use interval to check if the dialog open.
   await chrome.scripting.executeScript({
     target: { tabId },
     func: change_status_stage1,
@@ -685,33 +693,42 @@ function change_status_stage0() {
 }
 
 function change_status_stage1(status) {
-  let statusSelect = document.querySelector("#typeid");
-  let offset = 0;
-  if (statusSelect.options.length >= 5) {
-    offset = 1;
-  }
-  switch (status) {
-    case "未处理":
-      statusSelect.options.selectedIndex = offset + 0;
-      break;
-    case "处理中":
-    case "沟通中":
-      statusSelect.options.selectedIndex = offset + 1;
-      break;
-    case "调研中":
-    case "已采纳":
-      statusSelect.options.selectedIndex = offset + 2;
-      break;
-    case "已处理":
-    case "已支持":
-      statusSelect.options.selectedIndex = offset + 3;
-      break;
-    case "暂不采纳":
-      statusSelect.options.selectedIndex = offset + 4;
-      break;
-    default:
-      break;
-  }
+  let selector = "#typeid";
+  let intervalId = setInterval(() => {
+    let element = document.querySelector(selector);
+    console.log(`Checking ${selector} element...`);
+
+    if (element) {
+      clearInterval(intervalId);
+
+      let offset = 0;
+      if (element.options.length >= 5) {
+        offset = 1;
+      }
+      switch (status) {
+        case "未处理":
+          element.options.selectedIndex = offset + 0;
+          break;
+        case "处理中":
+        case "沟通中":
+          element.options.selectedIndex = offset + 1;
+          break;
+        case "调研中":
+        case "已采纳":
+          element.options.selectedIndex = offset + 2;
+          break;
+        case "已处理":
+        case "已支持":
+          element.options.selectedIndex = offset + 3;
+          break;
+        case "暂不采纳":
+          element.options.selectedIndex = offset + 4;
+          break;
+        default:
+          break;
+      }
+    }
+  }, 500);
 }
 
 /******************************************************************************* */
@@ -722,7 +739,7 @@ async function handleCloseButtonClick(tabId) {
     func: close_stage0,
   });
 
-  await sleep(defaultSleepTime);
+  // below is the code which is open dialog, so need use interval to check if the dialog open.
   await chrome.scripting.executeScript({
     target: { tabId },
     func: close_stage1,
@@ -745,10 +762,18 @@ function close_stage0() {
 }
 
 function close_stage1() {
-  let closeCheckBox = document.querySelector(
-    "#moderateform > div > table > tbody > tr:nth-child(2) > td > ul > li:nth-child(2) > label"
-  );
-  closeCheckBox.click();
+  let selector =
+    "#moderateform > div > table > tbody > tr:nth-child(2) > td > ul > li:nth-child(2) > label";
+  let intervalId = setInterval(() => {
+    let element = document.querySelector(selector);
+    console.log(`Checking ${selector} element...`);
+
+    if (element) {
+      clearInterval(intervalId);
+
+      element.click();
+    }
+  }, 500);
 }
 
 /******************************************************************************* */
@@ -759,7 +784,7 @@ async function handleRemoveRewardButtonClick(tabId) {
     func: remove_stage0,
   });
 
-  await sleep(defaultSleepTime);
+  // below is the code which is open dialog, so need use interval to check if the dialog open.
   await chrome.scripting.executeScript({
     target: { tabId },
     func: submit,
@@ -837,8 +862,17 @@ function fastPostMessageNotFoundAlert() {
 }
 
 function submit() {
-  let confirmButton = document.querySelector("#modsubmit");
-  confirmButton.click();
+  let selector = "#modsubmit";
+  let intervalId = setInterval(() => {
+    let element = document.querySelector(selector);
+    console.log(`Checking ${selector} element...`);
+
+    if (element) {
+      clearInterval(intervalId);
+
+      element.click();
+    }
+  }, 500);
 }
 
 function getReplySelectionIndex() {
