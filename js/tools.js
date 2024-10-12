@@ -51,6 +51,102 @@ window.onload = function () {
 
   /**************************************************************************************************************************************/
 
+  let hints = [];
+
+  const hintKeys = [
+    "quickReplyHintData1",
+    "quickReplyHintData2",
+    "quickReplyHintData3",
+    "quickReplyHintData4",
+    "quickReplyHintData5",
+    "quickReplyHintData6",
+  ];
+
+  chrome.storage.sync.get(hintKeys, function (data) {
+    hintKeys.forEach((key, index) => {
+      if (data?.[key]) {
+        hints[index] = data[key];
+      }
+    });
+
+    let postReplyElement = document.querySelector("#f_pst .plc");
+    for (let i = 0; i < 6; i++) {
+      createReplyElement(postReplyElement, i);
+    }
+  });
+
+  function createReplyElement(parentElement, index) {
+    let testButton = parentElement.appendChild(document.createElement("div"));
+    testButton.innerHTML = `${hints[index]}`;
+    testButton.id = index + 1;
+    testButton.style.display = "inline-block";
+    testButton.style.height = "30px";
+    testButton.style.lineHeight = "30px";
+    testButton.style.width = "60px";
+    testButton.style.textAlign = "center";
+    testButton.style.border = "1px solid gray";
+    testButton.style.borderRadius = "6px";
+    testButton.style.marginRight = "36px";
+    testButton.style.color = "gray";
+    testButton.style.cursor = "pointer";
+
+    testButton.addEventListener("mouseover", function () {
+      testButton.style.backgroundColor = "lightgrey";
+      testButton.style.color = "red";
+    });
+
+    testButton.addEventListener("mouseout", function () {
+      testButton.style.backgroundColor = "white";
+      testButton.style.color = "gray";
+    });
+
+    testButton.addEventListener("click", () => {
+      console.log("click");
+
+      let textArea = document.querySelector("#fastpostmessage");
+      if (textArea) {
+        switch (parseInt(testButton.id)) {
+          case 1:
+            chrome.storage.sync.get("quickReplyData1", (data) => {
+              textArea.value += data.quickReplyData1;
+            });
+            break;
+          case 2:
+            chrome.storage.sync.get("quickReplyData2", (data) => {
+              textArea.value += data.quickReplyData2;
+            });
+            break;
+          case 3:
+            chrome.storage.sync.get("quickReplyData3", (data) => {
+              textArea.value += data.quickReplyData3;
+            });
+            break;
+          case 4:
+            chrome.storage.sync.get("quickReplyData4", (data) => {
+              textArea.value += data.quickReplyData4;
+            });
+            break;
+          case 5:
+            chrome.storage.sync.get("quickReplyData5", (data) => {
+              textArea.value += data.quickReplyData5;
+            });
+            break;
+          case 6:
+            chrome.storage.sync.get("quickReplyData6", (data) => {
+              textArea.value += data.quickReplyData6;
+            });
+            break;
+          default:
+            break;
+        }
+      } else {
+        alert("未找到指定元素！(#fastpostmessage)");
+      }
+    });
+  }
+
+  /**************************************************************************************************************************************/
+
   let mainButton = document.createElement("button");
   mainButton.innerHTML = "→";
   mainButton.style.position = "fixed";
@@ -115,7 +211,7 @@ function createButton(
   parentElement,
   innerText,
   targetSelector,
-  clickMessage,
+  errorMessage,
   isScroll
 ) {
   let button = document.createElement("button");
@@ -135,7 +231,7 @@ function createButton(
         element.click();
       }
     } else {
-      alert(clickMessage);
+      alert(errorMessage);
     }
   });
   return button;
