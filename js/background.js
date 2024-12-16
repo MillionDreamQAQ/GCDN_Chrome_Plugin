@@ -611,13 +611,13 @@ function move_stage1(space) {
 
       switch (space) {
         case "求助中心":
-          element.options.selectedIndex = 23;
+          element.options.selectedIndex = 22;
           break;
         case "Bug反馈":
-          element.options.selectedIndex = 27;
+          element.options.selectedIndex = 26;
           break;
         case "产品需求":
-          element.options.selectedIndex = 26;
+          element.options.selectedIndex = 25;
           break;
         default:
           break;
