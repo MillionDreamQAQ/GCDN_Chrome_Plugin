@@ -931,12 +931,22 @@ chrome.runtime.onInstalled.addListener(function () {
   });
 });
 
+function getFormattedTime() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+  return `${hours}:${minutes}:${seconds}`;
+}
+
 function getForumDataUser(isNotify) {
   fetch("https://gcdn.grapecity.com.cn/api/forummasterreply.php", {
     mode: "no-cors",
   })
     .then((response) => response.json())
     .then((resp) => {
+      document.querySelector(".lastUpdateTime").innerText = getFormattedTime();
+
       if (Array.isArray(resp) && resp.length) {
         chrome.storage.sync.get(["board"], function (result) {
           if (result?.board) {

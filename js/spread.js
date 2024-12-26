@@ -291,6 +291,14 @@ function initSpread() {
 
 /**********************Sheet1 Post****************** */
 
+function getFormattedTime() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+  return `${hours}:${minutes}:${seconds}`;
+}
+
 function fetchHelpData() {
   let numElement = document.getElementById("num");
   let xhr = new XMLHttpRequest();
@@ -302,6 +310,9 @@ function fetchHelpData() {
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {
       try {
+        document.querySelector(".lastUpdateTime").innerText =
+          getFormattedTime();
+
         let resp = JSON.parse(xhr.responseText);
 
         if (resp instanceof Array) {
@@ -485,7 +496,13 @@ function bindingHelpData(data) {
 
     let userTypeValue = sheet.getValue(i, customerTypeIndex);
     if (userTypeValue === "金牌服务用户") {
-      sheet.getRange(i, -1, 1, -1).borderBottom(border).borderLeft(border).borderRight(border).borderTop(border).backColor("lightyellow");
+      sheet
+        .getRange(i, -1, 1, -1)
+        .borderBottom(border)
+        .borderLeft(border)
+        .borderRight(border)
+        .borderTop(border)
+        .backColor("lightyellow");
       // sheet.getRange(i, -1, 1, -1).borderBottom(border).borderLeft(border).borderRight(border).borderTop(border).backColor("lightyellow");
     }
   }
