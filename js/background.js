@@ -945,8 +945,6 @@ function getForumDataUser(isNotify) {
   })
     .then((response) => response.json())
     .then((resp) => {
-      document.querySelector(".lastUpdateTime").innerText = getFormattedTime();
-
       if (Array.isArray(resp) && resp.length) {
         chrome.storage.sync.get(["board"], function (result) {
           if (result?.board) {
